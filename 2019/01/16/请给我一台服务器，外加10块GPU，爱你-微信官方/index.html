@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Deep_learning,生成模型,GAN,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="昨天一句话刷爆了朋友圈  请给我一个圣诞帽@微信官方  我一眼看破天机，像我这种从小到大从来没转过 “今天是马化腾生日，只要复制转发此条消息发送到5个群，就可以获得1个月qq会员”的好孩子，边刷朋友圈边说：“老实人，都是老实人。” 直到看到他们的头像都变成了这样没错，他们都有一顶可爱的红帽子！我渐渐意识到，我才是老实人！微信老铁，没毛病，我向马化腾爸爸道歉！“别低头，小红帽会掉！”打开手机，虔诚的">
+<meta name="keywords" content="Deep_learning,生成模型,GAN">
+<meta property="og:type" content="article">
+<meta property="og:title" content="请给我一台服务器，外加10块GPU，爱你@微信官方">
+<meta property="og:url" content="http://yoursite.com/2019/01/16/请给我一台服务器，外加10块GPU，爱你-微信官方/index.html">
+<meta property="og:site_name" content="七月的风">
+<meta property="og:description" content="昨天一句话刷爆了朋友圈  请给我一个圣诞帽@微信官方  我一眼看破天机，像我这种从小到大从来没转过 “今天是马化腾生日，只要复制转发此条消息发送到5个群，就可以获得1个月qq会员”的好孩子，边刷朋友圈边说：“老实人，都是老实人。” 直到看到他们的头像都变成了这样没错，他们都有一顶可爱的红帽子！我渐渐意识到，我才是老实人！微信老铁，没毛病，我向马化腾爸爸道歉！“别低头，小红帽会掉！”打开手机，虔诚的">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3352522-5b028feaba4e531a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3352522-3c72513426eb7a96.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3352522-c885d86f0d404458.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3352522-7dc861249ac72a80.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3352522-b0fa37706d72c128.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3352522-b31d1fe16659ec01.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3352522-22efa32705d10972.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3352522-8e54994ab6ff43ef.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3352522-617155c0bc4404b6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3352522-626d36fefa2e9173.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3352522-3f65e7ecb9ab760d.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3352522-dae7cc23912e1264.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3352522-cef144040c9e9938.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3352522-e95bfbee46771c53.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3352522-f9f6d82a7ec1a319.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3352522-5dea898237210c04.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3352522-a2991d42a3618db7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3352522-e89fb51ed846e0fe.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2019-01-17T08:42:00.445Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="请给我一台服务器，外加10块GPU，爱你@微信官方">
+<meta name="twitter:description" content="昨天一句话刷爆了朋友圈  请给我一个圣诞帽@微信官方  我一眼看破天机，像我这种从小到大从来没转过 “今天是马化腾生日，只要复制转发此条消息发送到5个群，就可以获得1个月qq会员”的好孩子，边刷朋友圈边说：“老实人，都是老实人。” 直到看到他们的头像都变成了这样没错，他们都有一顶可爱的红帽子！我渐渐意识到，我才是老实人！微信老铁，没毛病，我向马化腾爸爸道歉！“别低头，小红帽会掉！”打开手机，虔诚的">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/3352522-5b028feaba4e531a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/01/16/请给我一台服务器，外加10块GPU，爱你-微信官方/">
+
+
+
+
+
+  <title>请给我一台服务器，外加10块GPU，爱你@微信官方 | 七月的风</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">七月的风</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/01/16/请给我一台服务器，外加10块GPU，爱你-微信官方/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Poemlin">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/xw.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="七月的风">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">请给我一台服务器，外加10块GPU，爱你@微信官方</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-01-16T20:16:53+08:00">
+                2019-01-16
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/生成模型/" itemprop="url" rel="index">
+                    <span itemprop="name">生成模型</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>昨天一句话刷爆了朋友圈</p>
+<blockquote>
+<p>请给我一个圣诞帽@微信官方</p>
+</blockquote>
+<p><img src="http://upload-images.jianshu.io/upload_images/3352522-5b028feaba4e531a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt><br>我一眼看破天机，像我这种从小到大从来没转过 “今天是马化腾生日，只要复制转发此条消息发送到5个群，就可以获得1个月qq会员”的好孩子，边刷朋友圈边说：“老实人，都是老实人。”</p>
+<p>直到看到他们的头像都变成了这样<br><img src="http://upload-images.jianshu.io/upload_images/3352522-3c72513426eb7a96.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt><br>没错，他们都有一顶可爱的红帽子！<br>我渐渐意识到，我才是老实人！<br>微信老铁，没毛病，我向马化腾爸爸道歉！<br>“别低头，小红帽会掉！”<br>打开手机，虔诚的打下下面的文字</p>
+<blockquote>
+<p>微信大大，我要一顶可爱的小红帽！ 爱你，QAQ@微信官方</p>
+</blockquote>
+<p>每隔5分钟看一眼头像，<br>没有。。。<br>每隔2分钟看一眼，<br>没有。。。</p>
+<p>眉头一紧，渐渐发现事情并不简单，然道是活动太火爆，微信官方人手不够，忙不过来？<br>可是已经过了这么久了啊….</p>
+<p>我开始了我IT工作者的思考&gt;&gt;&gt;</p>
+<p>然道是我的微信语言是英语，必须发英文？ 改改改</p>
+<blockquote>
+<p>Please put on a Christmas hat for me!@WeChat Team</p>
+</blockquote>
+<p>我的圣诞帽呢？怎么还没出现？<br>欸？</p>
+<p>又然道是我的老婆是新垣结衣，得发日文？ 该改改</p>
+<blockquote>
+<p>サンタ帽をください＠WeChat オフィシャル</p>
+</blockquote>
+<p>欸？欸？</p>
+<p>又或者<br><img src="http://upload-images.jianshu.io/upload_images/3352522-c885d86f0d404458.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt></p>
+<p>。。。。。。。。<br>。。。。。。<br>。。。<br>我编不下去了TAT</p>
+<p>可是，作为一个技术宅，我才不会@微信官方呢（/傲娇脸）。<br>自己动手，丰衣足食。<br>网上大部分教程都是基于ps图像拼接的，那我们今天就要通过深度学习中的生成对抗网络（具体为CycleGan）自动生成对应头像加上圣诞帽后的头像。以下是正文干货。</p>
+<h1 id="一-为什么选择CycleGan？"><a href="#一-为什么选择CycleGan？" class="headerlink" title="一. 为什么选择CycleGan？"></a>一. 为什么选择CycleGan？</h1><p>pix2pix也可以做图像变换，它和CycleGAN的区别在于，pix2pix模型必须要求 成对数据 （paired data），而CycleGAN利用 非成对数据 也能进行训练(unpaired data)。<br>我们希望训练一个将普通头像转换为带圣诞帽头像的模型。如果使用pix2pix模型， 那么我们必须在搜集大量普通头像以及其对应有圣诞帽头像的两张对应图片，而使用CycleGAN只需同时搜集普通头像和带圣诞帽头像的图片，不必满足对应关系。 因此CycleGAN的用途要比pix2pix更广泛，利用CycleGAN就可以做出更多有趣的应用。<br>（废话真多。。我就是不想标数据。。）<br><img src="http://upload-images.jianshu.io/upload_images/3352522-7dc861249ac72a80.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt></p>
+<h1 id="二-CycleGan基本原理"><a href="#二-CycleGan基本原理" class="headerlink" title="二. CycleGan基本原理"></a>二. CycleGan基本原理</h1><p><img src="http://upload-images.jianshu.io/upload_images/3352522-b0fa37706d72c128.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt></p>
+<p>CycleGAN的原理可以概述为： 将一类图片转换成另一类图片 。也就是说，现在有两个样本空间，X和Y，我们希望把X空间中的样本转换成Y空间中的样本。（获取一个数据集的特征，并转化成另一个数据集的特征）<br>（蛤，没了？。。是的，没时间解释了，快上车！，后面有空再详细写。）</p>
+<h1 id="三-爬取数据"><a href="#三-爬取数据" class="headerlink" title="三. 爬取数据"></a>三. 爬取数据</h1><p>在百度图片上利用python爬虫程序爬取了3000张普通头像，和3000张戴圣诞帽的头像。<br><img src="http://upload-images.jianshu.io/upload_images/3352522-b31d1fe16659ec01.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="nohat"><br><img src="http://upload-images.jianshu.io/upload_images/3352522-22efa32705d10972.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="hat"><br>（具体爬虫代码，会放在同性交友网github上。）</p>
+<h1 id="四-训练"><a href="#四-训练" class="headerlink" title="四. 训练"></a>四. 训练</h1><ol>
+<li><p>下载项目代码</p>
+<blockquote>
+<p>git clone <a href="https://github.com/vanhuyz/CycleGAN-TensorFlow.git" target="_blank" rel="noopener">https://github.com/vanhuyz/CycleGAN-TensorFlow.git</a></p>
+</blockquote>
+</li>
+<li><p>将头像数据转换为tfrecord格式</p>
+</li>
+</ol>
+<p>爬取的数据大小不一，在转换前先要将所有图片resize到统一的尺寸（我的是256）<br>项目中提供了一个build_data脚本，用于将图片转换成tfrecords形式。我们的图片存放在 /data/minglin/code/CycleGan/hatdata/hat/和 /data/minglin/code/CycleGan/hatdata/nohat/目录下，对应的命令就是：</p>
+<blockquote>
+<p>python build_data.py \<br>    –X_input_dir /data/minglin/code/CycleGan/hatdata/hat/\<br>    –Y_input_dir  /data/minglin/code/CycleGan/hatdata/nohat/ \<br>    –X_output_file /data/minglin/code/CycleGan/hatdata/hat.tfrecords\<br>    –Y_output_file /data/minglin/code/CycleGan/hatdata/nohat.tfrecords\</p>
+</blockquote>
+<p>数据不大，转换速度还是很快的。<br><img src="http://upload-images.jianshu.io/upload_images/3352522-8e54994ab6ff43ef.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt></p>
+<ol start="3">
+<li>训练</li>
+</ol>
+<p>直接执行train.py文件即可。</p>
+<blockquote>
+<p>python train.py \<br>    –X  /data/minglin/code/CycleGan/hatdata/hat.tfrecords\<br>    –Y/data/minglin/code/CycleGan/hatdata/nohat.tfrecords \<br>    –image_size 256</p>
+</blockquote>
+<p>其他参数（batchsize，lr等）可以通过train.py –help查看。<br>训练过程非常漫长。。。可以打开tensorboard查看训练进展</p>
+<blockquote>
+<p>tensorboard –logdir /data/minglin/code/CycleGan/checkpoints/20171223-1633/ –port portid</p>
+</blockquote>
+<p><img src="http://upload-images.jianshu.io/upload_images/3352522-617155c0bc4404b6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt></p>
+<p>目前训练还没完成，给一些训练过程中的结果<br>1000个step：头部开始变红。。。<br><img src="http://upload-images.jianshu.io/upload_images/3352522-626d36fefa2e9173.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt><br><img src="http://upload-images.jianshu.io/upload_images/3352522-3f65e7ecb9ab760d.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/3352522-dae7cc23912e1264.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt></p>
+<p>5000个step：头部变得很红。。<br><img src="http://upload-images.jianshu.io/upload_images/3352522-cef144040c9e9938.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt><br><img src="http://upload-images.jianshu.io/upload_images/3352522-e95bfbee46771c53.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt><br><img src="http://upload-images.jianshu.io/upload_images/3352522-f9f6d82a7ec1a319.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt><br>10000个step：小红帽开始有一点点雏形了。。。<br><img src="http://upload-images.jianshu.io/upload_images/3352522-5dea898237210c04.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt><br><img src="http://upload-images.jianshu.io/upload_images/3352522-a2991d42a3618db7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt></p>
+<h1 id="五-总结"><a href="#五-总结" class="headerlink" title="五. 总结"></a>五. 总结</h1><p>虽然训练还没有完成，但是目前看来，效果不是特别好，我总结了一些原因</p>
+<ol>
+<li>数据是我自己从百度上爬的，里面有很多噪声数据，我没时间去除。</li>
+<li>两个域的图片质量差异很大。</li>
+<li>图片数量也相对很少。</li>
+<li>高质量的数据会极大提高训练效果。</li>
+</ol>
+<p>不知不觉已经深夜两点多。。愿大家都会有个美妙的平安夜<br>圣诞快到了，提前祝大家圣诞节快乐！<br><img src="http://upload-images.jianshu.io/upload_images/3352522-e89fb51ed846e0fe.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Deep-learning/" rel="tag"># Deep_learning</a>
+          
+            <a href="/tags/生成模型/" rel="tag"># 生成模型</a>
+          
+            <a href="/tags/GAN/" rel="tag"># GAN</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/01/16/Image-Caption-看图说话，图像字幕-任务简介-neuraltalk2，densecap测试-show-and-tell论文阅读/" rel="next" title="Image Caption(看图说话，图像字幕)任务简介+neuraltalk2，densecap测试+show and tell论文阅读">
+                <i class="fa fa-chevron-left"></i> Image Caption(看图说话，图像字幕)任务简介+neuraltalk2，densecap测试+show and tell论文阅读
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/01/21/python的文件路径问题/" rel="prev" title="python的文件路径问题">
+                python的文件路径问题 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/xw.jpg" alt="Poemlin">
+            
+              <p class="site-author-name" itemprop="name">Poemlin</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">39</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">12</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">36</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#一-为什么选择CycleGan？"><span class="nav-number">1.</span> <span class="nav-text">一. 为什么选择CycleGan？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二-CycleGan基本原理"><span class="nav-number">2.</span> <span class="nav-text">二. CycleGan基本原理</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#三-爬取数据"><span class="nav-number">3.</span> <span class="nav-text">三. 爬取数据</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#四-训练"><span class="nav-number">4.</span> <span class="nav-text">四. 训练</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#五-总结"><span class="nav-number">5.</span> <span class="nav-text">五. 总结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">&copy; 2018 &mdash; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-snowflake-o"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Poemlin</span>
+
+  
+</div>
+<div class="powered-by">
+<i class="fa fa-user-md"></i><span id="busuanzi_container_site_uv">
+  本站访客数:<span id="busuanzi_value_site_pv"></span>
+</span>
+</div>
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

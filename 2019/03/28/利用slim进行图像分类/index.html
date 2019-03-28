@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Deep_learning,Tensorflow,classification,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="前面我们已经了解了如何使用tensorflow自己实现图像分类模型，包括数据的输入、网络结构的搭建、模型的训练和测试等等。之前的网络结构我们是自己编写或者采用比较常用的网络结构(如VGG)，这里我们介绍一下使用官方的图像分类工具包slim来进行更为方便的图像分类深度模型的实现。 一.数据集准备这里我们使用的数据集是21个项目书籍里的卫星图像数据集，包含6种物体的卫星图像。在项目目录下新建data_">
+<meta name="keywords" content="Deep_learning,Tensorflow,classification">
+<meta property="og:type" content="article">
+<meta property="og:title" content="利用slim进行图像分类识别">
+<meta property="og:url" content="http://yoursite.com/2019/03/28/利用slim进行图像分类/index.html">
+<meta property="og:site_name" content="七月的风">
+<meta property="og:description" content="前面我们已经了解了如何使用tensorflow自己实现图像分类模型，包括数据的输入、网络结构的搭建、模型的训练和测试等等。之前的网络结构我们是自己编写或者采用比较常用的网络结构(如VGG)，这里我们介绍一下使用官方的图像分类工具包slim来进行更为方便的图像分类深度模型的实现。 一.数据集准备这里我们使用的数据集是21个项目书籍里的卫星图像数据集，包含6种物体的卫星图像。在项目目录下新建data_">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://i.loli.net/2019/03/27/5c9b163dedb41.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/03/27/5c9b23128ce81.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/03/27/5c9b2c74c1e60.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/03/27/5c9b301df0052.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/03/27/5c9b34446012b.jpg">
+<meta property="og:updated_time" content="2019-03-28T06:36:21.345Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="利用slim进行图像分类识别">
+<meta name="twitter:description" content="前面我们已经了解了如何使用tensorflow自己实现图像分类模型，包括数据的输入、网络结构的搭建、模型的训练和测试等等。之前的网络结构我们是自己编写或者采用比较常用的网络结构(如VGG)，这里我们介绍一下使用官方的图像分类工具包slim来进行更为方便的图像分类深度模型的实现。 一.数据集准备这里我们使用的数据集是21个项目书籍里的卫星图像数据集，包含6种物体的卫星图像。在项目目录下新建data_">
+<meta name="twitter:image" content="https://i.loli.net/2019/03/27/5c9b163dedb41.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/03/28/利用slim进行图像分类/">
+
+
+
+
+
+  <title>利用slim进行图像分类识别 | 七月的风</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">七月的风</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/03/28/利用slim进行图像分类/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Poemlin">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/xw.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="七月的风">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">利用slim进行图像分类识别</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-03-28T14:32:23+08:00">
+                2019-03-28
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/图像分类识别/" itemprop="url" rel="index">
+                    <span itemprop="name">图像分类识别</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>前面我们已经了解了如何使用tensorflow自己实现图像分类模型，包括数据的输入、网络结构的搭建、模型的训练和测试等等。之前的网络结构我们是自己编写或者采用比较常用的网络结构(如VGG)，这里我们介绍一下使用官方的图像分类工具包slim来进行更为方便的图像分类深度模型的实现。</p>
+<h2 id="一-数据集准备"><a href="#一-数据集准备" class="headerlink" title="一.数据集准备"></a>一.数据集准备</h2><p>这里我们使用的数据集是21个项目书籍里的卫星图像数据集，包含6种物体的卫星图像。在项目目录下新建data_prepare文件夹，此文件夹子结构如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">data_prepare/</span><br><span class="line">    satellite/</span><br><span class="line">        train/</span><br><span class="line">            wood/</span><br><span class="line">            water/</span><br><span class="line">            ...</span><br><span class="line">            urban/</span><br><span class="line">        validation/</span><br><span class="line">            wood/</span><br><span class="line">            water/</span><br><span class="line">            ...</span><br><span class="line">            urban/</span><br><span class="line">    src/</span><br><span class="line">        tfrecord.py</span><br><span class="line">    data_convert.py</span><br></pre></td></tr></table></figure></p>
+<p>satellite文件夹是我们本次使用的数据集，文件夹train和validation帮助我们划分了数据集为训练集和验证集。这两个文件夹下是6类图片，每类图片单独一个文件夹存放。src文件夹下是为处理数据集编写的相应代码。这里只有一个tfrecord.py文件，该代码帮助我们对部署好的数据集转换成tfrecord格式（具体介绍待定）。我们可以使用data_prepare文件夹下的data_convert.py脚本转换我们部署好的数据集。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">python data_convert.py -t satellite/ \</span><br><span class="line">--train-shards 2 \</span><br><span class="line">--validation-shards 2 \</span><br><span class="line">--num-threads 2 \</span><br><span class="line">--dataset-name satellite    //tfrecord文件名</span><br></pre></td></tr></table></figure></p>
+<p>-t代表转换pic文件夹下的图片。–train-shards代表数据集分成两份，最终也会有两个tfrecord文件。运行完上述脚本后，satellite文件夹下会生成5个文件：<br><img src="https://i.loli.net/2019/03/27/5c9b163dedb41.jpg" alt><br>2个训练集tfrecord文件，2个验证集tfrecord文件。label.txt表示图片的内部标签(数字)到真实类别(字符串)之间的映射顺序。如图片在tfrecord中的标签为0，那么就对应label.txt第一行的类别，在tfrecord的标签为1，就对应label.txt中第二行的类别，依此类推。</p>
+<h2 id="二-slim图像分类工具包下载和修改"><a href="#二-slim图像分类工具包下载和修改" class="headerlink" title="二.slim图像分类工具包下载和修改"></a>二.slim图像分类工具包下载和修改</h2><h4 id="1-slim介绍"><a href="#1-slim介绍" class="headerlink" title="1.slim介绍"></a>1.slim介绍</h4><p>slim工具包是一个易用的分类工具，包含了大部分有名网络的网络结构和预训练模型。 VGG16、VGG19、 Inception V1~V4, ResNet50、ResNet101,MobileNet等等。slim的源码保存在tensorflow/models/research/slim中。我们这里需要完全拷贝这份代码到我们的项目中，slim文件夹和data_prepare文件夹同级。slim文件夹的结构如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">datasets/</span><br><span class="line">    定义一些训练时使用的数据集。预先定义好了4个数据集， 分别为MNIST、CIFAR-10、Flowers、 ImageNet如果需要训练自己的数据，必须同样在datasets文件夹中进行定义.</span><br><span class="line">nets/</span><br><span class="line">    定义了-些常用的网络结构 ，如 AlexNet、VGG16、VGG19、Inception系列、ResNet、MobileNet等</span><br><span class="line">preprocessing/</span><br><span class="line">    在模型读入图片前，常常需要对图像做预处理和数据增强。这个文件夹针对不同的网络，分别定义了它们的预处理方法</span><br><span class="line">scripts/</span><br><span class="line">    一些训练脚本</span><br><span class="line">train_image_classifier.py   训练模型的入口代码</span><br><span class="line">eval_image_class1fier.py    验证模型性能的入口代码</span><br><span class="line">download_and_convert_data.py    下载并转换数据集格式的入口代码</span><br></pre></td></tr></table></figure></p>
+<h3 id="2-定义我们自己的datasets"><a href="#2-定义我们自己的datasets" class="headerlink" title="2.定义我们自己的datasets"></a>2.定义我们自己的datasets</h3><p>在datasets/目录下新建一个文件satellite.py，将flowers.py的代码复制到里面。修改的地方如下面中文注释所示。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line">#%%</span><br><span class="line">_FILE_PATTERN = &apos;satellite_%s_*.tfrecord&apos; #tfrecord文件名修改</span><br><span class="line">SPLITS_TO_SIZES = &#123;&apos;train&apos;:4800, &apos;validation&apos;:1200&#125; #训练集和验证集大小修改</span><br><span class="line">_NUM_CLASSES = 6 # 数据集类别数量修改</span><br><span class="line">_ITEMS_TO_DESCRIPTIONS = &#123;</span><br><span class="line">        &apos;image&apos;: &apos;A color image of varying size.&apos;,</span><br><span class="line">        &apos;label&apos;:&apos;A single integer between 0 and 4&apos;,</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">#%%</span><br><span class="line">def get_split(split_name, dataset_dir, file_pattern=None, reader=None):</span><br><span class="line">  # 字符串匹配查找key，根据train和validation关键字划分tfrecord文件</span><br><span class="line">  if split_name not in SPLITS_TO_SIZES:</span><br><span class="line">    raise ValueError(&apos;split name %s was not recognized.&apos; % split_name)</span><br><span class="line"></span><br><span class="line">  if not file_pattern: #tfrecord文件名可以指定，如果没有，则默认&apos;satellite_%s_*.tfrecord&apos;</span><br><span class="line">    file_pattern = _FILE_PATTERN</span><br><span class="line">  # #&apos;satellite_train_*.tfrecord&apos; &apos;satellite_validation_*.tfrecord&apos;</span><br><span class="line">  file_pattern = os.path.join(dataset_dir, file_pattern % split_name) </span><br><span class="line"></span><br><span class="line">  # Allowing None in the signature so that dataset_factory can use the default.</span><br><span class="line">  if reader is None:</span><br><span class="line">    reader = tf.TFRecordReader</span><br><span class="line"></span><br><span class="line">  keys_to_features = &#123;</span><br><span class="line">      &apos;image/encoded&apos;: tf.FixedLenFeature((), tf.string, default_value=&apos;&apos;),</span><br><span class="line">      # 定义了图片的默认格式，收集的卫星图片为jpg，因此修改为jpg</span><br><span class="line">      &apos;image/format&apos;: tf.FixedLenFeature((), tf.string, default_value=&apos;jpg&apos;),</span><br><span class="line">      &apos;image/class/label&apos;: tf.FixedLenFeature(</span><br><span class="line">          [], tf.int64, default_value=tf.zeros([], dtype=tf.int64)),</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  items_to_handlers = &#123;</span><br><span class="line">      &apos;image&apos;: slim.tfexample_decoder.Image(),</span><br><span class="line">      &apos;label&apos;: slim.tfexample_decoder.Tensor(&apos;image/class/label&apos;),</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  decoder = slim.tfexample_decoder.TFExampleDecoder(</span><br><span class="line">      keys_to_features, items_to_handlers)</span><br><span class="line"></span><br><span class="line">  labels_to_names = None</span><br><span class="line">  if dataset_utils.has_labels(dataset_dir):</span><br><span class="line">    labels_to_names = dataset_utils.read_label_file(dataset_dir)</span><br><span class="line"></span><br><span class="line">  return slim.dataset.Dataset(</span><br><span class="line">      data_sources=file_pattern,</span><br><span class="line">      reader=reader,</span><br><span class="line">      decoder=decoder,</span><br><span class="line">      num_samples=SPLITS_TO_SIZES[split_name],</span><br><span class="line">      items_to_descriptions=_ITEMS_TO_DESCRIPTIONS,</span><br><span class="line">      num_classes=_NUM_CLASSES,</span><br><span class="line">      labels_to_names=labels_to_names)</span><br><span class="line">#%%</span><br></pre></td></tr></table></figure></p>
+<p>修改完后，我们需要在同级的dataset_factory文件夹注册satellite数据集。只需要模仿其他数据集将satellite添加进来即可：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">from datasets import satellite</span><br><span class="line">datasets_map = &#123;</span><br><span class="line">    &apos;cifar10&apos;: cifar10,</span><br><span class="line">    &apos;flowers&apos;: flowers,</span><br><span class="line">    &apos;imagenet&apos;: imagenet,</span><br><span class="line">    &apos;mnist&apos;: mnist,</span><br><span class="line">    &apos;satellite&apos;:satellite # 注册自定义数据集</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="3-准备训练"><a href="#3-准备训练" class="headerlink" title="3.准备训练"></a>3.准备训练</h3><p>在slim中新建satellite目录，新建data文件夹，将前面data_prepare中生成的5个文件拷贝进来。新建train_dir目录，新建pretraind目录，在 slim 的 GitHub页面找到InceptionV3模型的下载地址 <a href="http://download.tensorflow.org/models/inception_v3_2016_08_28.tar.gz，" target="_blank" rel="noopener">http://download.tensorflow.org/models/inception_v3_2016_08_28.tar.gz，</a> 下载并解压后，会得到一个inception_v3.ckpt文件，将该文件复制到pretrained目录下。最终结构如下：<br><img src="https://i.loli.net/2019/03/27/5c9b23128ce81.jpg" alt></p>
+<h3 id="4-开始训练"><a href="#4-开始训练" class="headerlink" title="4.开始训练"></a>4.开始训练</h3><p>利用slim中的训练入口代码太不、<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">python train_image_classifier.py \</span><br><span class="line">参数</span><br></pre></td></tr></table></figure></p>
+<p>参数较多，含义为：</p>
+<p>–train_dir=satellite/train_dir: 在satellite/train_dir目录下保存日志和checkpoint</p>
+<p>–dataset_name=satellite、–dataset_split_name=train: 指定训练的数据集 </p>
+<p>–dataset_dir=satellite/data: 指定训练数据集保存的位置</p>
+<p>–model_name=inception_v3: 使用的网络模型名称。</p>
+<p>–checkpoint_path=satellite/pretrained/inception_v3.ckpt:预训练模型的位置 </p>
+<p>–checkpoint_exclude_scopes=InceptionV3/Logits，InceptionV3/AuxLogits:<br>在恢复预训练模型时，不恢复这两层。正如之前所说，这两层是Inception v3模型的末端层，对应着ImageNet数据集的1000类，和当前的数据集不符，因此不要去恢复。</p>
+<p>–trainable_scopes=InceptionV3/Logits，InceptionV3/AuxLogits: trainable_scopes规定了在模型中微调变量的范围。这里的设定表示只对 InceptionV3/Logits，InceptionV3/AuxLogits 两个变量进行微调，其他变量都保持不动。如果不设走 trainable_scopes , 就会对模型中所有的参数进行训练。</p>
+<p>–max_number_of_steps 100000:最大的执行步数 。</p>
+<p>–batch_size=32:每步使用的batch数量。</p>
+<p>一learning_rate=0.001: 学习率</p>
+<p>–learning_rate_decay_type=fixed:学习率是否自动下降，此处使用固定的学习率</p>
+<p>–save_interval_secs=300:每隔 300s，程序会把当前模型保存到train_dir中.此处就是目录satellite/train dir</p>
+<p>–save_summaries_secs=2:每隔2s，就会将日志写入到train_dir中。可以用TensorBoard查看该日志. 此处为了方便观察，设定的时间间隔较多，实际训练时，为了性能考虑，可以设定较长的时间间隔。</p>
+<p>–log_every_n_steps=10:每隔 10步，就会在屏幕上打出训练信息。</p>
+<p>–optimizer=msprop:表示选定的优化器</p>
+<p>–weight_decay=0.00004:选定的weight_decay值。 即模型中所有参数的二次正则化超参数 。</p>
+<p>注意点</p>
+<ul>
+<li><p>当 train_image_classifier.py 程序启动后，如果训练 (即 satellite/train_dir )里没再已经保存的模型，就会加载checkpoint_path中的预训练模型，紧接着，程序会把初始模型保存到train_dir中，命名为model.ckpt-0, 0表示第0步。这之后，每隔5min(参数一save_interval_secs=300指定了每隔300s保存一次，即5min)。程序还会把当前模型保存到同样的文件夹中，命名格式和第一次保存的格式一样。因为模型比较大，程序只会保留最新的5个模型 。</p>
+</li>
+<li><p>如果中断了程序井再次运行，程序会首先检查train_dir中有无已经保存的模型，如果有，就不会去加载 checkpoint_path中的预训练模型，而是直接加载train_dir中已经训练好的模型，并以此为起点进行训练。 slim之所以这样设计，是为了在微调网络的时候，可以方便地接阶段手动调整学习率等参数。</p>
+</li>
+</ul>
+<p>训练完成后，train_dir会保存日志和模型文件（最新的5个）：<br><img src="https://i.loli.net/2019/03/27/5c9b2c74c1e60.jpg" alt></p>
+<h3 id="5-验证模型准确率"><a href="#5-验证模型准确率" class="headerlink" title="5.验证模型准确率"></a>5.验证模型准确率</h3><p>使用验证入口程序eval_image_classifier.py<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">python eval_image_classifier.py \ </span><br><span class="line">--checkpoint_yath=satellite/train_dir \ </span><br><span class="line">--eval_dir=satellite/eval_dir \ </span><br><span class="line">--dataset_name=satellite \ </span><br><span class="line">--dataset_split_name=validation \ </span><br><span class="line">--dataset_dir=satellite/data \ </span><br><span class="line">--model_name=inception_v3</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li>-checkpoint_path=satellite/train_dir:这个参数既可以接收一个目录的路径，也可以接收一个文件的路径。如果接收的是一个目录的路径，如这里的satellite/train_dir，就会在这个目录中寻找最新保存的模型文件，执行验证。也可以指定一个模型进行验证，第300步的模型为例，在 satellite/train_dir 文件夹下被保存为model.clcpt-300.meta、model.ckpt-300.index、model.ckpt-300.data-00000-of-OOOO1 三个文件。此时，如果要对它执行验证，给checkpoint_path传递的参数应该为 satellite/train_dir/model.ckpt-300。</li>
+</ul>
+<p>验证结果：<br><img src="https://i.loli.net/2019/03/27/5c9b301df0052.jpg" alt></p>
+<p>Accuracy 表示模型的分类准确率，而 Recall_5 表示Top 5的准确率。在输出的各类别概率中，正确的类别只要落在前5个就算对。由于此处的类别数比较少，因此可以不执行Top5的准确率，而执行Top 2或者Top 3的准确率，只要在eval_image_classifier.py 中修改代码。</p>
+<h3 id="6-Tensorbord可视化观察调参"><a href="#6-Tensorbord可视化观察调参" class="headerlink" title="6.Tensorbord可视化观察调参"></a>6.Tensorbord可视化观察调参</h3><p>train_dir训练过程中保存了模型文件外，还保存了日志文件，我们可以利用tensorboard可视化我们的训练过程，观察过程中可以帮助我们更加高效的调参。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tensorboard --logdir satellite/train_dir/ --port 10010</span><br></pre></td></tr></table></figure></p>
+<p>在 TensorBoard中, 可以看到损失的变化。观察损失曲线高助于调整参数。当损失曲线比较平缓，收敛较慢时 ,可以考虑增大学习率，以加快收敛速度;如果揭失曲线波动较大，无法收敛，就可能是因为学习率过大，此时就可以尝试适当减小学习率<br><img src="https://i.loli.net/2019/03/27/5c9b34446012b.jpg" alt></p>
+<p>注意：<br>之前给出了两条命令，一条命令是只微调Inception V3末端层的，另外一条命令是微调整个网络的。可以在 train_dir中建立两个文件夹,训练这两个模型时，通过调整train dir参数将他们的日志分别写到新建的文件 夹中。此时再使用命令 tensorboard logdir satellite/train_dir打开 TensorBoard, 就可以 比较这两个模型的变化曲线了 。 上方的曲线为只训练末端层的损失，下方的曲线为训练所高层的损失。仅看损失，训练所高层的效果应该比只训练末端层要好。事实也是如此，只训练末端层最后达到的分类准确率在76%左右，而训练所高层的分类准确率在82%左右。读者还可以进一步调整训练、变量、学习率等参数，以达到更好的效果。</p>
+<h3 id="导出模型并单张识别"><a href="#导出模型并单张识别" class="headerlink" title="导出模型并单张识别"></a>导出模型并单张识别</h3><p>应用场景不是一个准确率数字，而是需要直接部署。包含三个步骤。</p>
+<h4 id="1-导出网络结构"><a href="#1-导出网络结构" class="headerlink" title="1.导出网络结构"></a>1.导出网络结构</h4><p>slim中提供了导出网络结构的代码export_inference_graph.py，在slim中运行：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">python export_inference_graph.py \ </span><br><span class="line">--alsologtostderr \</span><br><span class="line">--model_name=inception_v3 \ </span><br><span class="line">--output_file=satellite/inception_v3_inf_graph.pb \ </span><br><span class="line">--dataset_name satellite</span><br></pre></td></tr></table></figure></p>
+<p>这个命令会在 satellite文件夹中生成一个inception_v3_inf_graph.pb文件。 注意: inception_v3_inf_graph.pb文件中只保存了Inception V3的网络结构，并不包含训练得到的模型参数</p>
+<h4 id="2-导入训练好的参数"><a href="#2-导入训练好的参数" class="headerlink" title="2.导入训练好的参数"></a>2.导入训练好的参数</h4><p>需要将checkpoint中的模型参数保存进来。 方法是使用freeze_graph.py脚本（在根目录中）<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">python freeze_graph.py \</span><br><span class="line">--input_graph slim/satellite/inception_v3_inf_graph.pb \ </span><br><span class="line">--input_checlφoint slim/satellite/train_dir/model.ckpt-5271 \ </span><br><span class="line">--input_binary true \</span><br><span class="line">--output_node_names InceptionV3/Predictions/Reshape 1 \ </span><br><span class="line">--output_graph slim/satellite/frozen_graph.pb</span><br></pre></td></tr></table></figure></p>
+<p>–input_binary true。导入的 inception_v3_inf_graph.pb实际是一个protobuf文件。protobuf文件有两种保存格式，一种是文本形式，一种是二进制形式。inception_v3_inf_graph.pb是二进制形式，所以对应的参数是true。 最终会在satellite文件夹中生成一个frozen_graph.pb文件。次文件包含了网络结构和模型参数。</p>
+<h4 id="3-单张图片预测"><a href="#3-单张图片预测" class="headerlink" title="3.单张图片预测"></a>3.单张图片预测</h4><p>根目录中classify_image_inception_v3.py可以实现单张图片检测<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">python classify_image_inception_v3.py \ </span><br><span class="line">--model_path slim/satellite/frozen_graph.pb \ </span><br><span class="line">--label_path data_prepare/pic/label.txt \ </span><br><span class="line">一image_file test_image.jpg</span><br></pre></td></tr></table></figure></p>
+<p>运行结果类似为：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">water(score=8.82)</span><br><span class="line">wetland(score=1.33)</span><br><span class="line">urban(score=-9.33</span><br><span class="line">wood(score=2.12)</span><br><span class="line">glacier(score=-8.92)</span><br></pre></td></tr></table></figure></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Deep-learning/" rel="tag"># Deep_learning</a>
+          
+            <a href="/tags/Tensorflow/" rel="tag"># Tensorflow</a>
+          
+            <a href="/tags/classification/" rel="tag"># classification</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/01/28/Detection-API-训练测试自己的数据集/" rel="next" title="Detection API 训练测试自己的数据集">
+                <i class="fa fa-chevron-left"></i> Detection API 训练测试自己的数据集
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/xw.jpg" alt="Poemlin">
+            
+              <p class="site-author-name" itemprop="name">Poemlin</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">39</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">12</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">36</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#一-数据集准备"><span class="nav-number">1.</span> <span class="nav-text">一.数据集准备</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二-slim图像分类工具包下载和修改"><span class="nav-number">2.</span> <span class="nav-text">二.slim图像分类工具包下载和修改</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-slim介绍"><span class="nav-number">2.0.1.</span> <span class="nav-text">1.slim介绍</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-定义我们自己的datasets"><span class="nav-number">2.1.</span> <span class="nav-text">2.定义我们自己的datasets</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-准备训练"><span class="nav-number">2.2.</span> <span class="nav-text">3.准备训练</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-开始训练"><span class="nav-number">2.3.</span> <span class="nav-text">4.开始训练</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-验证模型准确率"><span class="nav-number">2.4.</span> <span class="nav-text">5.验证模型准确率</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-Tensorbord可视化观察调参"><span class="nav-number">2.5.</span> <span class="nav-text">6.Tensorbord可视化观察调参</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#导出模型并单张识别"><span class="nav-number">2.6.</span> <span class="nav-text">导出模型并单张识别</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-导出网络结构"><span class="nav-number">2.6.1.</span> <span class="nav-text">1.导出网络结构</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-导入训练好的参数"><span class="nav-number">2.6.2.</span> <span class="nav-text">2.导入训练好的参数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-单张图片预测"><span class="nav-number">2.6.3.</span> <span class="nav-text">3.单张图片预测</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">&copy; 2018 &mdash; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-snowflake-o"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Poemlin</span>
+
+  
+</div>
+<div class="powered-by">
+<i class="fa fa-user-md"></i><span id="busuanzi_container_site_uv">
+  本站访客数:<span id="busuanzi_value_site_pv"></span>
+</span>
+</div>
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

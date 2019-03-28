@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="机器学习,激活函数,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="一. 引言 神经网络是由具有适应性的简单单元组成的广泛并行互连的网络，它的组织能够模拟生物神经系统对真实世界物体所作出的交互反应   如今神经网络已经为很多人所熟知，很多很多复杂的网络结构出现在我们面前。在我们日常编写神经网络代码的过程中，激活函数似乎已经是一种很自然正常的操作。可是，激活函数的原理，激活函数的性质，为什么需要激活函数，有哪些常用的激活函数，如何选用？也需要我们更加深入的了解。 二">
+<meta name="keywords" content="机器学习,激活函数">
+<meta property="og:type" content="article">
+<meta property="og:title" content="浅谈激活函数的性质、作用与选择">
+<meta property="og:url" content="http://yoursite.com/2019/01/16/浅谈激活函数的性质、作用与选择/index.html">
+<meta property="og:site_name" content="七月的风">
+<meta property="og:description" content="一. 引言 神经网络是由具有适应性的简单单元组成的广泛并行互连的网络，它的组织能够模拟生物神经系统对真实世界物体所作出的交互反应   如今神经网络已经为很多人所熟知，很多很多复杂的网络结构出现在我们面前。在我们日常编写神经网络代码的过程中，激活函数似乎已经是一种很自然正常的操作。可是，激活函数的原理，激活函数的性质，为什么需要激活函数，有哪些常用的激活函数，如何选用？也需要我们更加深入的了解。 二">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/3352522-eec4e80978e689a4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/3352522-d6ac903c6db903c0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/3352522-aa8761446b250f87.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/3352522-e9fa5556b5c6f45a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/3352522-078f74333a56a0e7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/3352522-ed63e340e26a7b57.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/3352522-31e434c2bc3bfbcc.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/3352522-ca4b18ee1066b90c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/3352522-e0ef5d7b93b41ba5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/3352522-b3f24721eaa3f643.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/3352522-9e0a58f320d0ace9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/3352522-b00fc18deb739f6d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/3352522-64a483f24c8c0a6f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/3352522-9e8e47de08252e08.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/3352522-cb3c48bf593e25c2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2019-01-17T08:42:55.635Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="浅谈激活函数的性质、作用与选择">
+<meta name="twitter:description" content="一. 引言 神经网络是由具有适应性的简单单元组成的广泛并行互连的网络，它的组织能够模拟生物神经系统对真实世界物体所作出的交互反应   如今神经网络已经为很多人所熟知，很多很多复杂的网络结构出现在我们面前。在我们日常编写神经网络代码的过程中，激活函数似乎已经是一种很自然正常的操作。可是，激活函数的原理，激活函数的性质，为什么需要激活函数，有哪些常用的激活函数，如何选用？也需要我们更加深入的了解。 二">
+<meta name="twitter:image" content="https://upload-images.jianshu.io/upload_images/3352522-eec4e80978e689a4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/01/16/浅谈激活函数的性质、作用与选择/">
+
+
+
+
+
+  <title>浅谈激活函数的性质、作用与选择 | 七月的风</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">七月的风</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/01/16/浅谈激活函数的性质、作用与选择/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Poemlin">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/xw.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="七月的风">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">浅谈激活函数的性质、作用与选择</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-01-16T20:06:54+08:00">
+                2019-01-16
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/机器学习/" itemprop="url" rel="index">
+                    <span itemprop="name">机器学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="一-引言"><a href="#一-引言" class="headerlink" title="一. 引言"></a>一. 引言</h2><blockquote>
+<p>神经网络是由具有适应性的简单单元组成的广泛并行互连的网络，<br>它的组织能够模拟生物神经系统对真实世界物体所作出的交互反应 </p>
+</blockquote>
+<p>如今神经网络已经为很多人所熟知，很多很多复杂的网络结构出现在我们面前。在我们日常编写神经网络代码的过程中，激活函数似乎已经是一种很自然正常的操作。可是，激活函数的原理，激活函数的性质，为什么需要激活函数，有哪些常用的激活函数，如何选用？也需要我们更加深入的了解。</p>
+<h2 id="二-神经元"><a href="#二-神经元" class="headerlink" title="二. 神经元"></a>二. 神经元</h2><p>神经网络中最基本的成分是神经元 (neuro且)模型，即上述定义中的”简单单元”在生物神经网络中，每个神经元与其他神经元相连，当它”兴奋”时，就会 向相连的神经元发送化学物质，从而改变这些神经元 内的电位;如果某神经元的电位超过了 一个”阔值” (threshold) ， 那么它就会被激活，即 “兴奋 “起来，向其他神经元发送化学物质。之前说深度网络就是模拟这种生物神经网络的，那么深度学习里的激活函数就是模仿这种神经元的激活方式。</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/3352522-eec4e80978e689a4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt></p>
+<p>这是一个简单的神经元模型，它接收N个输入<strong>X1， X2， … ,Xn</strong>。并为每个输入赋予一个权重<strong>W1, W2, … ,Wn</strong>。<strong>b</strong>是偏置参数（可以理解为为了更好的达到目标而做调整的参数）</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/3352522-d6ac903c6db903c0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt></p>
+<ul>
+<li><strong>X</strong>是该神经元接受的N个<strong>输入</strong></li>
+<li><strong>W</strong>是N维的<strong>权重向量</strong></li>
+<li><strong>z</strong> 表示一个神经元所获得的输入信号x的加权和,称为<strong>神经元的状态</strong></li>
+<li><strong>f</strong>是<strong>激活函数</strong></li>
+<li><strong>a</strong>为神经元的<strong>活性值</strong>，也即该神经元的<strong>输出</strong></li>
+</ul>
+<p>到这里我们知道了神经元接受了多个输入后，必须要通过”激活函数”处理才会产生最终输出。</p>
+<h2 id="三-理想的激活函数（阶跃函数）"><a href="#三-理想的激活函数（阶跃函数）" class="headerlink" title="三. 理想的激活函数（阶跃函数）"></a>三. 理想的激活函数（阶跃函数）</h2><p><img src="https://upload-images.jianshu.io/upload_images/3352522-aa8761446b250f87.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt></p>
+<p>理想中的激活函数是图所示 的阶跃函数，它将输入值映射为输出值 “0”或“1”，显然 “1” 对应于神经元兴奋 ， “0” 对应于神经元抑制。这种情况是最符合生物特性的，但是阶跃函数具有不连续 、不光滑等不太好的性质，所以它无法被用于神经网络的结构。</p>
+<p>既然理想的激活函数无法适用于我们的神经网络结构，那激活函数应该具有什么样的性质呢？</p>
+<h2 id="四-激活函数的性质"><a href="#四-激活函数的性质" class="headerlink" title="四. 激活函数的性质"></a>四. 激活函数的性质</h2><ul>
+<li><strong>可微性</strong>：计算梯度时必须要有此性质。</li>
+<li><strong>非线性</strong>：保证数据非线性可分。</li>
+<li><strong>单调性</strong>：保证凸函数。</li>
+<li><strong>输出值与输入值相差不会很大</strong>：保证神经网络训练和调参高效。</li>
+</ul>
+<h2 id="五-激活函数的作用（非线性）"><a href="#五-激活函数的作用（非线性）" class="headerlink" title="五. 激活函数的作用（非线性）"></a>五. 激活函数的作用（非线性）</h2><p><strong>能使得神经网络的每层输出结果变得非线性化</strong></p>
+<p>非线性化的作用<br>能使得神经网络的每层输出结果变得非线性化。</p>
+<p><strong>线性可分</strong><br><img src="https://upload-images.jianshu.io/upload_images/3352522-e9fa5556b5c6f45a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt><br><img src="https://upload-images.jianshu.io/upload_images/3352522-078f74333a56a0e7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt></p>
+<p><strong>线性不可分</strong><br><img src="https://upload-images.jianshu.io/upload_images/3352522-ed63e340e26a7b57.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt><br><img src="https://upload-images.jianshu.io/upload_images/3352522-31e434c2bc3bfbcc.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt></p>
+<h2 id="六-常用的激活函数"><a href="#六-常用的激活函数" class="headerlink" title="六. 常用的激活函数"></a>六. 常用的激活函数</h2><ol>
+<li><strong>Sigmoid</strong><br><img src="https://upload-images.jianshu.io/upload_images/3352522-ca4b18ee1066b90c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt></li>
+</ol>
+<ul>
+<li>经典的激活函数</li>
+<li>挤压函数：把一个实数压缩至0到1之间。当z是非常大的正数时，g(z)会趋近于1，而z是非常大的负数时，则g(z)会趋近于0。</li>
+<li>挤压的好处：分类分类的概率，比如激活函数的输出为0.9的话便可以解释为90%的概率为正样本。<br><img src="https://upload-images.jianshu.io/upload_images/3352522-e0ef5d7b93b41ba5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt></li>
+<li>微分形式简单，可以用自身表示。</li>
+<li>Sigmoid函数饱和使梯度消失。当神经元的激活在接近0或1处时会饱和，在这些区域梯度几乎为0，这就会导致梯度消失，几乎就有没有信号通过神经传回上一层</li>
+<li>Sigmoid函数的输出不是零中心的。因为如果输入神经元的数据总是正数，那么关于W的梯度在反向传播的过程中，将会要么全部是正数，要么全部是负数，这将会导致梯度下降权重更新时出现z字型的下降。</li>
+</ul>
+<ol start="2">
+<li><strong>TANH双曲正切</strong><br><img src="https://upload-images.jianshu.io/upload_images/3352522-b3f24721eaa3f643.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt><br><img src="https://upload-images.jianshu.io/upload_images/3352522-9e0a58f320d0ace9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt></li>
+</ol>
+<ul>
+<li>是sigmoid函数的一种变体，它的取值范围为【-1，1】，而不是sigmoid函数的【0，1】</li>
+<li>定义域R，同样是挤压函数。</li>
+<li>解决了输出不是零中心，但饱和问题仍然存在。</li>
+</ul>
+<ol start="3">
+<li><strong>ReLU</strong><br><img src="https://upload-images.jianshu.io/upload_images/3352522-b00fc18deb739f6d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt><br><img src="https://upload-images.jianshu.io/upload_images/3352522-64a483f24c8c0a6f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt></li>
+</ol>
+<ul>
+<li>相对于前面两者没有任何指数级运算，对网络计算加速具有巨大作用。</li>
+<li>单侧抑制                </li>
+<li>只需要一个阈值就可以得到激活值，而不用去算一大堆复杂的运算。</li>
+<li>容易死掉</li>
+</ul>
+<p>4.<strong>Leaky ReLU</strong><br>个人第一次使用是在训练GAN的过程中。<br><img src="https://upload-images.jianshu.io/upload_images/3352522-9e8e47de08252e08.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt><br><img src="https://upload-images.jianshu.io/upload_images/3352522-cb3c48bf593e25c2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt></p>
+<ul>
+<li>给与一个很小的负数梯度值，使负轴信息不会全部丢失，解决了ReLU神经元“死掉”的问题</li>
+</ul>
+<p>参考<br><a href="https://zhuanlan.zhihu.com/p/32610035" target="_blank" rel="noopener">https://zhuanlan.zhihu.com/p/32610035</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/机器学习/" rel="tag"># 机器学习</a>
+          
+            <a href="/tags/激活函数/" rel="tag"># 激活函数</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/01/16/Leetcode-array-数组题目解题报告/" rel="next" title="Leetcode array 数组题目解题报告">
+                <i class="fa fa-chevron-left"></i> Leetcode array 数组题目解题报告
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/01/16/浅谈过拟合-over-fitting-原因、危害、解决方法/" rel="prev" title="浅谈过拟合(over-fitting)-原因、危害、解决方法">
+                浅谈过拟合(over-fitting)-原因、危害、解决方法 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/xw.jpg" alt="Poemlin">
+            
+              <p class="site-author-name" itemprop="name">Poemlin</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">39</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">12</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">36</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#一-引言"><span class="nav-number">1.</span> <span class="nav-text">一. 引言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二-神经元"><span class="nav-number">2.</span> <span class="nav-text">二. 神经元</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#三-理想的激活函数（阶跃函数）"><span class="nav-number">3.</span> <span class="nav-text">三. 理想的激活函数（阶跃函数）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#四-激活函数的性质"><span class="nav-number">4.</span> <span class="nav-text">四. 激活函数的性质</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#五-激活函数的作用（非线性）"><span class="nav-number">5.</span> <span class="nav-text">五. 激活函数的作用（非线性）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#六-常用的激活函数"><span class="nav-number">6.</span> <span class="nav-text">六. 常用的激活函数</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">&copy; 2018 &mdash; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-snowflake-o"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Poemlin</span>
+
+  
+</div>
+<div class="powered-by">
+<i class="fa fa-user-md"></i><span id="busuanzi_container_site_uv">
+  本站访客数:<span id="busuanzi_value_site_pv"></span>
+</span>
+</div>
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

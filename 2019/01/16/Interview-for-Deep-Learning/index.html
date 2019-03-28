@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="面试,Deep_learning,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="本人在面试深度学习岗过程中遇到的问题，不定时更新。  1. CNN的最重要的特点局部连接：cnn有一个感受野，每一个神经元不需要对全局图像做感受，每个神经元只感受局部的图像区域，然后在更高层，将这些感受不同局部的神经元综合起来就可以得到全局信息。这样做的一个好处就是可以减少大量训练的参数。权值共享：我们前面使用感受野，每个神经元对应一块局部区域，如果局部区域是10*10，那么就有100的权重参数">
+<meta name="keywords" content="面试,Deep_learning">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Interview for Deep Learning">
+<meta property="og:url" content="http://yoursite.com/2019/01/16/Interview-for-Deep-Learning/index.html">
+<meta property="og:site_name" content="七月的风">
+<meta property="og:description" content="本人在面试深度学习岗过程中遇到的问题，不定时更新。  1. CNN的最重要的特点局部连接：cnn有一个感受野，每一个神经元不需要对全局图像做感受，每个神经元只感受局部的图像区域，然后在更高层，将这些感受不同局部的神经元综合起来就可以得到全局信息。这样做的一个好处就是可以减少大量训练的参数。权值共享：我们前面使用感受野，每个神经元对应一块局部区域，如果局部区域是10*10，那么就有100的权重参数">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/3352522-96d7ea76b426c975.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2019-01-16T12:28:17.313Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Interview for Deep Learning">
+<meta name="twitter:description" content="本人在面试深度学习岗过程中遇到的问题，不定时更新。  1. CNN的最重要的特点局部连接：cnn有一个感受野，每一个神经元不需要对全局图像做感受，每个神经元只感受局部的图像区域，然后在更高层，将这些感受不同局部的神经元综合起来就可以得到全局信息。这样做的一个好处就是可以减少大量训练的参数。权值共享：我们前面使用感受野，每个神经元对应一块局部区域，如果局部区域是10*10，那么就有100的权重参数">
+<meta name="twitter:image" content="https://upload-images.jianshu.io/upload_images/3352522-96d7ea76b426c975.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/01/16/Interview-for-Deep-Learning/">
+
+
+
+
+
+  <title>Interview for Deep Learning | 七月的风</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">七月的风</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/01/16/Interview-for-Deep-Learning/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Poemlin">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/xw.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="七月的风">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Interview for Deep Learning</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-01-16T20:11:38+08:00">
+                2019-01-16
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/深度学习/" itemprop="url" rel="index">
+                    <span itemprop="name">深度学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p>本人在面试深度学习岗过程中遇到的问题，不定时更新。</p>
+</blockquote>
+<h1 id="1-CNN的最重要的特点"><a href="#1-CNN的最重要的特点" class="headerlink" title="1. CNN的最重要的特点"></a>1. CNN的最重要的特点</h1><p><strong>局部连接</strong>：cnn有一个感受野，每一个神经元不需要对全局图像做感受，每个神经元只感受局部的图像区域，然后在更高层，将这些感受不同局部的神经元综合起来就可以得到全局信息。这样做的一个好处就是可以减少大量训练的参数。<br><strong>权值共享</strong>：我们前面使用感受野，每个神经元对应一块局部区域，如果局部区域是10*10，那么就有100的权重参数，但如果我们把每个神经元的权重参数设置为一样，相当于每个神经元用的是同一个卷积核去卷积图像，最终两层间的连接只有 100 个参数 ！两层间的连接只有 100 个参数 ！</p>
+<h1 id="2-医学图像的特点"><a href="#2-医学图像的特点" class="headerlink" title="2. 医学图像的特点"></a>2. 医学图像的特点</h1><p>a. 首要面对的问题是<strong>训练数据的缺乏</strong>，cnn的训练需要大量有标记数据，自然图像在获取和标注上都很方便，获取可以通过互联网爬虫获取，标注可以通过众包的方式获得。但是医学图像都是很私密的数据，并且标注也必须相关专家。像ImageNet这样大规模的上百万张的训练图像，简直是不可想象的。<br>b. 数据的缺乏就导致我们的模型很容易<strong>陷入过拟合</strong>，所以医学图像的深度方法通常会有很多“<strong>数据增强</strong>”，就是依赖现有的图像，通过旋转，平移，变形等变化，产生更多的图像。二是使用迁移学习(Transfer Learning)。其思想是通过在另一种大规模的数据集上面训练，得到CNN的参数作为初始值，再在目标数据集上训练对参数进行调优（Fine-tuning）。<br>c. 从医学图像的特质来看，医学图像涉及的往往是人体的组织，因此成分复杂。识别和分类的要求更加<strong>精细</strong>，例如我做的病理学图像，里面的不同的肿瘤在普通人看来都是一种样子：一个黑点。甚至说普通的医生都没法区分，只有受过专业训练的病理科的医生才能判断。<br>d。严重的<strong>类别不平衡</strong>问题，我做的乳腺病理图像，一张2000*2000的图像，只有一两个肿瘤区域。对这些区域进行密集采样，而对其他区域随机采样。</p>
+<h1 id="3-你理解的人工智能"><a href="#3-你理解的人工智能" class="headerlink" title="3. 你理解的人工智能"></a>3. 你理解的人工智能</h1><p>人工智能就是帮助计算机像人一样进行感知，学习与决策的学科。细分一下，感知对应着计算机视觉和自然语言处理，学习对应着机器学习，决策对应着知识表示和数据挖掘。</p>
+<h1 id="4-ANN受欢迎的原因"><a href="#4-ANN受欢迎的原因" class="headerlink" title="4. ANN受欢迎的原因"></a>4. ANN受欢迎的原因</h1><p>人工神经网络（ Artificial Neural Network）是众多机器学习算法中比较接近生物神经网络特性的数学模型。</p>
+<h1 id="5-CNN与人眼"><a href="#5-CNN与人眼" class="headerlink" title="5. CNN与人眼"></a>5. CNN与人眼</h1><p>CNN比较接近人脑的视觉机理：视觉的前期，并不是对整体的图片进行处理；视觉处理的第一步。是对简单形状结构处理。简言之，视觉是分层的。人的视觉系统从原始信号摄入开始（瞳孔摄入像素 Pixels），接着做初步处理（大脑皮层某些细胞发现边缘和方向），然后抽象（大脑判定，眼前的物体的形状，是圆形的），然后进一步抽象（大脑进一步判定该物体是只气球）。整个CNN就是在一定程度上模拟了人类的视觉分层系统，从底层低语义高分辨率的特征到高层高语义低分辨率的特征。</p>
+<h1 id="6-谈谈pooling"><a href="#6-谈谈pooling" class="headerlink" title="6. 谈谈pooling"></a>6. 谈谈pooling</h1><p>pooling是在前面卷积得到的featuremap上做聚合操作，最重要的作用引入了不变性，旋转平移缩放更关注是否存在某些特征而不是特征具体的位置。第二个作用是降维和减少计算参数个数。</p>
+<h1 id="7-卷积神经网络的训练"><a href="#7-卷积神经网络的训练" class="headerlink" title="7. 卷积神经网络的训练"></a>7. 卷积神经网络的训练</h1><p>有监督训练、所有的权用一些不同的小随机数进行初始化、（输入向量，理想输出向量）的向量对、BP算法+梯度下降调参</p>
+<h1 id="8-梯度下降"><a href="#8-梯度下降" class="headerlink" title="8. 梯度下降"></a>8. 梯度下降</h1><p>如果一个实值函数 f(x)在点a处可微且有定义，那么函数 f(x)在a点沿着梯度相反的方向-∇f(a)下降最快。</p>
+<h1 id="9-学习率"><a href="#9-学习率" class="headerlink" title="9. 学习率"></a>9. 学习率</h1><p>学习率取值必须合适，如果过大就不会收敛，如果过小则收敛速度太慢</p>
+<h1 id="10-正则项"><a href="#10-正则项" class="headerlink" title="10. 正则项"></a>10. 正则项</h1><p>鼓励简单模型，减少过拟合</p>
+<h1 id="11-描述BP反向传播"><a href="#11-描述BP反向传播" class="headerlink" title="11. 描述BP反向传播"></a>11. 描述BP反向传播</h1><p>反向传播算法的含义是：第 l层的一个神经元 的误差项（或敏感性）是所有与该神经元相连的第 l + 1 层的神经元的误差项的权重和。 然后，在乘上该神经元激活函数的梯度。<br>具体过程：<br>（ 1）先前馈计算每一层的状态和激活值，直到最 后一层；<br>（ 2）反向传播计算每一层的误差；<br>（ 3）计算每一层参数的偏导数，并更新参数。</p>
+<h1 id="12-关于激活函数"><a href="#12-关于激活函数" class="headerlink" title="12. 关于激活函数"></a>12. 关于激活函数</h1><p>神经元接受了多个输入后，必须要通过”激活函数”处理才会产生最终输出。<br>理想中的激活函数是图所示 的阶跃函数，”1” 对应于神经元兴奋 ， “0” 对应于神经元抑制。这种情况是最符合生物特性的，但是阶跃函数具有不连续 、不光滑等不太好的性质，所以它无法被用于神经网络的结构。</p>
+<h1 id="13-激活函数的性质"><a href="#13-激活函数的性质" class="headerlink" title="13. 激活函数的性质"></a>13. 激活函数的性质</h1><ul>
+<li>可微性：计算梯度时必须要有此性质。</li>
+<li>非线性：保证数据非线性可分。</li>
+<li>单调性：保证凸函数。</li>
+<li>输出值与输入值相差不会很大：保证神经网络训练和调参高效。</li>
+</ul>
+<h1 id="14-sigmoid"><a href="#14-sigmoid" class="headerlink" title="14. sigmoid"></a>14. sigmoid</h1><p>•    经典的激活函数<br>•    挤压函数：把一个实数压缩至0到1之间。当z是非常大的正数时，g(z)会趋近于1，而z是非常大的负数时，则g(z)会趋近于0。<br>•    挤压的好处：分类分类的概率，比如激活函数的输出为0.9的话便可以解释为90%的概率为正样本。<br>•    微分形式简单，可以用自身表示。<br>•    Sigmoid函数饱和使梯度消失。当神经元的激活在接近0或1处时会饱和，在这些区域梯度几乎为0，这就会导致梯度消失，几乎就有没有信号通过神经传回上一层。</p>
+<h1 id="15-双曲正切"><a href="#15-双曲正切" class="headerlink" title="15. 双曲正切"></a>15. 双曲正切</h1><p>•    是sigmoid函数的一种变体，它的取值范围为【-1，1】，而不是sigmoid函数的【0，1】<br>•    定义域R，同样是挤压函数。<br>•    解决了输出不是零中心，但饱和问题仍然存在。</p>
+<h1 id="16-ReLU"><a href="#16-ReLU" class="headerlink" title="16. ReLU"></a>16. ReLU</h1><p>•    相对于前面两者没有任何指数级运算，对网络计算加速具有巨大作用。</p>
+<h1 id="17-过拟合涵义，原因，解决方法"><a href="#17-过拟合涵义，原因，解决方法" class="headerlink" title="17. 过拟合涵义，原因，解决方法"></a>17. 过拟合涵义，原因，解决方法</h1><p><strong>涵义</strong>：<br>我们实际希望的，是在新样本上能表现得很好的学习器.为了达到这个目的，应该从训练样本中尽可能学出适用于所有潜在样本的”普遍规律”，这样才能在遇到新样本时做出正确的判别.然而，当学习器把训练样本学得”太好”了的时候，很可能巳经把训练样本自身的一些特点当作了所有潜在样本都会具有的一般性质，这样就会导致泛化性能下降。</p>
+<p><strong>原因</strong><br>•    <strong>噪声</strong>：永远没有完美的数据，数据里的噪声会影响模型的学习。<br>•    <strong>假规律</strong>： 样本量较少时，学习器却很复杂时，学习器会过度解读学到很多假的但是在这少数几个样本拥有的规律。</p>
+<p><strong>解决</strong>：<br><strong><em>过拟合是无法完全避免的，但是可以通过一些方法减少过拟合。</em></strong><br><strong>正则项</strong>：奥卡姆剃刀原则，鼓励简单模型。（过拟合的模型往往是复杂的）<br><strong>Dropout</strong>： 就是让神经网络在前向传播的时候，让某个神经元的激活值以一定的概率P，让他停止工作，也就是将这个神经元的激活值变为0。Dropout是非常有效的减少过拟合的方法，通俗的讲当我们挡住了数据的一部分，模型仍然能判断出数据是什么的话，说明模型的能力已经很强。同时挡住了一部分特征，能让模型不依赖于数据的某些局部特征，因为他可能已经被罢工了。<br><strong>获得更多数据</strong>：过拟合问题的一个本质原因就是训练数据量不足以让模型获得整个全局特征。在少量的样本中企图观察到事物真正的规律，无异于坐井观天。当我们获得更多数据的时候，模型的眼界就会变大，就不会被局部特征所迷惑。<br><strong>集成学习</strong>：简而言之，训练多个模型，以每个模型的平均输出作为结果。</p>
+<h1 id="18-BN-批规范化"><a href="#18-BN-批规范化" class="headerlink" title="18. BN 批规范化"></a>18. BN 批规范化</h1><p>batchnorm就是通过对每一层的输出做scale和shift的方法，通过一定的规范化手段，把每层神经网络任意神经元这个输入值的分布强行拉回到接近均值为0方差为1的标准正太分布，即严重偏离的分布强制拉回比较标准的分布，这样使得激活输入值落在非线性函数对输入比较敏感的区域，这样输入的小变化就会导致损失函数较大的变化，使得让梯度变大，避免梯度消失问题产生，而且梯度变大意味着学习收敛速度快，能大大加快训练速度。</p>
+<h1 id="19-梯度爆炸与梯度消失"><a href="#19-梯度爆炸与梯度消失" class="headerlink" title="19. 梯度爆炸与梯度消失"></a>19. 梯度爆炸与梯度消失</h1><p>对激活函数进行求导，如果此部分大于1，那么层数增多的时候，最终的求出的梯度更新将以指数形式增加，即发生梯度爆炸，如果此部分小于1，那么随着层数增多，求出的梯度更新信息将会以指数形式衰减，即发生了梯度消失。</p>
+<h1 id="20-残差"><a href="#20-残差" class="headerlink" title="20. 残差"></a>20. 残差</h1><p>假定某段神经网络的输入是x，期望输出是f*(x），如果我们直接把输入x传到输出作为初始结果，那么此时我们需要学习的目标就是。ResNet相当于将学习目标改变了，不再是学习一个完整的输出，只是输出和输入的差别，即残差。 </p>
+<h1 id="21-什麽样的资料集不适合用深度学习"><a href="#21-什麽样的资料集不适合用深度学习" class="headerlink" title="21. 什麽样的资料集不适合用深度学习?"></a>21. 什麽样的资料集不适合用深度学习?</h1><p>•    数据集太小，数据样本不足时，深度学习相对其它机器学习算法，没有明显优势。<br>•    数据集没有局部相关特性，目前深度学习表现比较好的领域主要是图像／语音／自然语言处理等领域，这些领域的一个共性是局部相关性。图像中像素组成物体，语音信号中音位组合成单词，文本数据中单词组合成句子，这些特征元素的组合一旦被打乱，表示的含义同时也被改变。对于没有这样的局部相关性的数据集，不适于使用深度学习算法进行处理。</p>
+<h1 id="22-损失函数"><a href="#22-损失函数" class="headerlink" title="22. 损失函数"></a>22. 损失函数</h1><p>均方误差是一种较早的损失函数定义方法，它衡量的是两个分布对应维度的差异性之和<br>最大似然误差是从概率的角度，求解出能完美拟合训练样例的模型参数theta，使得概率p(y | x, theta)最大化；<br>交叉熵损失函数，衡量的是两个分布p、q的相似性</p>
+<h1 id="23-目标检测系列"><a href="#23-目标检测系列" class="headerlink" title="23. 目标检测系列"></a>23. 目标检测系列</h1><p><strong>RCNN</strong><br>Motivation：目标检测进展缓慢，CNN在图片分类中取得重大成功<br>Contribution：应用CNN将检测问题转化成分类问题<br>候选框提取：一张图片，利用seletive search方法从中提取出2000个候选框。由于候选框大小不一，考虑到后续CNN要求输入的图片大小统一，将2000个候选框全部resize到227*227分辨率；<br>特征提取+分类器：得到SVMs对于所有Proposal的评分结果，将一些分数较低的proposal去掉后，剩下的proposal中会出现候选框相交的情况。采用非极大值抑制技术，对于相交的两个框或若干个框，找到最能代表最终检测结果的候选框。<br>缺点：R-CNN需要对SS提取得到的每个proposal进行一次前向CNN实现特征提取，因此计算量很大，无法实时；由于全连接层的存在，需要严格保证输入的proposal最终resize到相同尺度大小，这在一定程度造成图像畸变，影响最终结果。</p>
+<p><strong>SPP</strong>:<br>卷积层对输入图像大小不作特别要求，但全连接层要求输入图像具有统一尺寸大小<br>不同大小的proposal需要先通过Crop操作或Wrap操作将proposal区域裁剪为统一大小，然后用CNN提取proposal特征。任意大小的feature map首先分成16、4、1个块，然后在每个块上最大池化，池化后的特征拼接得到一个固定维度的输出。以满足全连接层的需要<br>.R-CNN在训练和测试是需要对每一个图像中每一个proposal进行一遍CNN前向特征提取，如果是2000个propsal,需要2000次前向CNN特征提取。但SPP-net只需要进行一次前向CNN特征提取，即对整图进行CNN特征提取，得到最后一个卷积层的feature map，然后采用SPP-layer根据空间对应关系得到相应proposal的特征</p>
+<p><strong>Fast-R-CNN</strong><br>RoI（region of ineterst）层处理最后一个卷积层得到的feature map为每一个proposal生成一个定长的特征向量roi_pool5。<br>RoI层的输出roi_pool5接着输入到全连接层产生最终用于多任务学习的特征并用于计算多任务Loss</p>
+<p><strong>Faster-R-CNN</strong><br>Region Proposal Network (RPN): 在conv5-3的卷积feature map上用一个n<em>n的滑窗（论文中作者选用了n=3，即3</em>3的滑窗）生成一个长度为256（对应于ZF网络）或512（对应于VGG网络）维长度的全连接特征。然后在这个256维或512维的特征后产生两个分支的全连接层：1.reg-layer,用于预测proposal的中心锚点对应的proposal的坐标x，y和宽高w，h；2.cls-layer，用于判定该proposal是前景还是背景。</p>
+<p><strong>YOLO</strong><br>YOLO将输入图像划分为S*S个网络，如果一个物体的中心落在某网格(cell)内，则相应网格负责检测该物体。</p>
+<h1 id="24-信息熵"><a href="#24-信息熵" class="headerlink" title="24. 信息熵"></a>24. 信息熵</h1><p><img src="https://upload-images.jianshu.io/upload_images/3352522-96d7ea76b426c975.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt><br>熵：描述事件不确定性的指标。一个事件可能变化越多，其本身不确定性越高，携带的信息越多，熵值越高。</p>
+<h1 id="25-调参技巧"><a href="#25-调参技巧" class="headerlink" title="25.调参技巧"></a>25.调参技巧</h1><ul>
+<li><p>参数初始化一定要做。否则可能会减慢收敛速度，影响收敛结果，甚至造成Nan等一系列问题：均匀分布初始化、高斯分布初始化</p>
+</li>
+<li><p>数据预处理方式，Zero-center，shuffle augmentation</p>
+</li>
+<li><p>BN</p>
+</li>
+<li><p>dropout对小数据防止过拟合有很好的效果,值一般设为0.5，之后0.3 0.7</p>
+</li>
+<li><p>小模型SGD比adam好</p>
+</li>
+<li><p>降低学习率1 0.1 0.01 0.001</p>
+</li>
+</ul>
+<h1 id="26-目标检测的评价指标"><a href="#26-目标检测的评价指标" class="headerlink" title="26 目标检测的评价指标"></a>26 目标检测的评价指标</h1><p>识别精度，识别速度，定位精度</p>
+<p>A、目标检测中衡量<strong>识别精度</strong>的指标是mAP（mean average precision）。多个类别物体检测中，每一个类别都可以根据recall和precision绘制一条曲线，AP就是该曲线下的面积，mAP是多个类别AP的平均值。</p>
+<p>B、  目标检测评价体系中衡量<strong>定位精度</strong>的指标是IoU,IoU就是算法预测的目标窗口和真实的目标窗口的交叠（两个窗口面积上的交集和并集比值），Pascal VOC中，这个值是0.5（已被证明相对宽松）。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/面试/" rel="tag"># 面试</a>
+          
+            <a href="/tags/Deep-learning/" rel="tag"># Deep_learning</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/01/16/卷积神经网络VGG-论文细读-Tensorflow实现/" rel="next" title="卷积神经网络VGG 论文细读 + Tensorflow实现">
+                <i class="fa fa-chevron-left"></i> 卷积神经网络VGG 论文细读 + Tensorflow实现
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/01/16/Pytorch-org-个人日常函数/" rel="prev" title="Pytorch.org 个人日常函数">
+                Pytorch.org 个人日常函数 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/xw.jpg" alt="Poemlin">
+            
+              <p class="site-author-name" itemprop="name">Poemlin</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">39</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">12</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">36</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#1-CNN的最重要的特点"><span class="nav-number">1.</span> <span class="nav-text">1. CNN的最重要的特点</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2-医学图像的特点"><span class="nav-number">2.</span> <span class="nav-text">2. 医学图像的特点</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#3-你理解的人工智能"><span class="nav-number">3.</span> <span class="nav-text">3. 你理解的人工智能</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#4-ANN受欢迎的原因"><span class="nav-number">4.</span> <span class="nav-text">4. ANN受欢迎的原因</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#5-CNN与人眼"><span class="nav-number">5.</span> <span class="nav-text">5. CNN与人眼</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#6-谈谈pooling"><span class="nav-number">6.</span> <span class="nav-text">6. 谈谈pooling</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#7-卷积神经网络的训练"><span class="nav-number">7.</span> <span class="nav-text">7. 卷积神经网络的训练</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#8-梯度下降"><span class="nav-number">8.</span> <span class="nav-text">8. 梯度下降</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#9-学习率"><span class="nav-number">9.</span> <span class="nav-text">9. 学习率</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#10-正则项"><span class="nav-number">10.</span> <span class="nav-text">10. 正则项</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#11-描述BP反向传播"><span class="nav-number">11.</span> <span class="nav-text">11. 描述BP反向传播</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#12-关于激活函数"><span class="nav-number">12.</span> <span class="nav-text">12. 关于激活函数</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#13-激活函数的性质"><span class="nav-number">13.</span> <span class="nav-text">13. 激活函数的性质</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#14-sigmoid"><span class="nav-number">14.</span> <span class="nav-text">14. sigmoid</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#15-双曲正切"><span class="nav-number">15.</span> <span class="nav-text">15. 双曲正切</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#16-ReLU"><span class="nav-number">16.</span> <span class="nav-text">16. ReLU</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#17-过拟合涵义，原因，解决方法"><span class="nav-number">17.</span> <span class="nav-text">17. 过拟合涵义，原因，解决方法</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#18-BN-批规范化"><span class="nav-number">18.</span> <span class="nav-text">18. BN 批规范化</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#19-梯度爆炸与梯度消失"><span class="nav-number">19.</span> <span class="nav-text">19. 梯度爆炸与梯度消失</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#20-残差"><span class="nav-number">20.</span> <span class="nav-text">20. 残差</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#21-什麽样的资料集不适合用深度学习"><span class="nav-number">21.</span> <span class="nav-text">21. 什麽样的资料集不适合用深度学习?</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#22-损失函数"><span class="nav-number">22.</span> <span class="nav-text">22. 损失函数</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#23-目标检测系列"><span class="nav-number">23.</span> <span class="nav-text">23. 目标检测系列</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#24-信息熵"><span class="nav-number">24.</span> <span class="nav-text">24. 信息熵</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#25-调参技巧"><span class="nav-number">25.</span> <span class="nav-text">25.调参技巧</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#26-目标检测的评价指标"><span class="nav-number">26.</span> <span class="nav-text">26 目标检测的评价指标</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">&copy; 2018 &mdash; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-snowflake-o"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Poemlin</span>
+
+  
+</div>
+<div class="powered-by">
+<i class="fa fa-user-md"></i><span id="busuanzi_container_site_uv">
+  本站访客数:<span id="busuanzi_value_site_pv"></span>
+</span>
+</div>
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

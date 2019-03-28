@@ -1,0 +1,1038 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="基础,c++,STL,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="一. 顺序容器： 按顺序存储数据； 插入速度快，查找相对较慢。 vector 在最后插入数据; STLvector类与数组类似，允许随机询问元素，即可使用下标运算符[]指定元素在 vector 中的位置(索引)，从而直接访问或操作元素. 将所有元素存储在连续的存储单元中   deque 允许在开头插入或删除元素; list 可在任何位置添加或删除对象;  普通链表的 STL 实现  不能像 STL">
+<meta name="keywords" content="基础,c++,STL">
+<meta property="og:type" content="article">
+<meta property="og:title" content="C++容器使用">
+<meta property="og:url" content="http://yoursite.com/2018/10/22/c++_stl/index.html">
+<meta property="og:site_name" content="七月的风">
+<meta property="og:description" content="一. 顺序容器： 按顺序存储数据； 插入速度快，查找相对较慢。 vector 在最后插入数据; STLvector类与数组类似，允许随机询问元素，即可使用下标运算符[]指定元素在 vector 中的位置(索引)，从而直接访问或操作元素. 将所有元素存储在连续的存储单元中   deque 允许在开头插入或删除元素; list 可在任何位置添加或删除对象;  普通链表的 STL 实现  不能像 STL">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-01-16T11:07:35.044Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="C++容器使用">
+<meta name="twitter:description" content="一. 顺序容器： 按顺序存储数据； 插入速度快，查找相对较慢。 vector 在最后插入数据; STLvector类与数组类似，允许随机询问元素，即可使用下标运算符[]指定元素在 vector 中的位置(索引)，从而直接访问或操作元素. 将所有元素存储在连续的存储单元中   deque 允许在开头插入或删除元素; list 可在任何位置添加或删除对象;  普通链表的 STL 实现  不能像 STL">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/10/22/c++_stl/">
+
+
+
+
+
+  <title>C++容器使用 | 七月的风</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">七月的风</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/10/22/c++_stl/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Poemlin">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/xw.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="七月的风">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">C++容器使用</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-10-22T18:52:59+08:00">
+                2018-10-22
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/C/" itemprop="url" rel="index">
+                    <span itemprop="name">C++</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="一-顺序容器："><a href="#一-顺序容器：" class="headerlink" title="一. 顺序容器："></a>一. 顺序容器：</h2><ul>
+<li>按顺序存储数据；</li>
+<li>插入速度快，查找相对较慢。</li>
+<li><strong>vector</strong> 在最后插入数据;<ol>
+<li>STLvector类与数组类似，允许随机询问元素，即可使用下标运算符[]指定元素在 vector 中的位置(索引)，从而直接访问或操作元素.</li>
+<li>将所有元素存储在连续的存储单元中</li>
+</ol>
+</li>
+<li>deque 允许在开头插入或删除元素;</li>
+<li><strong>list</strong> 可在任何位置添加或删除对象; <ol>
+<li>普通链表的 STL 实现 </li>
+<li>不能像 STLvector 中的元素那样随机访问，因为list使用不连续的内存块组织元素</li>
+</ol>
+</li>
+<li>forward_list 是单向链表，只能沿一个方向遍历。</li>
+</ul>
+<h2 id="二-关联容器"><a href="#二-关联容器" class="headerlink" title="二. 关联容器"></a>二. 关联容器</h2><ul>
+<li>指定的顺序存储数据</li>
+<li>就像词典一样。这将降低插入数据的速度，但在查询方面有很大的优势。</li>
+<li>set：存储各不相同的值，在插入时进行排序;容器的复杂度为对数;</li>
+<li>map: 存储键·值对，并根据唯一的键排序;容器的复杂度为对数;</li>
+<li>multiset：与 set 类似，但允许存储多个值相同的项，即值不需要是唯一的</li>
+</ul>
+<p>STL 容器是泛型模板类，因此是通用的，可用于存储字符串、整型、结构或类对象。</p>
+<h2 id="三-STL-string"><a href="#三-STL-string" class="headerlink" title="三. STL:string"></a>三. STL:string</h2><h5 id="1-为什么需要string类"><a href="#1-为什么需要string类" class="headerlink" title="1. 为什么需要string类"></a>1. 为什么需要string类</h5><p>字符数组可这样定义<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">char staticName[20];</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li><p>声明了一个名为staticName的字符数组(也叫字符串)，其长度是固定的(静态的)，包含20 个元素。</p>
+</li>
+<li><p>这个缓冲区可存储一个长度有限的字符串，如果试图存储的字符数超出限制将溢出。不能调整静态数组的长度.</p>
+</li>
+</ul>
+<p>避开这种限制， C++支持动态分配内存，因此可以如下定义更动态的字符数组:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">char* dynamicName = new char [ArrayLength];</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li><p>其长度由变量ArrayLength的值指定。</p>
+</li>
+<li><p>而这种值是在运行阶段确定的，因此该数组的长度是可变的。然而，如果要在运行阶段改变数组的长度，必须首先辈辈放以前分配给它的内存，再重新分配内存来存储数据。</p>
+</li>
+</ul>
+<h5 id="2-实例化和复制-STL-string"><a href="#2-实例化和复制-STL-string" class="headerlink" title="2. 实例化和复制 STL string"></a>2. 实例化和复制 STL string</h5><ul>
+<li>类提供了很多重载的构造函数，因此可以多种方式进行实例化和初始化</li>
+<li><p>实例化并初始化 string 对象时，无需关心字符串长度和内存分配细节。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">const char* constCStyleString = &quot;Hello String!&quot;;</span><br><span class="line"></span><br><span class="line">string strFromConst(constCStyleString);</span><br><span class="line"></span><br><span class="line">string strFromConst = constCStyleString;</span><br><span class="line"></span><br><span class="line">string str2(&quot;Hello Stringl&quot;);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>string 的构造函数只接受输入字符串的前 n 个字符:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">string strPartialCopy(constCStyleString, 5);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>使其包含指定数量的特定字符:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">string strRepeatChars(10, &apos;a&apos;);</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h5 id="3-访问string内字符内容"><a href="#3-访问string内字符内容" class="headerlink" title="3. 访问string内字符内容"></a>3. 访问string内字符内容</h5><ul>
+<li><p>使用类似于数组的写法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">string strSTLString(&apos;Hello String &apos; );</span><br><span class="line"></span><br><span class="line">for(size_t num = 0;num&lt;strSTLString.length();++num)&#123;</span><br><span class="line">    cout&lt;&lt;strSTLString[num]&lt;&lt;endl;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>使用迭代器</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">string::const_iterator iCharacterLocator;</span><br><span class="line">for (iCharacterLocator = strSTLString.begin(); iCharacterLocator != strSTLString.end (); </span><br><span class="line">++ iCharacterLocator)</span><br><span class="line">    cout&lt;&lt;*iCharacterLocator&lt;&lt;endl;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>4.拼接字符串</p>
+<ul>
+<li>要拼接字符扇，可使用运算符+=，也可使用成员函数 append:<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">string strSample1(&apos;Hello&apos;);</span><br><span class="line">string strSample2(&quot;String!&quot;);</span><br><span class="line">strSample1 += strSample2;</span><br><span class="line">strSample1.append(strSample2);</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h5 id="5-在-string-中查找字符或子字符串"><a href="#5-在-string-中查找字符或子字符串" class="headerlink" title="5.在 string 中查找字符或子字符串"></a>5.在 string 中查找字符或子字符串</h5><ul>
+<li><p>string 类提供了成员函数 find，该函数有多个重载版本</p>
+</li>
+<li><p>std::string::npos 表明没有找到要搜索的元素。如果 find 函数没有返回,npos它将返回一个偏移量，指出子字符串或字符在 string 中的位置。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">string strSample(&quot;happy birthday!&quot;)</span><br><span class="line">size_t charPos = strSample.find(&quot;day&quot;, 0); //从位置0开始</span><br><span class="line">if (charPos != string::npos)</span><br><span class="line">    cout &lt;&lt;&quot;First instance of \&quot;day\&quot; was found at position &quot; &lt;&lt; charPos；</span><br><span class="line">else</span><br><span class="line">    cout &lt;&lt;&quot;Substring not found.&quot; &lt;&lt; endl;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h5 id="6-擦除string"><a href="#6-擦除string" class="headerlink" title="6. 擦除string"></a>6. 擦除string</h5><ul>
+<li><p>在给定偏移位置和字符数时删除指定数目的字符;</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">string strSample(&quot;Hello Stringl Wake up to a beautiful dayl&quot;);</span><br><span class="line">strSample.erase (13, 28); //Hello String!</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>在给定指向字符的选代器时删除该字符:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">strSample.erase(iCharS);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>在给定由两个迭代器指定的范围时删除该范围内的字符:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">strSample.erase(strSample.begin(), strSample.end());</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h5 id="7-使用-auto-简化冗长的选代器声明"><a href="#7-使用-auto-简化冗长的选代器声明" class="headerlink" title="7. 使用 auto 简化冗长的选代器声明"></a>7. 使用 auto 简化冗长的选代器声明</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">string::iterator iCharS = find(strSample.begin(), strSample.end(), &apos;S&apos;);</span><br><span class="line"></span><br><span class="line">auto iCharS = find(strSample.begin(), strSample.end(), &apos;S&apos;);</span><br></pre></td></tr></table></figure>
+<h5 id="8-字符串反转"><a href="#8-字符串反转" class="headerlink" title="8. 字符串反转"></a>8. 字符串反转</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">string strSample(&quot;Hello Stringl We will reverse you!&quot;);</span><br><span class="line">reverse(strSample.begin(), strSample.end());</span><br></pre></td></tr></table></figure>
+<h5 id="9-字符串大小写转换"><a href="#9-字符串大小写转换" class="headerlink" title="9. 字符串大小写转换"></a>9. 字符串大小写转换</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">string strInput;</span><br><span class="line">getline(cin, strInput);</span><br><span class="line">transform(strInput.begin(), strInput.end(), strlnput.begin(), toupper); //大写</span><br><span class="line">transform(strlnput.begin(), strlnput.end(), strlnput.begin(), tolower); //小写</span><br></pre></td></tr></table></figure>
+<h2 id="四-STL动态数组vector类"><a href="#四-STL动态数组vector类" class="headerlink" title="四. STL动态数组vector类"></a>四. STL动态数组vector类</h2><ul>
+<li>是一个模板类，提供了动态数组的通用功能</li>
+<li>在数组末尾添加元素所需的时间是固定的，即在末尾插入元素的所需时间不随数组大小而异在末尾删除元素也如此;</li>
+<li>在数组中间添加或删除元素所需的时间与该元素后面的元素个数成正比;</li>
+<li>存储的元素数是动态的，而 vector类自行负责管理内存。</li>
+</ul>
+<h5 id="1-实例化vector"><a href="#1-实例化vector" class="headerlink" title="1. 实例化vector"></a>1. 实例化vector</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">using namespace std;</span><br><span class="line">vector&lt;int&gt; vecDynamiclntegerArray; // vector containing integers</span><br><span class="line">vector&lt;float&gt; vecDynamicFloatArray; // vector containing floats</span><br><span class="line">vector&lt;Tuna&gt; vecDynamicTunaArray; //包含对象</span><br></pre></td></tr></table></figure>
+<p>vector也有很多构造函数，初始化方式也多变</p>
+<ul>
+<li><p>实例化一个存储整型数据的 vector,使用了默认构造函数</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vector&lt;int&gt; vecone;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>vector 至少应包含10个元素。注意，这并没有限制容器最终的大小，而只是设置了初始大小。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vector&lt;int&gt; vectwo(10);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>10个90值</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vector&lt;int&gt; vecthree(10, 90);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>使用一个 vector 实例化另一个vector 的内容，即复制vector对象或其一部分</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vector&lt;int&gt; vecfour(vecthree);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>使用选代器 </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vector&lt;int&gt; vecfive(vecthree.cbegin (), vecthree.cbegin () + 5 );</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h5 id="2-push-back-在末尾插入元素"><a href="#2-push-back-在末尾插入元素" class="headerlink" title="2. push_back()在末尾插入元素"></a>2. push_back()在末尾插入元素</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">vector &lt;int&gt; veclntegers;</span><br><span class="line">veclntegers.push_back(50);</span><br><span class="line">veclntegers.push_back(1);</span><br><span class="line">vecIntegers.push_back(987);</span><br><span class="line">veclntegers.push_back(1001);</span><br><span class="line">cout &lt;&lt; veclntegers.size()&lt;&lt;endl; //4 //请注意函数size()的用法，它返回vector 中存储的元素数。</span><br></pre></td></tr></table></figure>
+<ul>
+<li>c++11支持像数组那样初始化列表<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">vector&lt;int&gt; veclntegers = &#123;50, 1, 987, 1001&#125;;</span><br><span class="line">vector&lt;int&gt; vecMorelntegers &#123;50, 1, 987, 1001&#125;;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h5 id="3-使用-insert-在指定位置插入元素"><a href="#3-使用-insert-在指定位置插入元素" class="headerlink" title="3. 使用 insert()在指定位置插入元素"></a>3. 使用 insert()在指定位置插入元素</h5><ul>
+<li><p>在开头插入一个元素25</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vecone.insert (vecone.begin(), 25);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>指定插入位置、要插入的元素数以及这些元素的值(都相同):</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">veclntegers.insert (veclntegers.end(), 2 , 45);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>还可将另一个 vector 的内容插入到指定位置:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vector&lt;int&gt; vecAnother(2, 30);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>在vecone位置1处插入vecanother从begin到end的值</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vecone.insert(vecone.begin() + 1,vecAnother.begin(), vecAnother.end());</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>插入位置的迭代器一般最好为：</p>
+<ol>
+<li>begin()或 end()返回的</li>
+<li>STL 算法(如find函数)的返回位,find可用于查找元素，然后在这个位置插入另一个元素(这将导致查找的元素向后移).</li>
+</ol>
+<p>注意：</p>
+<ul>
+<li>虽然函数insert功能众多，但给 vector添加元素时，应首选 push_back()。</li>
+<li>因为insert是低效的，它会导致所有元素后移</li>
+<li>频繁在容器中间插入元素 应使用list</li>
+</ul>
+<h5 id="4-数组语法访问vector元素"><a href="#4-数组语法访问vector元素" class="headerlink" title="4. 数组语法访问vector元素"></a>4. 数组语法访问vector元素</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">vector&lt;int&gt; vecone(5,10);</span><br><span class="line">for(size_t num; num&lt;vecone.size();++num)</span><br><span class="line">    cout&lt;&lt;vecone[num]&lt;endl;</span><br><span class="line">    cout&lt;&lt;vecone.at(num)&lt;&lt;endl;</span><br></pre></td></tr></table></figure>
+<p>注意：</p>
+<ul>
+<li>使用[]访问 vector 的元素时,面临越界的危险</li>
+<li>更安全的方法是使用成员函数 at()</li>
+<li>at()函数在运行阶段检查容荡的大小，如果索引超出边界(无论如何都不能这样做).将引发异常 </li>
+</ul>
+<h5 id="5-使用指针-迭代器-访问vector元素"><a href="#5-使用指针-迭代器-访问vector元素" class="headerlink" title="5. 使用指针(迭代器)访问vector元素"></a>5. 使用指针(迭代器)访问vector元素</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">vector&lt;int&gt; vecone(5,10);</span><br><span class="line">auto iLocator = vecone.begin();</span><br><span class="line">while(iLocator != vecone.end()</span><br><span class="line">&#123;</span><br><span class="line">    size_t index = distance(vecone.begin(),iLocator);//distance函数计算元素偏移量</span><br><span class="line">    cout&lt;&lt;index&lt;&lt;&apos;:&apos;&lt;&lt;*iLocator&lt;&lt;endl;</span><br><span class="line">    ++iLocator;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="6-pop-back删除vector末尾的元素"><a href="#6-pop-back删除vector末尾的元素" class="headerlink" title="6. pop_back删除vector末尾的元素"></a>6. pop_back删除vector末尾的元素</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">vector&lt;int&gt; vecone(10,90);</span><br><span class="line">vecone.pop_back();</span><br></pre></td></tr></table></figure>
+<h5 id="7-vector的大小和容量"><a href="#7-vector的大小和容量" class="headerlink" title="7. vector的大小和容量"></a>7. vector的大小和容量</h5><p>vector的大小指的是实际存储的元素数，而vector的容量指的是在重新分配内存以存储更多元素<br>前vector能够存储的元素数。因此，vector的大小小于或等于容量。</p>
+<ul>
+<li><p>查询 vector 当前存储的元素数</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vector.size();</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>查询vector的容量</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vector.capacity();</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="五-STL-动态数组deque"><a href="#五-STL-动态数组deque" class="headerlink" title="五. STL 动态数组deque"></a>五. STL 动态数组deque</h2><ul>
+<li>deque 是一个STL动态数组类，与vector非常类似</li>
+<li>支持使用方法push_back()和pop_back()在末尾插入和删除元素</li>
+<li>与Vector一样， deque也使用运算符[]以数组语法访问其元素<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">deque&lt;int&gt; deqone;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h5 id="1-使用-push-front-和-pop-front-在开头插入和删除元素"><a href="#1-使用-push-front-和-pop-front-在开头插入和删除元素" class="headerlink" title="1.使用 push_front 和 pop_front 在开头插入和删除元素"></a>1.使用 push_front 和 pop_front 在开头插入和删除元素</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">deque&lt;int&gt; deqone;</span><br><span class="line">deqone.push_back(3);</span><br><span class="line">deqone.push_back(4);</span><br><span class="line">deqone.push_back(5);</span><br><span class="line">deqone.push_front(2);</span><br><span class="line">deqone.push_front(1);</span><br><span class="line">deqone.push_front(0); // 0,1,2,3,4,5</span><br><span class="line">deque.pop_back(); // 0,1,2,3,4</span><br><span class="line">deque.pop_front(); //1,2,3,4</span><br></pre></td></tr></table></figure>
+<p>动态数组vector和deque总结</p>
+<ol>
+<li>在不知道需要存储多少个元素时，务必使用动态数组vector或deque.</li>
+<li>请牢记， vector只能在末端扩容，为此可使用方法push_back().</li>
+<li>请牢记，deque可在两端扩容，为此可使用方法push_back()和push_front().</li>
+<li>pop_back()删除集合最后一个元素</li>
+<li>pop_front()删除deque开头元素</li>
+</ol>
+<h2 id="六-STL-list"><a href="#六-STL-list" class="headerlink" title="六.STL::list"></a>六.STL::list</h2><ul>
+<li>以模板类 std::list 的方式向程序员提供了一个双向链表</li>
+<li><p>双向链表的主要优点是，插入和删除元素的速度快，且时间是固定的</p>
+<h5 id="1-实例化list"><a href="#1-实例化list" class="headerlink" title="1. 实例化list"></a>1. 实例化list</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">list&lt;int&gt; lione(10);</span><br><span class="line">list&lt;int&gt; litwo(10,90);</span><br><span class="line">list&lt;int&gt; lithree(litwo);</span><br><span class="line">vector&lt;int&gt; vecone(10,20);</span><br><span class="line">list&lt;int&gt; lifour(vecone.begin(),vecone.end());</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>声明一个指向 list 中元素的选代器</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">list&lt;int&gt;::const_iterator isite;</span><br><span class="line">list&lt;int&gt;::iterator isite</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h5 id="2-list开头或末尾插入元素"><a href="#2-list开头或末尾插入元素" class="headerlink" title="2.list开头或末尾插入元素"></a>2.list开头或末尾插入元素</h5><ul>
+<li>与 deque 类似，要在 list 开头插入元素，可使用其成员方法 push front。</li>
+<li>要在末尾插入，可使用成员方法 push_back。 </li>
+<li>这两个方法都接受一个参数，即要插入的值:<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">list&lt;int&gt; lione(10);</span><br><span class="line">lione.push_back(-1);</span><br><span class="line">lione.push_front(2001);</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h5 id="3-在list中间插入元素，借助insert函数"><a href="#3-在list中间插入元素，借助insert函数" class="headerlink" title="3.在list中间插入元素，借助insert函数"></a>3.在list中间插入元素，借助insert函数</h5><ul>
+<li>list 的特点之一是，在其中间插入元素所需的时间是固定的</li>
+<li><p>有多个重载版本</p>
+</li>
+<li><p>版本一：第 1 个参数是插入位置，第 2 个参数是要插入的值</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">iterator insert(iterator pos, const T&amp; x)；</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>版本二：第 1 个参数是插入位置，最后一个参数是要插入的值，而第2个参数是要插入的元素个数。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">void insert(iterator pos, size_type n, const T&amp; x)；</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>版本三： 除一个位置参数外，它还接受两个输入迭代器，指定要将集合中相应范围内的元素插入到 list 中</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">temp1ate &lt;c1ass Inputlterator&gt;</span><br><span class="line">void insert(iterator pos, Inputlterator f, Inputlterator 1)</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h5 id="4-删除list中元素，借助erase函数"><a href="#4-删除list中元素，借助erase函数" class="headerlink" title="4. 删除list中元素，借助erase函数"></a>4. 删除list中元素，借助erase函数</h5><ul>
+<li>erase函数有两个重载版本</li>
+<li><p>一个接受一个迭代器参数并删除迭代器指向的元素</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">listlntegers.erase(isite)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>另一个接受两个选代器参数并删除指定范围内的所有元素</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">listlntegers.erase(listlntegers.begin() , listlntegers.end());</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h5 id="5-对list元素进行反转"><a href="#5-对list元素进行反转" class="headerlink" title="5. 对list元素进行反转"></a>5. 对list元素进行反转</h5><ul>
+<li>list 的一个独特之处是，指向元素的选代器在 list 的元素重新排列或插入元素后仍有效</li>
+<li>使用reverse()反转元素顺序</li>
+<li>reverseO只是反转list 中元素的排列顺序。 </li>
+<li>它是一个没有参数的简单函数，确保指向元素的选代器在反转后仍有效一如果程序员保存了该迭代器。<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lione.reverse();</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h5 id="6-对list元素进行排序"><a href="#6-对list元素进行排序" class="headerlink" title="6. 对list元素进行排序"></a>6. 对list元素进行排序</h5><ul>
+<li><p>list 的成员函数 sort()有两个版本，其中一个没有参数:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">listlntegers.sort(); //递增顺序</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>另一个接受一个二元谓词函数作为参数，让您能够指定排序标准:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">bool SortPredicate_Descending(const int &amp; lsh, const int&amp; rsh)</span><br><span class="line">&#123;</span><br><span class="line">    return(lsh &gt; rsh); //优先找最大的，递减</span><br><span class="line">&#125;</span><br><span class="line">listlntegers.sort(SortPredicate_Descending);</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>注意：</p>
+<ul>
+<li>该谓词解释：这个谓词仅在第一个值比第二个值大时返回true也就是说，</li>
+<li>使用该谓词时，仅当第一个无素(lsh)的数字值比第二个元素(rsh)大时，sort才认为第一个元素比第二个元素小。</li>
+<li>基于这种解释，sort交换元素的位置，以满足谓词指定的标准。</li>
+</ul>
+<h5 id="7-总结"><a href="#7-总结" class="headerlink" title="7. 总结"></a>7. 总结</h5><ul>
+<li>如果需要频繁地插入或删除元素(尤其是在中间插入或删除时)，应使用list ，而不是vetor.</li>
+<li>因为在这种情况下，vector需要调整其内部缓冲区的大小，以支持数组语法，</li>
+<li>还需执行开销高昂的复制操作，而 list 只需建立或断开链接。</li>
+</ul>
+<h2 id="七-STL集合set"><a href="#七-STL集合set" class="headerlink" title="七.STL集合set"></a>七.STL集合set</h2><ul>
+<li>快速地查找和搜索</li>
+<li>set和multiset 之间的区别在于，后者可存储重复的值，而前者只能存储唯一的值。</li>
+<li>为实现快速搜索， STL set 和 multiset 的内部结构像二叉树</li>
+<li>这意味着将元素插入到 set 或 multiset时将对其进行排序，以提高查找速度</li>
+<li><p>如果您没有指定排序标准，它们将使用默认谓词 std::less，确保包含的元素按升序排列。</p>
+<h5 id="1-实例化set对象"><a href="#1-实例化set对象" class="headerlink" title="1. 实例化set对象"></a>1. 实例化set对象</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">set&lt;int&gt; seone;</span><br><span class="line">multiset&lt;int&gt; musone;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>要声明一个指向 set 或 mu1tiset 中元素的选代器</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">set&lt;int&gt;::const_iterator isiter;</span><br><span class="line">set&lt;int&gt;::iterator isiter;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>也可以指定排序谓词</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">template &lt;typename T&gt;</span><br><span class="line">struct SortDescending</span><br><span class="line">&#123;</span><br><span class="line">    bool operator() (const T&amp; lhs , const T&amp; rhs) const</span><br><span class="line">    &#123;</span><br><span class="line">        return (lhs &gt; rhs);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line">set &lt;int, SortDescending&lt;int&gt; setIntegerS;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h5 id="2-set插入元素"><a href="#2-set插入元素" class="headerlink" title="2. set插入元素"></a>2. set插入元素</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">setlntegers.insert(1);</span><br><span class="line">msetlntegers.insert (setlntegers.begin(), setlntegers.end());</span><br></pre></td></tr></table></figure>
+<h5 id="3-set中查找元素"><a href="#3-set中查找元素" class="headerlink" title="3. set中查找元素"></a>3. set中查找元素</h5><ul>
+<li>set、multiset、map和multimap等关联容器都提供了成员函数 find()<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">set&lt;int&gt; setone;</span><br><span class="line">setone.insert(10);</span><br><span class="line">setone.insert(13);</span><br><span class="line">setone.insert(9); //9,10,13</span><br><span class="line">auto isiter = setone.find(9);</span><br><span class="line">if (ister != setlntegers.end())</span><br><span class="line">    cout &lt;&lt; &quot;found&quot; &lt;&lt;endl;</span><br><span class="line">else</span><br><span class="line">    cout &lt;&lt; &quot;not found&quot;&lt;&lt;endl;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h5 id="4-删除set中的元素"><a href="#4-删除set中的元素" class="headerlink" title="4. 删除set中的元素"></a>4. 删除set中的元素</h5><ul>
+<li><p>接受键值</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">setObject.erase(key);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>接受一个选代器作为参数，删除该迭代器指向的元素:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">setObject.erase(iElement);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>使用迭代器指定的边界，可将指定范围内的所有元素都从 set 或 mu1tiset 中删除:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">setObject.erase(iLowerBound, iUpperBound);</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="八-STL映射类map"><a href="#八-STL映射类map" class="headerlink" title="八. STL映射类map"></a>八. STL映射类map</h2><p> key（键）– value（值）</p>
+<h5 id="1-实例化map对象"><a href="#1-实例化map对象" class="headerlink" title="1. 实例化map对象"></a>1. 实例化map对象</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">map&lt;key, value&gt; mapone;</span><br><span class="line"></span><br><span class="line">map&lt;int, string&gt; maptwo;</span><br><span class="line">map&lt;int, string&gt; mapthree(maptwo);</span><br><span class="line">map&lt;int, string&gt; mapfour(mapthree.begin(), mapthree.end())</span><br></pre></td></tr></table></figure>
+<h5 id="2-map插入元素"><a href="#2-map插入元素" class="headerlink" title="2. map插入元素"></a>2. map插入元素</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">map&lt;int, string&gt; mapone;</span><br></pre></td></tr></table></figure>
+<ul>
+<li><p>使用makepair函数</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mapone.insert(make_pair(1, &quot;one&quot;));</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>使用std::pair</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mapone.insert(pair&lt;int, string&gt;(2, &quot;two&quot;))</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>使用数组语法</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mapone[3] = &quot;three&quot;;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h5 id="3-map查找元素"><a href="#3-map查找元素" class="headerlink" title="3.map查找元素"></a>3.map查找元素</h5><ul>
+<li>map关联容器都提供了成员函数find().它让您能够根据给定的键查找值。find()总是返回一个选代器:<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">map&lt;int, string&gt; mapone;</span><br><span class="line">map&lt;int, string&gt;::const_iterator isiter = mapone.find(1); //find(key)</span><br><span class="line">if(isiter != mapone.end())</span><br><span class="line">&#123;</span><br><span class="line">    cout&lt;&lt;&quot;key: &quot;&lt;&lt;isiter-&gt;first&lt;&lt;endl;</span><br><span class="line">    cout&lt;&lt;&quot;value: &quot;&lt;&lt;isiter-&gt;second&lt;&lt;endl;</span><br><span class="line">&#125;</span><br><span class="line">else</span><br><span class="line">    cout&lt;&lt;&quot;not found&quot;&lt;&lt;endl;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h5 id="4-map删除元素"><a href="#4-map删除元素" class="headerlink" title="4. map删除元素"></a>4. map删除元素</h5><ul>
+<li><p>将键作为参数，这将删除包含指定键的所有键-值对:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mapObject.erase(key);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>接受迭代器作为参数，并删除选代器指向的元素:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mapObject.erase(iElement);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>使用选代器指定边界，从而将指定范围内的所有元素都从 map 或 multirnap 中删除:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mapObject.erase(iLowerBound, iUpperBound);</span><br></pre></td></tr></table></figure></li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/基础/" rel="tag"># 基础</a>
+          
+            <a href="/tags/c/" rel="tag"># c++</a>
+          
+            <a href="/tags/STL/" rel="tag"># STL</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/01/16/目标检测研究综述+LocNet Improving Localization Accuracy for Object Detection阅读/" rel="prev" title="目标检测研究综述+LocNet:Improving Localization Accuracy for Object Detection阅读">
+                目标检测研究综述+LocNet:Improving Localization Accuracy for Object Detection阅读 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/xw.jpg" alt="Poemlin">
+            
+              <p class="site-author-name" itemprop="name">Poemlin</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">39</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">12</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">36</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#一-顺序容器："><span class="nav-number">1.</span> <span class="nav-text">一. 顺序容器：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二-关联容器"><span class="nav-number">2.</span> <span class="nav-text">二. 关联容器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#三-STL-string"><span class="nav-number">3.</span> <span class="nav-text">三. STL:string</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-为什么需要string类"><span class="nav-number">3.0.0.1.</span> <span class="nav-text">1. 为什么需要string类</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-实例化和复制-STL-string"><span class="nav-number">3.0.0.2.</span> <span class="nav-text">2. 实例化和复制 STL string</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-访问string内字符内容"><span class="nav-number">3.0.0.3.</span> <span class="nav-text">3. 访问string内字符内容</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#5-在-string-中查找字符或子字符串"><span class="nav-number">3.0.0.4.</span> <span class="nav-text">5.在 string 中查找字符或子字符串</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#6-擦除string"><span class="nav-number">3.0.0.5.</span> <span class="nav-text">6. 擦除string</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#7-使用-auto-简化冗长的选代器声明"><span class="nav-number">3.0.0.6.</span> <span class="nav-text">7. 使用 auto 简化冗长的选代器声明</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#8-字符串反转"><span class="nav-number">3.0.0.7.</span> <span class="nav-text">8. 字符串反转</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#9-字符串大小写转换"><span class="nav-number">3.0.0.8.</span> <span class="nav-text">9. 字符串大小写转换</span></a></li></ol></li></ol><li class="nav-item nav-level-2"><a class="nav-link" href="#四-STL动态数组vector类"><span class="nav-number">4.</span> <span class="nav-text">四. STL动态数组vector类</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-实例化vector"><span class="nav-number">4.0.0.1.</span> <span class="nav-text">1. 实例化vector</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-push-back-在末尾插入元素"><span class="nav-number">4.0.0.2.</span> <span class="nav-text">2. push_back()在末尾插入元素</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-使用-insert-在指定位置插入元素"><span class="nav-number">4.0.0.3.</span> <span class="nav-text">3. 使用 insert()在指定位置插入元素</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#4-数组语法访问vector元素"><span class="nav-number">4.0.0.4.</span> <span class="nav-text">4. 数组语法访问vector元素</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#5-使用指针-迭代器-访问vector元素"><span class="nav-number">4.0.0.5.</span> <span class="nav-text">5. 使用指针(迭代器)访问vector元素</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#6-pop-back删除vector末尾的元素"><span class="nav-number">4.0.0.6.</span> <span class="nav-text">6. pop_back删除vector末尾的元素</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#7-vector的大小和容量"><span class="nav-number">4.0.0.7.</span> <span class="nav-text">7. vector的大小和容量</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#五-STL-动态数组deque"><span class="nav-number">5.</span> <span class="nav-text">五. STL 动态数组deque</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-使用-push-front-和-pop-front-在开头插入和删除元素"><span class="nav-number">5.0.0.1.</span> <span class="nav-text">1.使用 push_front 和 pop_front 在开头插入和删除元素</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#六-STL-list"><span class="nav-number">6.</span> <span class="nav-text">六.STL::list</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-实例化list"><span class="nav-number">6.0.0.1.</span> <span class="nav-text">1. 实例化list</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-list开头或末尾插入元素"><span class="nav-number">6.0.0.2.</span> <span class="nav-text">2.list开头或末尾插入元素</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-在list中间插入元素，借助insert函数"><span class="nav-number">6.0.0.3.</span> <span class="nav-text">3.在list中间插入元素，借助insert函数</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#4-删除list中元素，借助erase函数"><span class="nav-number">6.0.0.4.</span> <span class="nav-text">4. 删除list中元素，借助erase函数</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#5-对list元素进行反转"><span class="nav-number">6.0.0.5.</span> <span class="nav-text">5. 对list元素进行反转</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#6-对list元素进行排序"><span class="nav-number">6.0.0.6.</span> <span class="nav-text">6. 对list元素进行排序</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#7-总结"><span class="nav-number">6.0.0.7.</span> <span class="nav-text">7. 总结</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#七-STL集合set"><span class="nav-number">7.</span> <span class="nav-text">七.STL集合set</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-实例化set对象"><span class="nav-number">7.0.0.1.</span> <span class="nav-text">1. 实例化set对象</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-set插入元素"><span class="nav-number">7.0.0.2.</span> <span class="nav-text">2. set插入元素</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-set中查找元素"><span class="nav-number">7.0.0.3.</span> <span class="nav-text">3. set中查找元素</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#4-删除set中的元素"><span class="nav-number">7.0.0.4.</span> <span class="nav-text">4. 删除set中的元素</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#八-STL映射类map"><span class="nav-number">8.</span> <span class="nav-text">八. STL映射类map</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-实例化map对象"><span class="nav-number">8.0.0.1.</span> <span class="nav-text">1. 实例化map对象</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-map插入元素"><span class="nav-number">8.0.0.2.</span> <span class="nav-text">2. map插入元素</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-map查找元素"><span class="nav-number">8.0.0.3.</span> <span class="nav-text">3.map查找元素</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#4-map删除元素"><span class="nav-number">8.0.0.4.</span> <span class="nav-text">4. map删除元素</span></a></li></ol></li></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">&copy; 2018 &mdash; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-snowflake-o"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Poemlin</span>
+
+  
+</div>
+<div class="powered-by">
+<i class="fa fa-user-md"></i><span id="busuanzi_container_site_uv">
+  本站访客数:<span id="busuanzi_value_site_pv"></span>
+</span>
+</div>
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

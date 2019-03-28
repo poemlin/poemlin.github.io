@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Deep_learning,nlp,cnn,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="一. Image Caption任务简介1.传统的计算机视觉任务深度学习在图像领域取得了爆炸式的发展，这些任务的正确率直逼人类水平，可是： 2.计算机已经理解图像了吗？ 这是faster-rcnn的一个目标检测结果，看似结果非常好，可是当我们把这张照片输入到一个计算机里时，它能告诉我们的只是：“这是马，这是人，这是狗”，这远远没有达到计算机已经理解图像这一个判断。我们希望的是，当输入这一张照片时，">
+<meta name="keywords" content="Deep_learning,nlp,cnn">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Image Caption(看图说话，图像字幕)任务简介+neuraltalk2，densecap测试+show and tell论文阅读">
+<meta property="og:url" content="http://yoursite.com/2019/01/16/Image-Caption-看图说话，图像字幕-任务简介-neuraltalk2，densecap测试-show-and-tell论文阅读/index.html">
+<meta property="og:site_name" content="七月的风">
+<meta property="og:description" content="一. Image Caption任务简介1.传统的计算机视觉任务深度学习在图像领域取得了爆炸式的发展，这些任务的正确率直逼人类水平，可是： 2.计算机已经理解图像了吗？ 这是faster-rcnn的一个目标检测结果，看似结果非常好，可是当我们把这张照片输入到一个计算机里时，它能告诉我们的只是：“这是马，这是人，这是狗”，这远远没有达到计算机已经理解图像这一个判断。我们希望的是，当输入这一张照片时，">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/3352522-cb4e8b9467bb67bc.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/3352522-2af45bc74d71d4bc.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/3352522-dffc50216597fcf2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/3352522-2bd06d73e4052a00.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/3352522-0e22529a197a2519.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/3352522-431bedd0844f28c7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/3352522-8d103f83082490bb.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/3352522-2cea467d43f70e4a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/3352522-dff3899fb46edc29.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/3352522-e0e8e27af20f597b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/3352522-c12ef0ac9412464a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/3352522-0dff1b1f1c54327b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/3352522-e3288e247b6d8800.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/3352522-418356435ddb5234.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/3352522-96e4c593122cd784.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/3352522-41ab0cc9b2f04ed3.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/3352522-76524081cdcdb658.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/3352522-f5e32b511b919f06.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/3352522-fa26adda113a7d97.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/3352522-a6e7a7f31ce97109.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2019-01-17T08:44:10.046Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Image Caption(看图说话，图像字幕)任务简介+neuraltalk2，densecap测试+show and tell论文阅读">
+<meta name="twitter:description" content="一. Image Caption任务简介1.传统的计算机视觉任务深度学习在图像领域取得了爆炸式的发展，这些任务的正确率直逼人类水平，可是： 2.计算机已经理解图像了吗？ 这是faster-rcnn的一个目标检测结果，看似结果非常好，可是当我们把这张照片输入到一个计算机里时，它能告诉我们的只是：“这是马，这是人，这是狗”，这远远没有达到计算机已经理解图像这一个判断。我们希望的是，当输入这一张照片时，">
+<meta name="twitter:image" content="https://upload-images.jianshu.io/upload_images/3352522-cb4e8b9467bb67bc.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/01/16/Image-Caption-看图说话，图像字幕-任务简介-neuraltalk2，densecap测试-show-and-tell论文阅读/">
+
+
+
+
+
+  <title>Image Caption(看图说话，图像字幕)任务简介+neuraltalk2，densecap测试+show and tell论文阅读 | 七月的风</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">七月的风</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/01/16/Image-Caption-看图说话，图像字幕-任务简介-neuraltalk2，densecap测试-show-and-tell论文阅读/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Poemlin">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/xw.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="七月的风">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Image Caption(看图说话，图像字幕)任务简介+neuraltalk2，densecap测试+show and tell论文阅读</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-01-16T20:16:20+08:00">
+                2019-01-16
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Image-Caption/" itemprop="url" rel="index">
+                    <span itemprop="name">Image Caption</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="一-Image-Caption任务简介"><a href="#一-Image-Caption任务简介" class="headerlink" title="一. Image Caption任务简介"></a>一. Image Caption任务简介</h1><h2 id="1-传统的计算机视觉任务"><a href="#1-传统的计算机视觉任务" class="headerlink" title="1.传统的计算机视觉任务"></a>1.传统的计算机视觉任务</h2><p><img src="https://upload-images.jianshu.io/upload_images/3352522-cb4e8b9467bb67bc.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt><br>深度学习在图像领域取得了爆炸式的发展，这些任务的正确率直逼人类水平，可是：</p>
+<h2 id="2-计算机已经理解图像了吗？"><a href="#2-计算机已经理解图像了吗？" class="headerlink" title="2.计算机已经理解图像了吗？"></a>2.计算机已经理解图像了吗？</h2><p><img src="https://upload-images.jianshu.io/upload_images/3352522-2af45bc74d71d4bc.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt></p>
+<p>这是faster-rcnn的一个目标检测结果，看似结果非常好，可是当我们把这张照片输入到一个计算机里时，它能告诉我们的只是：“这是马，这是人，这是狗”，这远远没有达到计算机已经理解图像这一个判断。我们希望的是，当输入这一张照片时，计算机能够告诉我们：“一个人骑在一匹马上，他的狗坐在马前面”。我们甚至希望计算机在看到这幅图片后能够说出下面这段话：“在一个阳光明媚的下午，一个穿着蓝色衣服的年轻小伙坐在一匹健壮的马上，他的爱犬坐在马的前面，他们相互对望着，看起来非常开心”。这样才能勉强说计算机已经理解了图像。</p>
+<h2 id="3-Image-Caption涵义"><a href="#3-Image-Caption涵义" class="headerlink" title="3.Image Caption涵义"></a>3.Image Caption涵义</h2><p>（图像标注 图像字幕 看图说话）</p>
+<p>本质是视觉到语言（Visual-to-Language，即V2L）的问题</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/3352522-dffc50216597fcf2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt><br>这张照片是一年级看图说话的作业，上面的描述：”图上是什么时候？都有谁？在哪里？在干什么？在说什么？“ 正好对应了image caption任务的要求：根据图像给出能够描述图像内容的自然语言语句。这对人类来说实在是一个小儿科的任务，但是在计算机视觉领域却不能不说是一个挑战。因为这需要在两种不同形式的信息（图像信息到文本信息）之间进行“翻译”。</p>
+<h2 id="4-Image-Caption-当前水平"><a href="#4-Image-Caption-当前水平" class="headerlink" title="4.Image Caption 当前水平"></a>4.Image Caption 当前水平</h2><p>和人类水平描述差距仍然明显！<br><img src="https://upload-images.jianshu.io/upload_images/3352522-2bd06d73e4052a00.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt></p>
+<p>关于image caption这个topic阶段性文章</p>
+<p>• Explain Images with Multi modal Recurrent Neural Networks, Mao et al.</p>
+<p>•Deep Visual-Semantic Alignments for Generating Image Descriptions,Karpathy and Fei-Fei</p>
+<p>•Show and Tell: A Neural Image Caption Generator,Vinyalset al.</p>
+<p>•Long-term Recurrent Convolutional Networks for Visual Recognition and Description,Donahue et al.</p>
+<p>•Learning a Recurrent Visual Representation for Image Caption Generation, Chen and Zitnick</p>
+<h2 id="5-Image-Caption-实际应用"><a href="#5-Image-Caption-实际应用" class="headerlink" title="5.Image Caption 实际应用"></a>5.Image Caption 实际应用</h2><p>图像标注问题如果能够得到很好的解决，那么价值是显而易见的</p>
+<p>图像检索（更细粒度的搜索）</p>
+<p>视力受损人士的生活辅助（计算机成为另一双眼睛）</p>
+<h2 id="6-Image-Caption数据集"><a href="#6-Image-Caption数据集" class="headerlink" title="6.Image Caption数据集"></a>6.Image Caption数据集</h2><ol>
+<li>Microsoft COCO Caption数据集</li>
+</ol>
+<p>• 原COCO数据集中约330,000张图像，人工地为每张图像都生成了至少5句标注，标注语句总共超过了约150万句 </p>
+<p>• MS COCO C5/C40</p>
+<ol start="2">
+<li>Flickr8K和30K</li>
+</ol>
+<p>• 图像数据来源是雅虎的相册网站Flickr </p>
+<p>• 数据集中图像的数量分别是8,000张和30,000张</p>
+<ol start="3">
+<li>PASCAL 1K</li>
+</ol>
+<p>• 大名鼎鼎的PASCAL VOC challenge图像数据集的一个子集</p>
+<p>• 20个分类，随机选出了50张图像，共1,000张图像 </p>
+<h2 id="7-Image-Caption评价标准"><a href="#7-Image-Caption评价标准" class="headerlink" title="7.Image Caption评价标准"></a>7.Image Caption评价标准</h2><p>BLEU</p>
+<p>• 图像标注结果评价中使用最广泛，设计初衷并不是针对图像标注问题，而是针对机器翻译问题 </p>
+<p>• 分析待评价的翻译语句和参考翻译语句之间n元组的相关性</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/3352522-0e22529a197a2519.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt><br><img src="https://upload-images.jianshu.io/upload_images/3352522-431bedd0844f28c7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt><br><img src="https://upload-images.jianshu.io/upload_images/3352522-8d103f83082490bb.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt></p>
+<h1 id="二-Show-and-Tell-A-Neural-Image-Caption-Generator"><a href="#二-Show-and-Tell-A-Neural-Image-Caption-Generator" class="headerlink" title="二.Show and Tell: A Neural Image Caption Generator"></a>二.Show and Tell: A Neural Image Caption Generator</h1><h2 id="1-摘要"><a href="#1-摘要" class="headerlink" title="1.摘要"></a>1.摘要</h2><p>• 对图像内容的自动描述是一个CV + NLP的AI问题</p>
+<p>• 采用基于深度循环（recurrent）结构的生成模型，融合了近期在计算机视觉和机器翻译的前沿研究</p>
+<p>• 模型学习的目标：给定训练图像，最大化其对应的目标描述语句的似然概率</p>
+<p>• 结果：</p>
+<p>  BLEU-1 score指标</p>
+<p>  Pascal数据集：state-of-art:25分，该文59分，对比人类69分左右</p>
+<p>  Flicker30k: 56分提高到66分</p>
+<p>  SBU 19分提高到28分</p>
+<h2 id="2-introduction"><a href="#2-introduction" class="headerlink" title="2.introduction"></a>2.introduction</h2><p>• 这个任务比计算机视觉领域通常关注的图像分类、物体识别任务难很多</p>
+<p>• 任务的目的：object detection+ object relation+ object attributes+object activity</p>
+<p>• 同时expressed in natural language</p>
+<p>• 除了视觉理解模型外，还需要一个语言模型</p>
+<p>• 输入是图片I，训练的目标是最大化似然概率P(S|I)，S是目标word序列S={S1,S2,…},Si来源固定词典</p>
+<p>• 机器翻译：Encoder（RNN）+Decoder（RNN）</p>
+<p>• 贡献：</p>
+<p>   end-to-end系统</p>
+<p>   state-of-art的sub-network的组合</p>
+<p>   NIC的效果超出state-of-art</p>
+<h2 id="3-model"><a href="#3-model" class="headerlink" title="3.model"></a>3.model</h2><p>• NIC类似于将image “翻译”成语言。最大化获得正确描述的条件概率（条件是给定input image）</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/3352522-2cea467d43f70e4a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt></p>
+<p>• 是模型的参数，I是image，S是它对应的翻译结果</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/3352522-dff3899fb46edc29.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt></p>
+<p>• S表示句子，所以长度没有限制，比较普遍的做法是使用chain rule计算联合概率</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/3352522-e0e8e27af20f597b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt></p>
+<p>• 用RNN来model</p>
+<h2 id="4-LSTM"><a href="#4-LSTM" class="headerlink" title="4.LSTM"></a>4.LSTM</h2><p><img src="https://upload-images.jianshu.io/upload_images/3352522-c12ef0ac9412464a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt></p>
+<p>• 函数f的选择需要考虑它应对梯度消失和爆炸的能力</p>
+<p>• LSTM的核心是memory cell c，对每个时刻的knowledge进行编码</p>
+<p>• cell的行为是被门“gates”控制的</p>
+<p>• 是否forget当前cell的值（forget gate f），</p>
+<p>• 是否读取当前的输入（input gate i）</p>
+<p>• 是否输出新cell的值（output gate o）</p>
+<h2 id="5-training"><a href="#5-training" class="headerlink" title="5.training"></a>5.training</h2><p><img src="https://upload-images.jianshu.io/upload_images/3352522-0dff1b1f1c54327b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt></p>
+<p>• Input: image I</p>
+<p>• ground truth sentence:S=（S0 ,…, Sn）</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/3352522-e3288e247b6d8800.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt></p>
+<p>• St是每个word的one-hot表示，维度等于词典的大小.</p>
+<p>• 图片和words被映射到相同的空间，image通过CNN映射，words通过一个Word embedding We映射</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/3352522-418356435ddb5234.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt></p>
+<p>• Loss是各个时刻上正确word的负log似然之和</p>
+<p>• loss在全部参数（包含LSTM、CNN、We的全部参数）上寻求最小化</p>
+<h2 id="6-result"><a href="#6-result" class="headerlink" title="6.result"></a>6.result</h2><p><img src="https://upload-images.jianshu.io/upload_images/3352522-96e4c593122cd784.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt></p>
+<p><img src="https://upload-images.jianshu.io/upload_images/3352522-41ab0cc9b2f04ed3.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt></p>
+<h1 id="三-neuraltalk2测试"><a href="#三-neuraltalk2测试" class="headerlink" title="三.neuraltalk2测试"></a>三.neuraltalk2测试</h1><h2 id="1-torch安装"><a href="#1-torch安装" class="headerlink" title="1.torch安装"></a>1.torch安装</h2><p>$ curl -s <a href="https://raw.githubusercontent.com/torch/ezinstall/master/install-deps" target="_blank" rel="noopener">https://raw.githubusercontent.com/torch/ezinstall/master/install-deps</a> | bash</p>
+<p>$ git clone <a href="https://github.com/torch/distro.git~/torch" target="_blank" rel="noopener">https://github.com/torch/distro.git~/torch</a> –recursive</p>
+<p>$ cd ~/torch;$ ./install.sh# and enter “yes” at the end to modify your bashrc</p>
+<p>$ source ~/.bashrc</p>
+<p>安装成功</p>
+<p><img src="https://upload-images.jianshu.io/upload_images/3352522-76524081cdcdb658.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt></p>
+<h2 id="2-依赖下载"><a href="#2-依赖下载" class="headerlink" title="2.依赖下载"></a>2.依赖下载</h2><p>sudo ~/torch/install/bin/luarocks install nn</p>
+<p>sudo ~/torch/install/bin/luarocks install nngraph</p>
+<p>sudo ~/torch/install/bin/luarocks install image</p>
+<p>sudo ~/torch/install/bin/luarocks install hdf5 </p>
+<p>sudo ~/torch/install/bin/luarocks install loadcaffe </p>
+<p>sudo ~/torch/install/bin/luarocks install cutorch</p>
+<p>sudo ~/torch/install/bin/luarocks install cunn</p>
+<p>（luarocks list命令查看是否安装所有需要的依赖）</p>
+<h2 id="3-代码模型"><a href="#3-代码模型" class="headerlink" title="3.代码模型"></a>3.代码模型</h2><p>git clone <a href="https://github.com/karpathy/neuraltalk2（代码）" target="_blank" rel="noopener">https://github.com/karpathy/neuraltalk2（代码）</a></p>
+<p><a href="http://cs.stanford.edu/people/karpathy/neuraltalk2/checkpoint_v1.zip（模型）" target="_blank" rel="noopener">http://cs.stanford.edu/people/karpathy/neuraltalk2/checkpoint_v1.zip（模型）</a></p>
+<p>th eval.lua -model model_id1-501-1448236541.t7_cpu.t7 -image_folder ./images/ -gpuid 1</p>
+<h2 id="4-结果"><a href="#4-结果" class="headerlink" title="4.结果"></a>4.结果</h2><p><img src="https://upload-images.jianshu.io/upload_images/3352522-f5e32b511b919f06.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt></p>
+<h1 id="四-densecap-测试"><a href="#四-densecap-测试" class="headerlink" title="四.densecap 测试"></a>四.densecap 测试</h1><h2 id="1-依赖下载"><a href="#1-依赖下载" class="headerlink" title="1.依赖下载"></a>1.依赖下载</h2><p>luarocks install torch</p>
+<p>luarocks install nn</p>
+<p>luarocks install image</p>
+<p>luarocks install lua-cjson</p>
+<p>luarocks install <a href="https://raw.githubusercontent.com/qassemoquab/stnbhwd/master/stnbhwd-scm-1.rockspec" target="_blank" rel="noopener">https://raw.githubusercontent.com/qassemoquab/stnbhwd/master/stnbhwd-scm-1.rockspec</a></p>
+<p>luarocks install <a href="https://raw.githubusercontent.com/jcjohnson/torch-rnn/master/torch-rnn-scm-1.rockspec" target="_blank" rel="noopener">https://raw.githubusercontent.com/jcjohnson/torch-rnn/master/torch-rnn-scm-1.rockspec</a></p>
+<p>luarocks install cutorch</p>
+<p>luarocks install cunn</p>
+<p>luarocks install cudnn</p>
+<h2 id="2-代码模型"><a href="#2-代码模型" class="headerlink" title="2.代码模型"></a>2.代码模型</h2><p>git clone <a href="https://github.com/jcjohnson/densecap（代码）" target="_blank" rel="noopener">https://github.com/jcjohnson/densecap（代码）</a></p>
+<p>sh scripts/download_pretrained_model.sh（模型，可能下载很慢）</p>
+<p>th run_model.lua -input_image imgs/elephant.jpg</p>
+<h2 id="3-结果"><a href="#3-结果" class="headerlink" title="3.结果"></a>3.结果</h2><p><img src="https://upload-images.jianshu.io/upload_images/3352522-fa26adda113a7d97.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt><br><img src="https://upload-images.jianshu.io/upload_images/3352522-a6e7a7f31ce97109.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Deep-learning/" rel="tag"># Deep_learning</a>
+          
+            <a href="/tags/nlp/" rel="tag"># nlp</a>
+          
+            <a href="/tags/cnn/" rel="tag"># cnn</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/01/16/卷积神经网络-LeNet-5各层参数详解/" rel="next" title="卷积神经网络 LeNet-5各层参数详解">
+                <i class="fa fa-chevron-left"></i> 卷积神经网络 LeNet-5各层参数详解
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/01/16/请给我一台服务器，外加10块GPU，爱你-微信官方/" rel="prev" title="请给我一台服务器，外加10块GPU，爱你@微信官方">
+                请给我一台服务器，外加10块GPU，爱你@微信官方 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/xw.jpg" alt="Poemlin">
+            
+              <p class="site-author-name" itemprop="name">Poemlin</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">39</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">12</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">36</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#一-Image-Caption任务简介"><span class="nav-number">1.</span> <span class="nav-text">一. Image Caption任务简介</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-传统的计算机视觉任务"><span class="nav-number">1.1.</span> <span class="nav-text">1.传统的计算机视觉任务</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-计算机已经理解图像了吗？"><span class="nav-number">1.2.</span> <span class="nav-text">2.计算机已经理解图像了吗？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-Image-Caption涵义"><span class="nav-number">1.3.</span> <span class="nav-text">3.Image Caption涵义</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-Image-Caption-当前水平"><span class="nav-number">1.4.</span> <span class="nav-text">4.Image Caption 当前水平</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-Image-Caption-实际应用"><span class="nav-number">1.5.</span> <span class="nav-text">5.Image Caption 实际应用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-Image-Caption数据集"><span class="nav-number">1.6.</span> <span class="nav-text">6.Image Caption数据集</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-Image-Caption评价标准"><span class="nav-number">1.7.</span> <span class="nav-text">7.Image Caption评价标准</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二-Show-and-Tell-A-Neural-Image-Caption-Generator"><span class="nav-number">2.</span> <span class="nav-text">二.Show and Tell: A Neural Image Caption Generator</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-摘要"><span class="nav-number">2.1.</span> <span class="nav-text">1.摘要</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-introduction"><span class="nav-number">2.2.</span> <span class="nav-text">2.introduction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-model"><span class="nav-number">2.3.</span> <span class="nav-text">3.model</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-LSTM"><span class="nav-number">2.4.</span> <span class="nav-text">4.LSTM</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-training"><span class="nav-number">2.5.</span> <span class="nav-text">5.training</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-result"><span class="nav-number">2.6.</span> <span class="nav-text">6.result</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#三-neuraltalk2测试"><span class="nav-number">3.</span> <span class="nav-text">三.neuraltalk2测试</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-torch安装"><span class="nav-number">3.1.</span> <span class="nav-text">1.torch安装</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-依赖下载"><span class="nav-number">3.2.</span> <span class="nav-text">2.依赖下载</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-代码模型"><span class="nav-number">3.3.</span> <span class="nav-text">3.代码模型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-结果"><span class="nav-number">3.4.</span> <span class="nav-text">4.结果</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#四-densecap-测试"><span class="nav-number">4.</span> <span class="nav-text">四.densecap 测试</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-依赖下载"><span class="nav-number">4.1.</span> <span class="nav-text">1.依赖下载</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-代码模型"><span class="nav-number">4.2.</span> <span class="nav-text">2.代码模型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-结果"><span class="nav-number">4.3.</span> <span class="nav-text">3.结果</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">&copy; 2018 &mdash; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-snowflake-o"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Poemlin</span>
+
+  
+</div>
+<div class="powered-by">
+<i class="fa fa-user-md"></i><span id="busuanzi_container_site_uv">
+  本站访客数:<span id="busuanzi_value_site_pv"></span>
+</span>
+</div>
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

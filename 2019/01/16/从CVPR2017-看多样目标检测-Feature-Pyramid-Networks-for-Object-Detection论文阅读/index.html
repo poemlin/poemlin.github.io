@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="CVPR,Object detection,FPN,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="一. 导读 When you have trouble with object detection, keep calm and use deep learning.  这句话是作者自己抖机灵的话，如果说 deep learning 已经攻陷计算机视觉这个领域的话，Object Detection可以说是受灾最严重的区域了。不管是基于region proposal的RCNN系列，还是 end-to">
+<meta name="keywords" content="CVPR,Object detection,FPN">
+<meta property="og:type" content="article">
+<meta property="og:title" content="从CVPR2017 看多样目标检测+Feature Pyramid Networks for Object Detection论文阅读">
+<meta property="og:url" content="http://yoursite.com/2019/01/16/从CVPR2017-看多样目标检测-Feature-Pyramid-Networks-for-Object-Detection论文阅读/index.html">
+<meta property="og:site_name" content="七月的风">
+<meta property="og:description" content="一. 导读 When you have trouble with object detection, keep calm and use deep learning.  这句话是作者自己抖机灵的话，如果说 deep learning 已经攻陷计算机视觉这个领域的话，Object Detection可以说是受灾最严重的区域了。不管是基于region proposal的RCNN系列，还是 end-to">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3352522-1f6e25833362a90c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3352522-eadd2233a955dd8e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3352522-600136b33fd2a4b6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3352522-b476c659381dd9e7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3352522-ce392a659cf5b88e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3352522-3cf91715a72ef6ea.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3352522-401b75c4e7905a7b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3352522-2bcedc9a68f7a0a9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3352522-43a9b750f9724e39.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3352522-8cc961a7654c662d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3352522-d02c260452d2f6c1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3352522-77704da5e9e99b4b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3352522-2c19d2d6e6d12844.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3352522-5aefe01e2ffab2d3.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3352522-378e632c16fb0196.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3352522-f39cb6bfd26e7c25.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3352522-f323ffd41314780f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3352522-b573e30c2892383a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3352522-608bbccf8389ff16.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3352522-1acff78704032d97.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3352522-b2cd8fc54f4d7c79.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3352522-972199a9a91aff0c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3352522-49b4e08f51ba3235.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3352522-cc839d545c0eec00.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3352522-fe33f3300d7f5bb5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3352522-4088f77d31bb8d6d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3352522-444e42a418007d74.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2019-01-17T08:42:08.604Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="从CVPR2017 看多样目标检测+Feature Pyramid Networks for Object Detection论文阅读">
+<meta name="twitter:description" content="一. 导读 When you have trouble with object detection, keep calm and use deep learning.  这句话是作者自己抖机灵的话，如果说 deep learning 已经攻陷计算机视觉这个领域的话，Object Detection可以说是受灾最严重的区域了。不管是基于region proposal的RCNN系列，还是 end-to">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/3352522-1f6e25833362a90c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/01/16/从CVPR2017-看多样目标检测-Feature-Pyramid-Networks-for-Object-Detection论文阅读/">
+
+
+
+
+
+  <title>从CVPR2017 看多样目标检测+Feature Pyramid Networks for Object Detection论文阅读 | 七月的风</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">七月的风</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/01/16/从CVPR2017-看多样目标检测-Feature-Pyramid-Networks-for-Object-Detection论文阅读/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Poemlin">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/xw.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="七月的风">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">从CVPR2017 看多样目标检测+Feature Pyramid Networks for Object Detection论文阅读</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-01-16T19:40:39+08:00">
+                2019-01-16
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/目标检测/" itemprop="url" rel="index">
+                    <span itemprop="name">目标检测</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="一-导读"><a href="#一-导读" class="headerlink" title="一. 导读"></a>一. 导读</h1><blockquote>
+<p>When you have trouble with object detection, keep calm and use deep learning.</p>
+</blockquote>
+<p>这句话是作者自己抖机灵的话，如果说 <strong>deep learning</strong> 已经攻陷<strong>计算机视觉</strong>这个领域的话，Object Detection可以说是受灾最严重的区域了。不管是基于<strong>region proposal</strong>的<strong>RCNN</strong>系列，还是 <strong>end-to-end</strong> 的YOLO系列，基于深度学习的方法已经完胜手工特征方法。<strong>Object Detection</strong> 这块众多博士科研工作者和大批公司关注的<strong>“硬骨头”</strong> 是否已经黔驴技穷，无从下手？ 当然不是，而且，从近几年的趋势来看，如果你想“一文惊人”，抑或得到Best Paper Award，Object Detection是最佳方向（从RestNet 到 DenseNet 再到前几天ICCV kaimingHe双best paper）。</p>
+<p>同时，近两年一个更明显的特点，最吸引人的Object Detection方法都是：</p>
+<blockquote>
+<p><strong>Simple Clean But Effective</strong></p>
+</blockquote>
+<p>这些方法都是基于网络结构很简单的思想，基本结构都是：</p>
+<blockquote>
+<ul>
+<li><strong>Skip Connection</strong>  (RestNet, DenseNet)</li>
+<li><strong>Joint Multi Feature Map</strong>  (R-FCN, FPN)</li>
+</ul>
+</blockquote>
+<p>关于目标检测的发展（传统方法-RCNN系列-YOLO系列）以及目标检测的一些经常使用的术语（IOU, NMS, BBOX回归， MAP）可以见我<a href="http://www.jianshu.com/p/e6496a764b51" target="_blank" rel="noopener">另一篇博客</a>。</p>
+<h1 id="二-从CVPR-2016看Object-Detection-发展"><a href="#二-从CVPR-2016看Object-Detection-发展" class="headerlink" title="二. 从CVPR 2016看Object Detection 发展"></a>二. 从CVPR 2016看Object Detection 发展</h1><h3 id="a-检测精度（“又准”）"><a href="#a-检测精度（“又准”）" class="headerlink" title="(a) 检测精度（“又准”）"></a>(a) 检测精度（“又准”）</h3><p>检测精度是目标检测任务最初始也是最重要的指标，如何提高方法检测精度指标<strong>MAP</strong>，是各种方法比较的最基本的指标。这也是深度方法完胜手工方法的地方。<br>CVPR2016代表性工作有：ResNet, ION, HyperNet.</p>
+<h3 id="b-检测效率（“又快”）"><a href="#b-检测效率（“又快”）" class="headerlink" title="(b) 检测效率（“又快”）"></a>(b) 检测效率（“又快”）</h3><p>网络的时间开销，如何提高检测速度，实现又快又好地检测。<br>YOLO：这个工作在识别效率方面优势十分明显。</p>
+<h3 id="c-定位精度（“又好”）"><a href="#c-定位精度（“又好”）" class="headerlink" title="(c)定位精度（“又好”）"></a>(c)定位精度（“又好”）</h3><p><img src="http://upload-images.jianshu.io/upload_images/3352522-1f6e25833362a90c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/3352522-eadd2233a955dd8e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt><br>如何产生更准确的Boundbox？如何逐步提高评价参数IOU（voc数据集，这个值为0.5）？<br>代表工作LocNet： 抛弃Boundbox回归，使用概率模型。</p>
+<p>总结：总最初始最基本的检测指标 检测精度MAP，到如何减少时间开销，再到一个更准确的bbox。侧面反映了目标检测的不断发展: <strong>又准(检测精度)又快(检测效率)又好(定位精度)</strong></p>
+<h1 id="三-从CVPR2017看多样的目标检测"><a href="#三-从CVPR2017看多样的目标检测" class="headerlink" title="三. 从CVPR2017看多样的目标检测"></a>三. 从CVPR2017看多样的目标检测</h1><p>从CVPR2017 论文list看，新的目标检测论文已经不再拘泥于ImageNet，VOC，CoCo数据集了，也不再拘泥于前面的检测精度，检测效率，以及定位精度了（当然这方面也有很多文章）。大家的目光开始转向一个特定环境特点条件下特定目标的检测（最大的特点是有很多这些特点目标的数据集文章出现）。目标检测呈现出百花齐放的景象。</p>
+<h3 id="1-Object-Action-Detection"><a href="#1-Object-Action-Detection" class="headerlink" title="1. Object Action Detection"></a>1. Object Action Detection</h3><p><img src="http://upload-images.jianshu.io/upload_images/3352522-600136b33fd2a4b6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Action Detection"><br>特定行为特定动作的检测，“一个人在刷牙”不是检测出“人”和“牙刷”，而是“刷牙“这个动作。<br>CVPR2017相关文章：</p>
+<ul>
+<li>Temporal Convolutional Networks for <strong>Action</strong> Segmentation and Detection ;</li>
+<li>Predictive-Corrective Networks for <strong>Action Detection</strong>;</li>
+<li>SCC: Semantic Context Cascade for Efficient <strong>Action Detection</strong> ; </li>
+<li>UntrimmedNets for Weakly Supervised <strong>Action</strong> Recognition and Detection<h3 id="2-Video-Object-Detection"><a href="#2-Video-Object-Detection" class="headerlink" title="2. Video Object Detection"></a>2. Video Object Detection</h3></li>
+</ul>
+<p><img src="http://upload-images.jianshu.io/upload_images/3352522-b476c659381dd9e7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Video Object Detection"><br>基于视频的目标检测，传统目标检测都是基于静态图片的，基于视频的目标检测有很多不同点，大部分都是和跟踪算法想结合的。<br>CVPR2017相关文章：</p>
+<ul>
+<li><strong>Object Detection in Videos</strong> With Tubelet Proposal Networks ; </li>
+<li>YouTube-BoundingBoxes: A Large High-Precision Data Set for <strong>Object Detection in Video</strong>；</li>
+<li>Spatio-Temporal Self-Organizing Map Deep Network for Dynamic <strong>Object Detection From Videos</strong>;</li>
+</ul>
+<h3 id="3-3D-Object-Detection"><a href="#3-3D-Object-Detection" class="headerlink" title="3. 3D Object Detection"></a>3. 3D Object Detection</h3><p><img src="http://upload-images.jianshu.io/upload_images/3352522-ce392a659cf5b88e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="3D Object Detection"><br>自然环境下的目标检测如何转换到3D空间下。<br>CVPR2017相关文章：</p>
+<ul>
+<li>Visual-Inertial-Semantic Scene Representation for <strong>3D Object Detection</strong>;</li>
+<li>Multi-View <strong>3D Object Detection</strong> Network for Autonomous Driving;</li>
+<li>Amodal Detection of <strong>3D Objects</strong>: Inferring 3D Bounding Boxes From 2D Ones in RGB-Depth Images</li>
+</ul>
+<h3 id="4-TEXT-Detection"><a href="#4-TEXT-Detection" class="headerlink" title="4. TEXT Detection"></a>4. TEXT Detection</h3><p><img src="http://upload-images.jianshu.io/upload_images/3352522-3cf91715a72ef6ea.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="TEXT Detection"></p>
+<p>图像里文字的检测和识别。<br>CVPR2017相关文章：</p>
+<ul>
+<li>Deep Matching Prior Network: Toward Tighter Multi-Oriented <strong>Text Detection</strong>;</li>
+<li>End-To-End Concept <strong>Word Detection</strong> for Video Captioning, Retrieval, and Question Answering</li>
+</ul>
+<h3 id="5-Rain-Detection"><a href="#5-Rain-Detection" class="headerlink" title="5. Rain Detection"></a>5. Rain Detection</h3><p><img src="http://upload-images.jianshu.io/upload_images/3352522-401b75c4e7905a7b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/3352522-2bcedc9a68f7a0a9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Rain Detection"><br>检测出图像中的雨，并且去除得到去雨的照片。（记得之前有一篇去雾的）<br>CVPR2017相关文章：</p>
+<ul>
+<li>Deep Joint <strong>Rain Detection</strong> and Removal From a Single Image</li>
+</ul>
+<h3 id="6-Line-Detection"><a href="#6-Line-Detection" class="headerlink" title="6. Line Detection"></a>6. Line Detection</h3><p><img src="http://upload-images.jianshu.io/upload_images/3352522-43a9b750f9724e39.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/3352522-8cc961a7654c662d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Line Detection"><br>图片里边缘线段的检测。<br>CVPR2017相关文章：</p>
+<ul>
+<li>MCMLSD: A Dynamic Programming Approach to <strong>Line Segment Detection</strong></li>
+</ul>
+<h3 id="7-Pedestrian-Detection"><a href="#7-Pedestrian-Detection" class="headerlink" title="7. Pedestrian Detection"></a>7. Pedestrian Detection</h3><p><img src="http://upload-images.jianshu.io/upload_images/3352522-d02c260452d2f6c1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Pedestrian Detection"><br>行人检测一直是一个重要的topic，当然也少不了。<br>CVPR2017相关文章：</p>
+<ul>
+<li>What Can Help <strong>Pedestrian Detection</strong>?;</li>
+<li>CityPersons: A Diverse Dataset for <strong>Pedestrian Detection</strong>;</li>
+<li>Learning Cross-Modal Deep Representations for Robust <strong>Pedestrian Detection</strong></li>
+</ul>
+<h3 id="8-Moving-Object-Detection"><a href="#8-Moving-Object-Detection" class="headerlink" title="8. Moving Object Detection"></a>8. Moving Object Detection</h3><p><img src="http://upload-images.jianshu.io/upload_images/3352522-77704da5e9e99b4b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/3352522-2c19d2d6e6d12844.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Moving Object Detection"><br>移动物体检测不同于基于视频的目标检测，移动物体一般都是移动速度很快的物体（汽车，摩托，飞机，动物等等）。<br>CVPR2017相关文章：</p>
+<ul>
+<li>Minimum Delay <strong>Moving Object Detection</strong></li>
+</ul>
+<h3 id="9-Facial-Landmark-Detection"><a href="#9-Facial-Landmark-Detection" class="headerlink" title="9. Facial Landmark Detection"></a>9. Facial Landmark Detection</h3><p><img src="http://upload-images.jianshu.io/upload_images/3352522-5aefe01e2ffab2d3.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Facial Landmark Detection"><br>人脸关键点检测也是一个一直很火热的话题。<br>CVPR2017相关文章：</p>
+<ul>
+<li>A Deep Regression Architecture With Two-Stage Re-Initialization for High Performance <strong>Facial Landmark Detection</strong>;</li>
+<li>Simultaneous <strong>Facial Landmark Detection</strong>, Pose and Deformation Estimation Under Facial Occlusion;</li>
+<li>Interspecies Knowledge Transfer for <strong>Facial Keypoint Detection</strong></li>
+</ul>
+<h3 id="10-Small-Object-Detection"><a href="#10-Small-Object-Detection" class="headerlink" title="10. Small Object Detection"></a>10. Small Object Detection</h3><p><img src="http://upload-images.jianshu.io/upload_images/3352522-378e632c16fb0196.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/3352522-f39cb6bfd26e7c25.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Small Object Detection"></p>
+<p>小目标检测一直是目标检测任务的一个难点，这一篇是小交通标志检测。</p>
+<ul>
+<li>Perceptual Generative Adversarial Networks for <strong>Small Object Detection</strong></li>
+</ul>
+<h1 id="四-Feature-Pyramid-Networks-for-Object-Detection-阅读"><a href="#四-Feature-Pyramid-Networks-for-Object-Detection-阅读" class="headerlink" title="四. Feature Pyramid Networks for Object Detection 阅读"></a>四. Feature Pyramid Networks for Object Detection 阅读</h1><h4 id="1-Introduction"><a href="#1-Introduction" class="headerlink" title="1. Introduction"></a>1. Introduction</h4><p><img src="http://upload-images.jianshu.io/upload_images/3352522-f323ffd41314780f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/3352522-b573e30c2892383a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt><br>小目标检测和尺度变化比较大的目标检测一直是目标检测任务的一大难点。<br>特征金字塔一直是传统方法应对这一难点最常用的方法。<br>但是对于深度学习：费时费力。<br><strong>如何设计适合深度学习的特征金字塔？</strong></p>
+<h4 id="2-Some-DL-feature-pyramid"><a href="#2-Some-DL-feature-pyramid" class="headerlink" title="2. Some DL  feature pyramid"></a>2. Some DL  feature pyramid</h4><p><img src="http://upload-images.jianshu.io/upload_images/3352522-608bbccf8389ff16.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt><br>(a) 用图片金字塔生成特征金字塔<br>(b) 只在特征最上层预测<br>(c) 特征层分层预测<br>(d) FPN从高层携带信息传给底层，再分层预测</p>
+<p><strong>各自特点：</strong><br>(a).运算耗时会增加4倍，训练深度网络的时候太吃显存；<br>(b).前后层之间由于不同深度（depths）影响，语义信息差距太大；<br>(c).SSD就是这样的形式，但是对于高分辨率的底层特征没有再利用，而这些层对于检测小目标很重要；<br>(d).把低分辨率、高语义信息的高层特征和高分辨率、低语义信息的低层特征进行自上而下的侧边连接，使得所有尺度下的特征都有丰富的语义信息</p>
+<h4 id="3-Bottom-up-pathway"><a href="#3-Bottom-up-pathway" class="headerlink" title="3. Bottom-up pathway"></a>3. Bottom-up pathway</h4><p><img src="http://upload-images.jianshu.io/upload_images/3352522-1acff78704032d97.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt></p>
+<ul>
+<li>自底向上的过程就是神经网络普通的正向传播；</li>
+<li>特征图经过卷积核计算，通常是越变越小的；</li>
+<li>same network stage：feature map大小相同的地方，只抽取最上层；</li>
+<li>逐层抽取特征；<br>ResNets的卷积层，分为了<strong>{C1_x，C2_x，C3_x，C4_x，C5_x}</strong>用了 <strong>C2，C3，C4，C5</strong> 最后的 feature map；<h4 id="4-Top-down-pathway-and-lateral-connections"><a href="#4-Top-down-pathway-and-lateral-connections" class="headerlink" title="4. Top-down pathway and lateral connections"></a>4. Top-down pathway and lateral connections</h4></li>
+<li>迭代最开始时：C5 + 1 * 1的卷积核–&gt;最粗略的特征图（P5)<br><img src="http://upload-images.jianshu.io/upload_images/3352522-b2cd8fc54f4d7c79.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt></li>
+<li>高层特征做2倍上采样–&gt;与下一层同样大小的 featuremap<br><img src="http://upload-images.jianshu.io/upload_images/3352522-972199a9a91aff0c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt></li>
+<li>低层特征+1*1卷积,改变channel数–&gt;与前一层相同channel特征图<br><img src="http://upload-images.jianshu.io/upload_images/3352522-49b4e08f51ba3235.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt></li>
+<li>上下相同channel 相同大小的特征图,像素间加法–&gt;融合后的特征图 (C4-&gt;C4’)<br><img src="http://upload-images.jianshu.io/upload_images/3352522-cc839d545c0eec00.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt></li>
+<li>3 * 3的卷积核处理已经融合的特征图–&gt;消除混叠效应(C4’-&gt;P4)<br><img src="http://upload-images.jianshu.io/upload_images/3352522-fe33f3300d7f5bb5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt></li>
+<li>不断迭代，前面抽取的C2，C3，C4，C5，各自对应融合的特征图{P2, P3, P4, P5}<br><img src="http://upload-images.jianshu.io/upload_images/3352522-4088f77d31bb8d6d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt><h4 id="5-Why-does-FPN-Improves-Features-for-Small-Objects"><a href="#5-Why-does-FPN-Improves-Features-for-Small-Objects" class="headerlink" title="5.  Why does FPN Improves Features for Small Objects?"></a>5.  Why does FPN Improves Features for Small Objects?</h4>FPN leverages <strong>contextual information</strong> passed top-down for small objects<br>FPN increases <strong>feature resolution</strong> for small objects.</li>
+</ul>
+<p><img src="http://upload-images.jianshu.io/upload_images/3352522-444e42a418007d74.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt></p>
+<p>对于小物体，一方面我们需要高分辨率的 feature map 更多<strong>关注小区域信息</strong>，另一方面，如图中的足球一样，需要更<strong>全局的信息</strong>更准确判断足球的存在及位置。(这是作者在poster上的解释，poster那张图太模糊了，就借用习大大的照片了）</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/CVPR/" rel="tag"># CVPR</a>
+          
+            <a href="/tags/Object-detection/" rel="tag"># Object detection</a>
+          
+            <a href="/tags/FPN/" rel="tag"># FPN</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/01/16/目标检测研究综述+LocNet Improving Localization Accuracy for Object Detection阅读/" rel="next" title="目标检测研究综述+LocNet:Improving Localization Accuracy for Object Detection阅读">
+                <i class="fa fa-chevron-left"></i> 目标检测研究综述+LocNet:Improving Localization Accuracy for Object Detection阅读
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/01/16/机器学习解决问题的一般过程/" rel="prev" title="机器学习解决问题的一般过程">
+                机器学习解决问题的一般过程 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/xw.jpg" alt="Poemlin">
+            
+              <p class="site-author-name" itemprop="name">Poemlin</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">39</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">12</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">36</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#一-导读"><span class="nav-number">1.</span> <span class="nav-text">一. 导读</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二-从CVPR-2016看Object-Detection-发展"><span class="nav-number">2.</span> <span class="nav-text">二. 从CVPR 2016看Object Detection 发展</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#a-检测精度（“又准”）"><span class="nav-number">2.0.1.</span> <span class="nav-text">(a) 检测精度（“又准”）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#b-检测效率（“又快”）"><span class="nav-number">2.0.2.</span> <span class="nav-text">(b) 检测效率（“又快”）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#c-定位精度（“又好”）"><span class="nav-number">2.0.3.</span> <span class="nav-text">(c)定位精度（“又好”）</span></a></li></ol></li></ol><li class="nav-item nav-level-1"><a class="nav-link" href="#三-从CVPR2017看多样的目标检测"><span class="nav-number">3.</span> <span class="nav-text">三. 从CVPR2017看多样的目标检测</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-Object-Action-Detection"><span class="nav-number">3.0.1.</span> <span class="nav-text">1. Object Action Detection</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-Video-Object-Detection"><span class="nav-number">3.0.2.</span> <span class="nav-text">2. Video Object Detection</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3D-Object-Detection"><span class="nav-number">3.0.3.</span> <span class="nav-text">3. 3D Object Detection</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-TEXT-Detection"><span class="nav-number">3.0.4.</span> <span class="nav-text">4. TEXT Detection</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-Rain-Detection"><span class="nav-number">3.0.5.</span> <span class="nav-text">5. Rain Detection</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-Line-Detection"><span class="nav-number">3.0.6.</span> <span class="nav-text">6. Line Detection</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-Pedestrian-Detection"><span class="nav-number">3.0.7.</span> <span class="nav-text">7. Pedestrian Detection</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-Moving-Object-Detection"><span class="nav-number">3.0.8.</span> <span class="nav-text">8. Moving Object Detection</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#9-Facial-Landmark-Detection"><span class="nav-number">3.0.9.</span> <span class="nav-text">9. Facial Landmark Detection</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#10-Small-Object-Detection"><span class="nav-number">3.0.10.</span> <span class="nav-text">10. Small Object Detection</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#四-Feature-Pyramid-Networks-for-Object-Detection-阅读"><span class="nav-number">4.</span> <span class="nav-text">四. Feature Pyramid Networks for Object Detection 阅读</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-Introduction"><span class="nav-number">4.0.0.1.</span> <span class="nav-text">1. Introduction</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-Some-DL-feature-pyramid"><span class="nav-number">4.0.0.2.</span> <span class="nav-text">2. Some DL  feature pyramid</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-Bottom-up-pathway"><span class="nav-number">4.0.0.3.</span> <span class="nav-text">3. Bottom-up pathway</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-Top-down-pathway-and-lateral-connections"><span class="nav-number">4.0.0.4.</span> <span class="nav-text">4. Top-down pathway and lateral connections</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#5-Why-does-FPN-Improves-Features-for-Small-Objects"><span class="nav-number">4.0.0.5.</span> <span class="nav-text">5.  Why does FPN Improves Features for Small Objects?</span></a></li></ol></li></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">&copy; 2018 &mdash; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-snowflake-o"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Poemlin</span>
+
+  
+</div>
+<div class="powered-by">
+<i class="fa fa-user-md"></i><span id="busuanzi_container_site_uv">
+  本站访客数:<span id="busuanzi_value_site_pv"></span>
+</span>
+</div>
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

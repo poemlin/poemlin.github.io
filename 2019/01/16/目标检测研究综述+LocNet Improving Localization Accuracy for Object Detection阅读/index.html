@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="CVPR,目标检测,LocNet,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="一. localization accuracy  更准确的bounding box，提高IOU 二. 目标检测的发展1. 传统的目标检测（滑动窗口的框架）：(1).滑动窗口(2).提取特征（SIFT,HOG,LBP)(3).分类器(SVM) 2. 基于深度学习的目标检测: 具体发展(1).R-CNNMotivation：目标检测进展缓慢，CNN在图片分类中取得重大成功Contribution：应">
+<meta name="keywords" content="CVPR,目标检测,LocNet">
+<meta property="og:type" content="article">
+<meta property="og:title" content="目标检测研究综述+LocNet:Improving Localization Accuracy for Object Detection阅读">
+<meta property="og:url" content="http://yoursite.com/2019/01/16/目标检测研究综述+LocNet Improving Localization Accuracy for Object Detection阅读/index.html">
+<meta property="og:site_name" content="七月的风">
+<meta property="og:description" content="一. localization accuracy  更准确的bounding box，提高IOU 二. 目标检测的发展1. 传统的目标检测（滑动窗口的框架）：(1).滑动窗口(2).提取特征（SIFT,HOG,LBP)(3).分类器(SVM) 2. 基于深度学习的目标检测: 具体发展(1).R-CNNMotivation：目标检测进展缓慢，CNN在图片分类中取得重大成功Contribution：应">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3352522-cc564b050c6f6503.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3352522-cf08add3915acddd.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3352522-2da29293f4aa01e5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3352522-82dc0f8cd5506f63.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3352522-78b683d1e0a321d9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3352522-f5272086daa4fcf5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3352522-413855c138f799ce.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3352522-adf6a483bbf26bf6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3352522-53badf6050758fdb.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3352522-2e9acd7907cc1930.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3352522-c6980f88fb529db0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3352522-b79f35fe5378b398.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3352522-ecefba437645a2b4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3352522-8d5b915f54076b78.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3352522-77db8d8c23da209a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3352522-2e2be283df4d556d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3352522-c596f284648b60ed.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3352522-ab7b479bdbfd6aef.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3352522-4c5b95ea957de19c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3352522-795b06e5565bfbee.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3352522-a835224c2d53d569.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3352522-ab63822f71df2d74.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3352522-ae730e12be96f0c0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3352522-cdc7f55ed5ce8650.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3352522-2b771189751fe02f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3352522-6b85773a465dceb9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3352522-fc77c7ca14a38888.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3352522-889e87f7f717a591.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3352522-ecb604c6ac069c31.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3352522-7d8e0895ed8905c7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3352522-e0a849d31bcde473.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3352522-986c4b1d5fba2d99.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3352522-f51e9190b8f9a91b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3352522-1d5646efa970ddc8.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3352522-3fa29771fe3d3139.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3352522-2b8e62f9508c0d75.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3352522-0a9481a992915500.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3352522-e475b1c3aaddf976.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2019-01-17T08:41:15.599Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="目标检测研究综述+LocNet:Improving Localization Accuracy for Object Detection阅读">
+<meta name="twitter:description" content="一. localization accuracy  更准确的bounding box，提高IOU 二. 目标检测的发展1. 传统的目标检测（滑动窗口的框架）：(1).滑动窗口(2).提取特征（SIFT,HOG,LBP)(3).分类器(SVM) 2. 基于深度学习的目标检测: 具体发展(1).R-CNNMotivation：目标检测进展缓慢，CNN在图片分类中取得重大成功Contribution：应">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/3352522-cc564b050c6f6503.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/01/16/目标检测研究综述+LocNet Improving Localization Accuracy for Object Detection阅读/">
+
+
+
+
+
+  <title>目标检测研究综述+LocNet:Improving Localization Accuracy for Object Detection阅读 | 七月的风</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">七月的风</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/01/16/目标检测研究综述+LocNet Improving Localization Accuracy for Object Detection阅读/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Poemlin">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/xw.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="七月的风">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">目标检测研究综述+LocNet:Improving Localization Accuracy for Object Detection阅读</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-01-16T19:28:53+08:00">
+                2019-01-16
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/目标检测/" itemprop="url" rel="index">
+                    <span itemprop="name">目标检测</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="一-localization-accuracy"><a href="#一-localization-accuracy" class="headerlink" title="一. localization accuracy"></a>一. localization accuracy</h1><p><img src="http://upload-images.jianshu.io/upload_images/3352522-cc564b050c6f6503.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/3352522-cf08add3915acddd.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt></p>
+<p>更<strong>准确</strong>的<strong>bounding box</strong>，提高<strong>IOU</strong></p>
+<h1 id="二-目标检测的发展"><a href="#二-目标检测的发展" class="headerlink" title="二. 目标检测的发展"></a>二. 目标检测的发展</h1><h2 id="1-传统的目标检测（滑动窗口的框架）："><a href="#1-传统的目标检测（滑动窗口的框架）：" class="headerlink" title="1. 传统的目标检测（滑动窗口的框架）："></a>1. 传统的目标检测（滑动窗口的框架）：</h2><p>(1).滑动窗口<br>(2).提取特征（SIFT,HOG,LBP)<br>(3).分类器(SVM)</p>
+<h2 id="2-基于深度学习的目标检测"><a href="#2-基于深度学习的目标检测" class="headerlink" title="2. 基于深度学习的目标检测:"></a>2. 基于深度学习的目标检测:</h2><p><img src="http://upload-images.jianshu.io/upload_images/3352522-2da29293f4aa01e5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="d"></p>
+<h3 id="具体发展"><a href="#具体发展" class="headerlink" title="具体发展"></a>具体发展</h3><p>(1).<strong>R-CNN</strong><br><strong>Motivation</strong>：目标检测进展缓慢，CNN在图片分类中取得重大成功<br><strong>Contribution</strong>：应用CNN将检测问题转化成分类问题</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/3352522-82dc0f8cd5506f63.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="RCNN"><br><strong>(2).SPPNet</strong><br><strong>Motivation</strong>：CNN要求输入图片尺寸固定<br><strong>Contribution</strong>：引入SPP层解除固定尺寸约束<br><img src="http://upload-images.jianshu.io/upload_images/3352522-78b683d1e0a321d9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="SPPNet"><br><strong>(3).Fast R-CNN</strong><br><strong>Motivation</strong>：候选框的重复计算问题<br><strong>Contribution</strong>： 加入RoI池化层、将BB回归融入网络<br><img src="http://upload-images.jianshu.io/upload_images/3352522-f5272086daa4fcf5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Fast R-CNN"><br><strong>(4).faster RCNN</strong><br><strong>Motivation</strong>： Selective Search作为一个独立的操作，速度依然不够快<br><strong>Contribution</strong>：抛弃了Selective Search，引入了RPN网络，使得区域提名、分类、回归一起共用卷积特征，从而得到了进一步的加速。<br><img src="http://upload-images.jianshu.io/upload_images/3352522-413855c138f799ce.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="faster rcnn"><br><strong>(5).YOLO</strong><br><strong>Motivation</strong>：先前提出的算法都是将检测问题转化为分类解决<br><strong>Contribution</strong>：将检测回归到回归方法，提高实时性能<br><img src="http://upload-images.jianshu.io/upload_images/3352522-adf6a483bbf26bf6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="YOLO"><br><strong>(6).SSD</strong><br><strong>Motivation</strong>：yolo S×S的网格就是一个比较启发式的策略,难以检测小目标<br><strong>Contribution</strong>：借鉴了Faster R-CNN中的Anchor机制，使用了多尺度特征金字塔<br><img src="http://upload-images.jianshu.io/upload_images/3352522-53badf6050758fdb.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="SSD"></p>
+<h1 id="三-目标检测的几个名词"><a href="#三-目标检测的几个名词" class="headerlink" title="三.目标检测的几个名词"></a>三.目标检测的几个名词</h1><h2 id="1-MAP-mean-average-precision"><a href="#1-MAP-mean-average-precision" class="headerlink" title="(1). MAP(mean average precision)"></a>(1). MAP(mean average precision)</h2><p><img src="http://upload-images.jianshu.io/upload_images/3352522-2e9acd7907cc1930.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt><br>每一个类别都可以根据recall和precision绘制一条曲线，那么AP就是该曲线下的面积，而mAP是多个类别AP的平均值，<strong><em>这个值介于0到1之间，且越大越好</em></strong>。这个指标是目标检测算法最为重要的一个。</p>
+<h2 id="2-IOU"><a href="#2-IOU" class="headerlink" title="(2).IOU"></a>(2).IOU</h2><p><img src="http://upload-images.jianshu.io/upload_images/3352522-c6980f88fb529db0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt><br><strong>绿色框</strong>是人工标注的<strong>groundtruth</strong>，<strong>红色框</strong>是目标检测<strong>算法</strong>最终给出的结果，显然绿色框对于飞机这个物体检测的更加准确（机翼机尾都全部包含在绿色框中），IOU正是表达这种bounding box和groundtruth的<strong>差异的指标</strong>。<strong><em>算法产生的bbox VS 人工标注的数据</em></strong><br><img src="http://upload-images.jianshu.io/upload_images/3352522-b79f35fe5378b398.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt><br>IOU定义了两个bounding box的<strong>重叠度</strong>，可以说，当算法给出的框和人工标注的框差异很小时，或者说重叠度很大时，可以说算法产生的boundingbox就很准确。<br>矩形框A、B的一个重合度IOU计算公式为：<br><strong>IOU=(A∩B)/(A∪B)</strong></p>
+<h2 id="3-NMS-非极大值抑制"><a href="#3-NMS-非极大值抑制" class="headerlink" title="(3). NMS(非极大值抑制)"></a>(3). NMS(非极大值抑制)</h2><p><img src="http://upload-images.jianshu.io/upload_images/3352522-ecefba437645a2b4.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt><br>目标检测算法一般会给出目标很多的粗略结果，对一个目标成百上千的粗略结果都进行调整肯定是不可行的。那么我们就需要对这些粗略结果先进行一个大体的挑选。挑选出其中最具代表性的结果。再对这些挑选后的结果进行调整，这样可以加快算法效率。<br><strong><em>消除多余的框，找到最佳的bbox</em></strong><br>根据这些框的分类器类别分类概率做排序: A&lt;B&lt;C&lt;D&lt;E&lt;F<br>(1)从最大概率矩形框F开始，分别判断A~E与F的重叠度IOU是否大于某个设定的阈值;</p>
+<p>(2)假设B、D与F的重叠度超过阈值，那么就扔掉B、D；并标记第一个矩形框F，是我们保留下来的。</p>
+<p>(3)从剩下的矩形框A、C、E中，选择概率最大的E，然后判断E与A、C的重叠度，重叠度大于一定的阈值，那么就扔掉；并标记E是我们保留下来的第二个矩形框。</p>
+<p><strong>就这样一直重复，找到所有被保留下来的矩形框</strong></p>
+<h2 id="4-边界框回归-Bounding-box-regression"><a href="#4-边界框回归-Bounding-box-regression" class="headerlink" title="(4) 边界框回归(Bounding-box regression )"></a>(4) 边界框回归(Bounding-box regression )</h2><p><img src="http://upload-images.jianshu.io/upload_images/3352522-8d5b915f54076b78.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt><br>由前面介绍的IOU指标可知，这里算法给出的红色框可以认为是<strong>检测失败</strong>的，因为它和绿色的groundtruth的 <strong>IOU值小于了0.5</strong>，也就是说重叠度不够。那么我们就需要对这个红色框进行微调。<strong><em>使得经过微调后的窗口跟Ground Truth 更接近 。</em></strong><br><img src="http://upload-images.jianshu.io/upload_images/3352522-77db8d8c23da209a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt><br><strong>红色的框 P</strong> 代表原始的Proposal<br><strong>绿色的框 G </strong>代表目标的 Ground Truth<br><strong>目标</strong>是：寻找一种关系使得输入原始的窗口 P 经过映射得到一个跟真实窗口 G 更接近的回归窗口 G~<br><strong>G~≈G</strong><br><img src="http://upload-images.jianshu.io/upload_images/3352522-2e2be283df4d556d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt></p>
+<h1 id="四-从cvpr2016看目标检测的发展趋势"><a href="#四-从cvpr2016看目标检测的发展趋势" class="headerlink" title="四. 从cvpr2016看目标检测的发展趋势"></a>四. 从cvpr2016看目标检测的发展趋势</h1><p><strong>（a）检测精度</strong><br><strong>如何提高检测精度的指标mAP？</strong><br>代表性的工作是<strong>ResNet、ION和HyperNet</strong></p>
+<p><strong>（b）识别效率</strong><br>如何提高检测<strong>速度</strong>？<br><strong>YOLO</strong>：这个工作在识别效率方面的优势很明显，可以做到每秒钟45帧图像，处理视频是完全没有问题的</p>
+<p><strong>（c）定位精度</strong><br>如何产生更准确的bounding box? 如何逐步提高评价参数<strong>IOU</strong>？（Pascal VOC中，这个值为0.5）<br><strong>LocNet</strong>：抛弃boundingbox回归，利用<strong>概率模型</strong>（本文）</p>
+<p>从单纯的<strong><em>一律追求检测精度</em></strong>，到想方法<strong>*加快检测结果</strong>，到最后追求<strong><em>更加准确的结果</em></strong>。侧面反映了<strong><em>目标检测研究的不断进步</em></strong>。</p>
+<h1 id="五-LocNet-Improving-Localization-Accuracy-for-Object-Detection"><a href="#五-LocNet-Improving-Localization-Accuracy-for-Object-Detection" class="headerlink" title="五. LocNet: Improving Localization Accuracy for Object Detection"></a>五. LocNet: Improving Localization Accuracy for Object Detection</h1><h2 id="1-background"><a href="#1-background" class="headerlink" title="1. background"></a>1. background</h2><ul>
+<li><strong>localization accuracy</strong> 少人问津</li>
+<li><strong>PASCAL VOC  IOU=0.5</strong> (object has been successfully detected)</li>
+<li>Real life  higher localization accuracy (e.g. <strong>IoU&gt; 0.7</strong>) is normally required</li>
+<li>COCO detection challenge 把IOU值也作为了最终的评价指标（<strong>MAP+IOU</strong>）</li>
+<li><strong>提高目标检测的IOU</strong>（而不仅是MAP）将会成为未来目标检测的主要挑战。</li>
+<li>传统的<strong>bbox回归</strong>：尝试直接通过回归的方式直接得到bbox的坐标，很难得到很准确的bbox。</li>
+</ul>
+<h2 id="2-Contributions"><a href="#2-Contributions" class="headerlink" title="2. Contributions"></a>2. Contributions</h2><ul>
+<li>可以很方便的和现在<strong>最先进的目标检测</strong>系统结合</li>
+<li>提出了两种<strong>基于行列的概率模型</strong>解决定位准确率，而不是回归的方式，并与回归方式进行了<br>对比</li>
+<li>对传统方法和最先进的方法不同iou下的<strong>map都有所提高</strong></li>
+<li>未来可以<strong>完全取代bbox回归</strong>的方法</li>
+</ul>
+<h2 id="3-两种概率模型"><a href="#3-两种概率模型" class="headerlink" title="3.两种概率模型"></a>3.两种概率模型</h2><p><img src="http://upload-images.jianshu.io/upload_images/3352522-c596f284648b60ed.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt><br><strong>黄色框</strong>是检测系统给出的，<strong>红色框</strong>是由黄色框<strong>扩大常数倍</strong>得到的<strong>search region</strong>，LOCNet会在这个搜索区域<strong>建立概率模型</strong>得到最终的<strong>定位区域蓝色框</strong></p>
+<ul>
+<li><strong>边界概率：</strong><br>计算该行或该列是目标边界的概率（所以，行列两个概率图各选两个极大值，即可得到目标边界）</li>
+<li><strong>in-out概率：</strong><br>计算目标在该行或该列的概率（所以，行列两个概率图分别选择最高并且最平滑的区域，即可得到目标的区域）</li>
+</ul>
+<h2 id="4-detection-pipeline"><a href="#4-detection-pipeline" class="headerlink" title="4. detection pipeline"></a>4. detection pipeline</h2><p><img src="http://upload-images.jianshu.io/upload_images/3352522-ab7b479bdbfd6aef.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt><br>输入的候选bounding box（使用selective search或者sliding windows获得），通过迭代的方法，获得更精确的box<br><strong>两个过程：</strong></p>
+<ul>
+<li><strong>Recognition model</strong>：</li>
+</ul>
+<p><img src="http://upload-images.jianshu.io/upload_images/3352522-4c5b95ea957de19c.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="输入候选box "></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/3352522-795b06e5565bfbee.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="为每个box产生一个置信度"></p>
+<ul>
+<li><strong>Localization model：</strong></li>
+</ul>
+<p><img src="http://upload-images.jianshu.io/upload_images/3352522-a835224c2d53d569.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="输入候选box"></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/3352522-ab63822f71df2d74.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="调整box的边界生成新的候选box"></p>
+<p>为降低算法复杂度，会参与一个后处理NMS操作。</p>
+<h2 id="5-Model-predictions"><a href="#5-Model-predictions" class="headerlink" title="5. Model predictions"></a>5. Model predictions</h2><p>输入的box，把它扩大一个因子的倍数，获取一个更大的区域R，区域R划分成M*M的格子</p>
+<ul>
+<li><strong>In-Out probabilities</strong></li>
+</ul>
+<p><img src="http://upload-images.jianshu.io/upload_images/3352522-ae730e12be96f0c0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt><br><img src="http://upload-images.jianshu.io/upload_images/3352522-cdc7f55ed5ce8650.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="产生两个概率，分别代表区域R的每一行或者列包含在bounding box中的概率"></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/3352522-2b771189751fe02f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="ground truth box而言，对于边界内的行或列概率为1，否则为0"></p>
+<ul>
+<li><strong>Border probabilities </strong></li>
+</ul>
+<p><img src="http://upload-images.jianshu.io/upload_images/3352522-6b85773a465dceb9.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt><br><img src="http://upload-images.jianshu.io/upload_images/3352522-fc77c7ca14a38888.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt><br><img src="http://upload-images.jianshu.io/upload_images/3352522-889e87f7f717a591.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt><br><img src="http://upload-images.jianshu.io/upload_images/3352522-ecb604c6ac069c31.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="产生4个概率，left (l), right (r), top (t) and bottom (b)"></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/3352522-7d8e0895ed8905c7.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="ground truth box"></p>
+<h2 id="6-Network-Architecture"><a href="#6-Network-Architecture" class="headerlink" title="6. Network Architecture"></a>6. Network Architecture</h2><p><img src="http://upload-images.jianshu.io/upload_images/3352522-e0a849d31bcde473.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt><br>（1）对于输入的box，把它扩大一个因子的倍数，获取一个更大的区域R，把R投影到feature map中<br>（2）经过一个类似于ROI pooling的层，输出<strong>固定大小的map</strong><br>（3）经过几个卷积层和ReLU激活之后，出现两个分支，分别对应两个向量。然后经过<strong>max pooling</strong>得到<br>row、column对应的向量</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/3352522-986c4b1d5fba2d99.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt><br>（4）经过FC层之后，使用sigmoid函数输出<strong>In –Out概率</strong>或者<strong>边界概率</strong></p>
+<h2 id="7-Loss-function"><a href="#7-Loss-function" class="headerlink" title="7.Loss function"></a>7.Loss function</h2><p>每行或列有两种可能（是或者不是），伯努利分布的模型，log对数损失函数假设样本服从伯努<br>利分布（0-1分布）</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/3352522-f51e9190b8f9a91b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="logistic 回归常用的损失函数交叉熵"></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/3352522-1d5646efa970ddc8.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="In-Out"></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/3352522-3fa29771fe3d3139.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Borders"></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/3352522-2b8e62f9508c0d75.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="平衡因子，因为作为边界的行或列较少，所以增大他们的权重"></p>
+<h2 id="8-results"><a href="#8-results" class="headerlink" title="8.results"></a>8.results</h2><p><img src="http://upload-images.jianshu.io/upload_images/3352522-0a9481a992915500.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt><br>结果表明，与<strong>不同的检测系统</strong>结合，基于边界概率的模型在<strong>不同的IOU下都提高了mAP值</strong>，并且效果<strong>优于bbox回归</strong>。</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/3352522-e475b1c3aaddf976.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="不同IOU下的MAP"></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/CVPR/" rel="tag"># CVPR</a>
+          
+            <a href="/tags/目标检测/" rel="tag"># 目标检测</a>
+          
+            <a href="/tags/LocNet/" rel="tag"># LocNet</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/10/22/c++_stl/" rel="next" title="C++容器使用">
+                <i class="fa fa-chevron-left"></i> C++容器使用
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/01/16/从CVPR2017-看多样目标检测-Feature-Pyramid-Networks-for-Object-Detection论文阅读/" rel="prev" title="从CVPR2017 看多样目标检测+Feature Pyramid Networks for Object Detection论文阅读">
+                从CVPR2017 看多样目标检测+Feature Pyramid Networks for Object Detection论文阅读 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/xw.jpg" alt="Poemlin">
+            
+              <p class="site-author-name" itemprop="name">Poemlin</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">39</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">12</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">36</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#一-localization-accuracy"><span class="nav-number">1.</span> <span class="nav-text">一. localization accuracy</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二-目标检测的发展"><span class="nav-number">2.</span> <span class="nav-text">二. 目标检测的发展</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-传统的目标检测（滑动窗口的框架）："><span class="nav-number">2.1.</span> <span class="nav-text">1. 传统的目标检测（滑动窗口的框架）：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-基于深度学习的目标检测"><span class="nav-number">2.2.</span> <span class="nav-text">2. 基于深度学习的目标检测:</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#具体发展"><span class="nav-number">2.2.1.</span> <span class="nav-text">具体发展</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#三-目标检测的几个名词"><span class="nav-number">3.</span> <span class="nav-text">三.目标检测的几个名词</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-MAP-mean-average-precision"><span class="nav-number">3.1.</span> <span class="nav-text">(1). MAP(mean average precision)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-IOU"><span class="nav-number">3.2.</span> <span class="nav-text">(2).IOU</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-NMS-非极大值抑制"><span class="nav-number">3.3.</span> <span class="nav-text">(3). NMS(非极大值抑制)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-边界框回归-Bounding-box-regression"><span class="nav-number">3.4.</span> <span class="nav-text">(4) 边界框回归(Bounding-box regression )</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#四-从cvpr2016看目标检测的发展趋势"><span class="nav-number">4.</span> <span class="nav-text">四. 从cvpr2016看目标检测的发展趋势</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#五-LocNet-Improving-Localization-Accuracy-for-Object-Detection"><span class="nav-number">5.</span> <span class="nav-text">五. LocNet: Improving Localization Accuracy for Object Detection</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-background"><span class="nav-number">5.1.</span> <span class="nav-text">1. background</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-Contributions"><span class="nav-number">5.2.</span> <span class="nav-text">2. Contributions</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-两种概率模型"><span class="nav-number">5.3.</span> <span class="nav-text">3.两种概率模型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-detection-pipeline"><span class="nav-number">5.4.</span> <span class="nav-text">4. detection pipeline</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-Model-predictions"><span class="nav-number">5.5.</span> <span class="nav-text">5. Model predictions</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-Network-Architecture"><span class="nav-number">5.6.</span> <span class="nav-text">6. Network Architecture</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-Loss-function"><span class="nav-number">5.7.</span> <span class="nav-text">7.Loss function</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#8-results"><span class="nav-number">5.8.</span> <span class="nav-text">8.results</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">&copy; 2018 &mdash; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-snowflake-o"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Poemlin</span>
+
+  
+</div>
+<div class="powered-by">
+<i class="fa fa-user-md"></i><span id="busuanzi_container_site_uv">
+  本站访客数:<span id="busuanzi_value_site_pv"></span>
+</span>
+</div>
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

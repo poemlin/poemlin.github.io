@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Generation,生成,one-shot learning,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="一. 引述 传统深度网络：数据驱动大量迭代遇到新数据重新训练低效 神经图灵机 (Neural Turing Machine）：极少量样本便可以进行有效学习强大的推理能力人类水平的学习  人们可以从仅仅一个或一小撮样本中学习一个新的概念，而机器学习的标准算法需要成百上千个类似的样本 二. 人类水平的概念学习(Human Level Concept Learning；one-shot learning">
+<meta name="keywords" content="Generation,生成,one-shot learning">
+<meta property="og:type" content="article">
+<meta property="og:title" content="One-Shot Generalization in Deep Generative Models 阅读笔记">
+<meta property="og:url" content="http://yoursite.com/2019/01/16/One-Shot-Generalization-in-Deep-Generative-Models-阅读笔记/index.html">
+<meta property="og:site_name" content="七月的风">
+<meta property="og:description" content="一. 引述 传统深度网络：数据驱动大量迭代遇到新数据重新训练低效 神经图灵机 (Neural Turing Machine）：极少量样本便可以进行有效学习强大的推理能力人类水平的学习  人们可以从仅仅一个或一小撮样本中学习一个新的概念，而机器学习的标准算法需要成百上千个类似的样本 二. 人类水平的概念学习(Human Level Concept Learning；one-shot learning">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3352522-df3d59f020ef6e50.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3352522-11f24746df14493f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3352522-70da94d4c7c1793f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3352522-0306f22b00937c33.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3352522-5e53a4df28b51ca6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3352522-05a9338986be59e5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3352522-96b9227b23454a29.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3352522-6f54bb26e5d724c0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3352522-0295fd5364903236.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3352522-910a89884a44d846.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3352522-eba6342991906001.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3352522-2605e7d2dbbc0949.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3352522-c437dd328cb45ac3.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3352522-74ce5d83ff244984.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3352522-f69003f14e0ba4ef.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3352522-c8763467ef478925.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3352522-1735a66b9347ed45.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3352522-518c3dde80262dfd.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="http://upload-images.jianshu.io/upload_images/3352522-8bf1339244271434.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2019-01-17T08:43:44.842Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="One-Shot Generalization in Deep Generative Models 阅读笔记">
+<meta name="twitter:description" content="一. 引述 传统深度网络：数据驱动大量迭代遇到新数据重新训练低效 神经图灵机 (Neural Turing Machine）：极少量样本便可以进行有效学习强大的推理能力人类水平的学习  人们可以从仅仅一个或一小撮样本中学习一个新的概念，而机器学习的标准算法需要成百上千个类似的样本 二. 人类水平的概念学习(Human Level Concept Learning；one-shot learning">
+<meta name="twitter:image" content="http://upload-images.jianshu.io/upload_images/3352522-df3d59f020ef6e50.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/01/16/One-Shot-Generalization-in-Deep-Generative-Models-阅读笔记/">
+
+
+
+
+
+  <title>One-Shot Generalization in Deep Generative Models 阅读笔记 | 七月的风</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">七月的风</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/01/16/One-Shot-Generalization-in-Deep-Generative-Models-阅读笔记/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Poemlin">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/xw.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="七月的风">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">One-Shot Generalization in Deep Generative Models 阅读笔记</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-01-16T19:51:44+08:00">
+                2019-01-16
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/生成模型/" itemprop="url" rel="index">
+                    <span itemprop="name">生成模型</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="一-引述"><a href="#一-引述" class="headerlink" title="一. 引述"></a>一. 引述</h1><ul>
+<li><strong>传统深度网络：</strong><br>数据驱动<br>大量迭代<br>遇到新数据重新训练<br>低效</li>
+<li><strong>神经图灵机 (Neural Turing Machine）：</strong><br>极少量样本便可以进行有效学习<br>强大的推理能力<br>人类水平的学习</li>
+</ul>
+<p><strong><em>人们可以从仅仅一个或一小撮样本中学习一个新的概念，而机器学习的标准算法需要成百上千个类似的样本</em></strong></p>
+<h1 id="二-人类水平的概念学习-Human-Level-Concept-Learning；one-shot-learning"><a href="#二-人类水平的概念学习-Human-Level-Concept-Learning；one-shot-learning" class="headerlink" title="二. 人类水平的概念学习(Human Level Concept Learning；one-shot learning)"></a>二. 人类水平的概念学习(Human Level Concept Learning；one-shot learning)</h1><p><img src="http://upload-images.jianshu.io/upload_images/3352522-df3d59f020ef6e50.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt></p>
+<ul>
+<li><p>给定一个单一的对象，人类可以：<br><strong>分类</strong>新样本；</p>
+<p><strong>生成</strong>类似类型的新样本；</p>
+<p>把它<strong>解析</strong>成部分，并理解它们的关系。</p>
+</li>
+</ul>
+<h1 id="三-Background"><a href="#三-Background" class="headerlink" title="三. Background"></a>三. Background</h1><ul>
+<li><p>人类善于仅<strong>凭单个例子</strong>对新概念和经验进行推理。</p>
+</li>
+<li><p>人类拥有<strong>单次泛化</strong>的能力：遭遇新概念，理解其结构，然后生成这个概念的有意义的变型。</p>
+</li>
+<li><p>Salakhutdinov et al.(2013)发展了一个结合了<strong>玻耳兹曼机和等级狄利克雷过程</strong>的概率模型，可以学习层级概念类别，并且提供了强大的生成模型.</p>
+</li>
+<li><p>Lake et al.(2015)等人利用基于组合性(Compositionality)、因果关系(Causality)和学会学习(Learning to learn)的<strong>贝叶斯程序学习</strong>完成了基于贝叶斯推断的单点学习</p>
+</li>
+</ul>
+<h1 id="四-Contribution"><a href="#四-Contribution" class="headerlink" title="四. Contribution"></a>四. Contribution</h1><ul>
+<li><p>结合了<strong>深度学习的表达能力</strong>和<strong>贝叶斯推断的推测能力</strong></p>
+</li>
+<li><p>展示了结合<strong>注意力机制</strong>与推断对生成模型带来的明显提高</p>
+</li>
+<li><p>模型可以在仅仅看一次实例的情况下生成有意义且多样的样本，提供了一类重要的单点机器学习的一般性模型。</p>
+</li>
+</ul>
+<h1 id="五-Attention机制"><a href="#五-Attention机制" class="headerlink" title="五. Attention机制"></a>五. Attention机制</h1><blockquote>
+<p>从源信息中<strong>有选择性地筛选</strong>出一部分信息被进一步利用的机制。<br>人脑的注意力模型，就是说你看到了整幅画面，但在特定的时刻t，你的意识和注意力的焦点是集中在画面中的某一个部分上，其它部分虽然还在你的眼中，但是你分配给它们的注意力资源是很少的</p>
+</blockquote>
+<ul>
+<li><strong>Reading attention</strong>：分类等判别式任务，从图像或者文字中筛选出一部分我们需要的信息。</li>
+<li><strong>Writing attention</strong>：是指对输出变量的选择性更新</li>
+</ul>
+<p><strong>generative process</strong>（生成过程）使用了writing attention机制，在<strong>inference process</strong>（推理过程）使用了reading attention机制。</p>
+<p>两个机制在概念上有区分，但实际运用过程中遵从一样的计算原理，这篇文章中采用了<strong>spatial attention</strong>，使用参数 λ 处理输入图像 x 以生成输出</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/3352522-11f24746df14493f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="**κh 和κw 是一维核，⨂是两个核的张量外积，*表示卷积**"></p>
+<p>Attention是很神奇的东西，想仔细了解，可以阅读下面的论文：</p>
+<ul>
+<li>Recurrent Models of Visual Attention (2014.06.24) </li>
+<li>Show, Attend and Tell: Neural Image Caption Generation with Visual Attention (2015.02.10) </li>
+<li>DRAW: A Recurrent Neural Network For Image Generation (2015.05.20) </li>
+<li>Teaching Machines to Read and Comprehend (2015.06.04) </li>
+<li>Learning Wake-Sleep Recurrent Attention Models (2015.09.22) </li>
+<li>Action Recognition using Visual Attention (2015.10.12) </li>
+<li>Recursive Recurrent Nets with Attention Modeling for OCR in the Wild (2016.03.09)</li>
+<li>Sequence to Sequence Learning using Neural Networks </li>
+<li>Reasoning about Neural Attention </li>
+<li>A Neural Attention Model for Abstractive Sentence Summarization </li>
+<li>Neural Machine Translation by Jointly Learning to Align and Translate</li>
+</ul>
+<h1 id="六-高斯隐变量模型和变分推断"><a href="#六-高斯隐变量模型和变分推断" class="headerlink" title="六. 高斯隐变量模型和变分推断"></a>六. 高斯隐变量模型和变分推断</h1><blockquote>
+<p><strong><em>隐变量</em></strong>：具有<strong>不可直接观测特征</strong>的<strong>综合性</strong>变量<br>概率模型的中心任务：给定观测（可见）数据变量X的条件下，计算潜在变量Z的后验概率分布P(Z | X)</p>
+</blockquote>
+<p><img src="http://upload-images.jianshu.io/upload_images/3352522-70da94d4c7c1793f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="**基于隐变量的贝叶斯概率模型**"></p>
+<p><strong>EM算法</strong>：计算完整数据对数似然函数关于潜在变量后验概率分布的期望</p>
+<p>实际应用中计算后验概率分布或者后验概率分布的期望是<strong>不可⾏</strong>的 :</p>
+<ul>
+<li>潜在空间的<strong>维度太⾼</strong>，以⾄于⽆法直接计算 </li>
+<li>后验概率分布的<strong>形式特别复杂</strong>，从⽽期望⽆法解析地计算 </li>
+<li>隐含状态的<strong>数量</strong>可能有指数多个，从⽽精确的计算所需的代价⾼ </li>
+</ul>
+<p>从<strong>公式</strong>角度：</p>
+<ul>
+<li>如果变量维度过高，积分就会变得非常困难</li>
+<li>分布p非常复杂时，积分就完全不可能了</li>
+</ul>
+<p><strong><em>选择合适的分布q来逼近真实的后验概率分布p！!</em></strong></p>
+<h1 id="七-变分推断（variational-inference）变分贝叶斯（variational-Bayes）"><a href="#七-变分推断（variational-inference）变分贝叶斯（variational-Bayes）" class="headerlink" title="七. 变分推断（variational inference）变分贝叶斯（variational Bayes）"></a>七. 变分推断（variational inference）变分贝叶斯（variational Bayes）</h1><blockquote>
+<ul>
+<li><strong>Gibbs Sampling</strong>这一类<strong>Monte Carlo</strong>算法，它们的做法就是通过抽取大量的样本估计真实的后验分布；</li>
+<li>当后验分布难于求解的时候我们就希望选择一些<strong>简单的分布q</strong>来近似这些<strong>复杂的后验分布p</strong>；</li>
+<li>变分推断限制近似分布的类型，从而得到一种局部最优，但具有确定解的近似后验分布。</li>
+</ul>
+</blockquote>
+<p><img src="http://upload-images.jianshu.io/upload_images/3352522-0306f22b00937c33.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/3352522-5e53a4df28b51ca6.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/3352522-05a9338986be59e5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt></p>
+<p>现在问题变成了如何选择一个<strong>q(X)</strong>,使得估算的效率最高:<br>1.考虑概率分布q是⼀个<strong>受限制</strong>的类别<br>2.<strong>充分限制</strong>q可以取得的概率分布的类别范围，使得这个范围中的所有概率分布都是我们可以处理<br>3.这个范围<strong>充分⼤、充分灵活</strong>，使它对真实后验概率分布的⼀个⾜够好的近似  </p>
+<p>简单的分布<strong>怎么选</strong>：（假设各个变量之间相互独立砍断了所有变量之间的依赖关系）<br>    1.Bethe自由能近似<br>    2.平均场定理近似(复杂的多元积分变成简单的多个一元积分)</p>
+<h1 id="八-变分自编码器（Variational-Auto-Encoder，VAE）"><a href="#八-变分自编码器（Variational-Auto-Encoder，VAE）" class="headerlink" title="八. 变分自编码器（Variational Auto-Encoder，VAE）"></a>八. 变分自编码器（Variational Auto-Encoder，VAE）</h1><p><img src="http://upload-images.jianshu.io/upload_images/3352522-96b9227b23454a29.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="**inference model是把观测数据变成隐含描述的encoder**"></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/3352522-6f54bb26e5d724c0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="generative model是decoder"></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/3352522-0295fd5364903236.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="decoder 以为任何结构——MLP、CNN，RNN 或其他"><br>想仔细了解<strong>变分自编码，变分推断，高斯隐变量</strong>的可以阅读下面文献：</p>
+<ul>
+<li>Kingma et al. Auto-Encoding Variational Bayes.</li>
+<li>Rezende et al. Stochastic Backpropagation and Approximate Inference in Deep Generative Models.</li>
+<li>Kingma and Rezende et al. Semi-supervised Learning with Deep Generative Models.</li>
+<li>Bishop. Pattern Recognition and Machine Learning.</li>
+<li>Young et al. HTK handbook.</li>
+<li>Blei et al. Variational Inference: A Review for Statisticians.</li>
+<li>Doersch. Tutorial on Variational Autoencoders.</li>
+<li>Kevin Frans. Variational Autoencoders Explained.</li>
+<li>Sridharan. Gaussian mixture models and the EM algorithm.</li>
+<li>Blei et al. Variational Inference: Foundations and Modern Methods.</li>
+<li>Durr. Introduction to variational autoencoders .</li>
+<li>Xu et al. Variational Autoencoders for Semi-supervised Text Classification.</li>
+</ul>
+<p>此外，《PRML》《MLAPP》《Deep Learning》分别花了一个或两个大章介绍隐变量模型、变分推断、变分贝叶斯、变分自编码器</p>
+<h1 id="九-Sequential-Generative-Model（顺序生成模型）"><a href="#九-Sequential-Generative-Model（顺序生成模型）" class="headerlink" title="九. Sequential Generative Model（顺序生成模型）"></a>九. Sequential Generative Model（顺序生成模型）</h1><blockquote>
+<p>顺序生成模型是VAE模型的一个自然延伸，用T时间段内的一系列隐变量来描述观测变量</p>
+</blockquote>
+<p><img src="http://upload-images.jianshu.io/upload_images/3352522-910a89884a44d846.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="顺序生成模型"></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/3352522-eba6342991906001.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt></p>
+<ul>
+<li>z(t)表示隐变量，x表示观测数据</li>
+<li>隐状态h(t)由前一时刻隐状态h(t-1)和当前时刻隐变量z(t)转化</li>
+<li>论文里采用的转化机制是LSTM单元</li>
+<li>c(t)也是一种隐变量（hiddenvariables），可以把它称为“隐容器”（hidden canvas）</li>
+<li>ct利用writing attention，reading attention则被利用在z(t)的inference阶段中。</li>
+</ul>
+<h1 id="十-result"><a href="#十-result" class="headerlink" title="十. result"></a>十. result</h1><p><img src="http://upload-images.jianshu.io/upload_images/3352522-2605e7d2dbbc0949.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/3352522-c437dd328cb45ac3.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/3352522-74ce5d83ff244984.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt></p>
+<p>评价指标NLL</p>
+<p><strong>不同难度的推理任务实验</strong><br><strong>（1）生成新样本<br>a) weak shot-geralization</strong></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/3352522-f69003f14e0ba4ef.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="**训练数据包括所有的字母，但是测试数据在每一个字母上删除了的三种字符类型。**"></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/3352522-c8763467ef478925.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt></p>
+<p><strong>b) strong shot-geralization</strong></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/3352522-1735a66b9347ed45.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="**训练数据是部分字母，测试数据是剩余的字母。图从左到右分别是三种训练-测试数据大小的拆分方式。**"></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/3352522-518c3dde80262dfd.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt><br><strong>（2）生成新类型</strong></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/3352522-8bf1339244271434.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="**训练数据：外文字母表中的10个字母，要求机器生成同属于一个字母表中的类似字母**"></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Generation/" rel="tag"># Generation</a>
+          
+            <a href="/tags/生成/" rel="tag"># 生成</a>
+          
+            <a href="/tags/one-shot-learning/" rel="tag"># one-shot learning</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/01/16/机器学习解决问题的一般过程/" rel="next" title="机器学习解决问题的一般过程">
+                <i class="fa fa-chevron-left"></i> 机器学习解决问题的一般过程
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/01/16/Binary-Tree-Preorder-Traversal/" rel="prev" title="Binary Tree Preorder Traversal">
+                Binary Tree Preorder Traversal <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/xw.jpg" alt="Poemlin">
+            
+              <p class="site-author-name" itemprop="name">Poemlin</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">39</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">12</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">36</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#一-引述"><span class="nav-number">1.</span> <span class="nav-text">一. 引述</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二-人类水平的概念学习-Human-Level-Concept-Learning；one-shot-learning"><span class="nav-number">2.</span> <span class="nav-text">二. 人类水平的概念学习(Human Level Concept Learning；one-shot learning)</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#三-Background"><span class="nav-number">3.</span> <span class="nav-text">三. Background</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#四-Contribution"><span class="nav-number">4.</span> <span class="nav-text">四. Contribution</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#五-Attention机制"><span class="nav-number">5.</span> <span class="nav-text">五. Attention机制</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#六-高斯隐变量模型和变分推断"><span class="nav-number">6.</span> <span class="nav-text">六. 高斯隐变量模型和变分推断</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#七-变分推断（variational-inference）变分贝叶斯（variational-Bayes）"><span class="nav-number">7.</span> <span class="nav-text">七. 变分推断（variational inference）变分贝叶斯（variational Bayes）</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#八-变分自编码器（Variational-Auto-Encoder，VAE）"><span class="nav-number">8.</span> <span class="nav-text">八. 变分自编码器（Variational Auto-Encoder，VAE）</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#九-Sequential-Generative-Model（顺序生成模型）"><span class="nav-number">9.</span> <span class="nav-text">九. Sequential Generative Model（顺序生成模型）</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#十-result"><span class="nav-number">10.</span> <span class="nav-text">十. result</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">&copy; 2018 &mdash; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-snowflake-o"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Poemlin</span>
+
+  
+</div>
+<div class="powered-by">
+<i class="fa fa-user-md"></i><span id="busuanzi_container_site_uv">
+  本站访客数:<span id="busuanzi_value_site_pv"></span>
+</span>
+</div>
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

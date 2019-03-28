@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="google net,Deep_learning,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="Going deeper with convolutions GoogleNet首次出现在ILSVRC 2014比赛中（和VGG同年），获得了当时比赛的第一名。使用了Inception的结构，当时比赛的版本叫做Inception V1。inception结构现在已经更新了4个版本。Going deeper with convolutions这篇论文就是指的Inception V1版本。  论文地址">
+<meta name="keywords" content="google net,Deep_learning">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Google Inception Net论文细读">
+<meta property="og:url" content="http://yoursite.com/2019/01/16/Google-Inception-Net论文细读/index.html">
+<meta property="og:site_name" content="七月的风">
+<meta property="og:description" content="Going deeper with convolutions GoogleNet首次出现在ILSVRC 2014比赛中（和VGG同年），获得了当时比赛的第一名。使用了Inception的结构，当时比赛的版本叫做Inception V1。inception结构现在已经更新了4个版本。Going deeper with convolutions这篇论文就是指的Inception V1版本。  论文地址">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/3352522-318f8e398c2bcac0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/3352522-944398c86d1414c2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/3352522-9b8de6178b60f24a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/3352522-61e40de69fe1aef2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/3352522-91fd68acfa15537a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/3352522-7cdd10a4799663af.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/3352522-d5397247923fe73f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/3352522-d8bb3762fa8ac827.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/3352522-e789b5125fc58e09.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/3352522-05d34de3f41ce95e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/3352522-59b590bb4d0715b1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/3352522-8396b836d963044b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2019-01-17T08:41:47.388Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Google Inception Net论文细读">
+<meta name="twitter:description" content="Going deeper with convolutions GoogleNet首次出现在ILSVRC 2014比赛中（和VGG同年），获得了当时比赛的第一名。使用了Inception的结构，当时比赛的版本叫做Inception V1。inception结构现在已经更新了4个版本。Going deeper with convolutions这篇论文就是指的Inception V1版本。  论文地址">
+<meta name="twitter:image" content="https://upload-images.jianshu.io/upload_images/3352522-318f8e398c2bcac0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/01/16/Google-Inception-Net论文细读/">
+
+
+
+
+
+  <title>Google Inception Net论文细读 | 七月的风</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">七月的风</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/01/16/Google-Inception-Net论文细读/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Poemlin">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/xw.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="七月的风">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Google Inception Net论文细读</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-01-16T20:10:42+08:00">
+                2019-01-16
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/深度学习/" itemprop="url" rel="index">
+                    <span itemprop="name">深度学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="Going-deeper-with-convolutions"><a href="#Going-deeper-with-convolutions" class="headerlink" title="Going deeper with convolutions"></a>Going deeper with convolutions</h2><blockquote>
+<p>GoogleNet首次出现在ILSVRC 2014比赛中（和VGG同年），获得了当时比赛的第一名。使用了Inception的结构，当时比赛的版本叫做Inception V1。inception结构现在已经更新了4个版本。Going deeper with convolutions这篇论文就是指的Inception V1版本。</p>
+</blockquote>
+<p><a href="https://arxiv.org/pdf/1409.4842.pdf" target="_blank" rel="noopener">论文地址</a></p>
+<h2 id="一-Abstract"><a href="#一-Abstract" class="headerlink" title="一. Abstract"></a>一. Abstract</h2><p><img src="https://upload-images.jianshu.io/upload_images/3352522-318f8e398c2bcac0.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="abstract"><br><strong>1. 该深度网络的代号为“inception”，在ImageNet大规模视觉识别挑战赛2014上，在分类和检测上都获得了好的结果。</strong><br><strong>2. 控制了计算量和参数量的同时，获得了很好的分类性能。500万的参数量只有AlexNet的1/12（6000万）。</strong></p>
+<h2 id="Inception-V1-或者说深度网络-为什么以降低参数量为目的？"><a href="#Inception-V1-或者说深度网络-为什么以降低参数量为目的？" class="headerlink" title="Inception V1(或者说深度网络)为什么以降低参数量为目的？"></a>Inception V1(或者说深度网络)为什么以降低参数量为目的？</h2><ul>
+<li>参数越多，计算压力更大，需要的计算资源越多。</li>
+<li>参数越多，模型越大，越容易过拟合。（鼓励简单模型）</li>
+<li>参数越多，模型越大，就需要更多的数据来学习，但是高质量的训练数据很宝贵。<h2 id="Inception-V1如何降低参数量的？"><a href="#Inception-V1如何降低参数量的？" class="headerlink" title="Inception V1如何降低参数量的？"></a>Inception V1如何降低参数量的？</h2></li>
+<li>用全局平均池化层代替了全连接（VGG中全连接层的参数占据了90%的参数量）</li>
+<li>大量1×1的卷积核的使用</li>
+</ul>
+<p><strong>3. Inception Net整体结构受Hebbian原理的启发，并且充满了multi-scale的思想。</strong></p>
+<h2 id="二-Motivation-and-High-Level-Considerations"><a href="#二-Motivation-and-High-Level-Considerations" class="headerlink" title="二. Motivation and High Level Considerations"></a>二. Motivation and High Level Considerations</h2><p><img src="https://upload-images.jianshu.io/upload_images/3352522-944398c86d1414c2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Motivation and High Level Considerations"></p>
+<h2 id="Inception-Net设计的思考是什么？-好的深度网络有哪些设计原则"><a href="#Inception-Net设计的思考是什么？-好的深度网络有哪些设计原则" class="headerlink" title="Inception Net设计的思考是什么？(好的深度网络有哪些设计原则)"></a>Inception Net设计的思考是什么？(好的深度网络有哪些设计原则)</h2><ul>
+<li><p>逐层构造网络：如果数据集的概率分布能够被一个神经网络所表达，那么构造这个网络的最佳方法是逐层构筑网络，即将上一层高度相关的节点连接在一起。几乎所有效果好的深度网络都具有这一点，不管AlexNet VGG堆叠多个卷积，googleNet堆叠多个inception模块，还是ResNet堆叠多个resblock。</p>
+</li>
+<li><p>稀疏的结构：人脑的神经元连接就是稀疏的，因此大型神经网络的合理连接方式也应该是稀疏的。稀疏的结构对于大型神经网络至关重要，可以减轻计算量并减少过拟合。 卷积操作（局部连接，权值共享）本身就是一种稀疏的结构，相比于全连接网络结构是很稀疏的。</p>
+</li>
+<li><p>符合Hebbian原理: Cells that fire together, wire together. 一起发射的神经元会连在一起。 相关性高的节点应该被连接而在一起。</p>
+</li>
+</ul>
+<p>inception中 1×1的卷积恰好可以融合三者。我们一层可能会有多个卷积核，在同一个位置但在不同通道的卷积核输出结果相关性极高。一个1×1的卷积核可以很自然的把这些相关性很高，在同一个空间位置，但不同通道的特征结合起来。而其它尺寸的卷积核（3×3，5×5）可以保证特征的多样性，因此也可以适量使用。于是，这就完成了inception module下图的设计初衷：4个分支：<br><img src="https://upload-images.jianshu.io/upload_images/3352522-9b8de6178b60f24a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="inception module"></p>
+<h2 id="New-Version比Old-version是如何减少参数量的？"><a href="#New-Version比Old-version是如何减少参数量的？" class="headerlink" title="New Version比Old version是如何减少参数量的？"></a>New Version比Old version是如何减少参数量的？</h2><ul>
+<li>1×1的卷积核和正常的滤波器完全是一样的，只不过它不再感受一个局部区域，不考虑像素与像素之间的关系。1×1的卷积本身就是不同feature channel的线性叠加。1×1的卷积最早出现在<a href="https://arxiv.org/abs/1312.4400" target="_blank" rel="noopener">Network in Network</a>这篇文章中，在Google的inception结构中也采用了大量1×1的卷积。</li>
+<li>NIN论文中解释1×1的卷积实现了多个feature map的结合，从而整合了不同通道间的信息。（个人认为这个作用并不是特点，因为其它大小的卷积核也可以实现）</li>
+<li>1×1的卷积可以实现通道数量的升维和降维。并且是低成本的特征变换（计算量比3×3小很多）。是一个性价比很高的聚合操作。怎么理解1×1是性价比很高的升降通道数的操作呢？<br>（以google inception为例）<br><img src="https://upload-images.jianshu.io/upload_images/3352522-61e40de69fe1aef2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="原始"><br><img src="https://upload-images.jianshu.io/upload_images/3352522-91fd68acfa15537a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="新"></li>
+</ul>
+<p>原始结构：<br>参数：(1×1×192×64) + (3×3×192×128) + (5×5×192×32) = 153600<br>最终输出的feature map：64+128+32+192 = 416</p>
+<p>加入不同channel的1×1卷积后：<br>参数：1×1×192×64+（1×1×192×96+3×3×96×128）+（1×1×192×16+5×5×16×32）=15872<br>最终输出的feature map： 64+128+32+32=256</p>
+<p>所以加入1×1的卷积后，在降低大量运算的前提下，降低了维度。<br>降低维度也是inception module一个非常明智的举措。</p>
+<h2 id="三-GoogleNet"><a href="#三-GoogleNet" class="headerlink" title="三. GoogleNet"></a>三. GoogleNet</h2><p><img src="https://upload-images.jianshu.io/upload_images/3352522-7cdd10a4799663af.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt></p>
+<ul>
+<li>在inception module中，通常1×1的卷积比例（输出通道占比）最高，3×3和5×5的卷积稍低。</li>
+<li>在整个网络中，会有多个堆叠的inception module，希望靠后的inception module可以捕捉更高阶的抽象特征，因此靠后的inception module中，大的卷积应该占比变多。<br><img src="https://upload-images.jianshu.io/upload_images/3352522-d5397247923fe73f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="google net"><br>GoogleNet有22层深，比同年的VGG19还深。包含了9个inception module，下面是具体的结构。我试图将表格和结构图结合起来，解释整个的网络结构。<br><img src="https://upload-images.jianshu.io/upload_images/3352522-d8bb3762fa8ac827.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="googlenet"><br><strong>DepthConcat：</strong>聚合操作，在输出通道这个维度上聚合（一个inception module每个分支通道数可能不一样，但是feature map大小应该是一样的。strides=1，padding=same）<h4 id="inception-3a"><a href="#inception-3a" class="headerlink" title="inception 3a"></a>inception 3a</h4><img src="https://upload-images.jianshu.io/upload_images/3352522-e789b5125fc58e09.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="inception 3a"><br>输入：28×28×192<br>输出：由于每个分支strides=1，padding=same，所以只是通道数在变化，feature map大小不变。最终输出 28×28×256（只增加了少量通道数）<br>其它的inception module也是这种形式，可自己推算。</li>
+</ul>
+<h4 id="辅助分类器"><a href="#辅助分类器" class="headerlink" title="辅助分类器"></a>辅助分类器</h4><p><img src="https://upload-images.jianshu.io/upload_images/3352522-05d34de3f41ce95e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="classifier 1"><br><img src="https://upload-images.jianshu.io/upload_images/3352522-59b590bb4d0715b1.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="classifier 2"><br><img src="https://upload-images.jianshu.io/upload_images/3352522-8396b836d963044b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="classifier 3"><br>Google net除了最后一层输出进行分类外，其中间节点的分类效果也很好。于是，Googlenet也会将中间的某一层的输出用于分类，并按一个较小的权重（0.3）加到最终的分类结果中。</p>
+<blockquote>
+<p><strong>个人原创作品，转载需征求本人同意</strong></p>
+</blockquote>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/google-net/" rel="tag"># google net</a>
+          
+            <a href="/tags/Deep-learning/" rel="tag"># Deep_learning</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/01/16/Object-Detection-From-A-to-Z/" rel="next" title="Object Detection: From A to Z">
+                <i class="fa fa-chevron-left"></i> Object Detection: From A to Z
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/01/16/卷积神经网络VGG-论文细读-Tensorflow实现/" rel="prev" title="卷积神经网络VGG 论文细读 + Tensorflow实现">
+                卷积神经网络VGG 论文细读 + Tensorflow实现 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/xw.jpg" alt="Poemlin">
+            
+              <p class="site-author-name" itemprop="name">Poemlin</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">39</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">12</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">36</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Going-deeper-with-convolutions"><span class="nav-number">1.</span> <span class="nav-text">Going deeper with convolutions</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#一-Abstract"><span class="nav-number">2.</span> <span class="nav-text">一. Abstract</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Inception-V1-或者说深度网络-为什么以降低参数量为目的？"><span class="nav-number">3.</span> <span class="nav-text">Inception V1(或者说深度网络)为什么以降低参数量为目的？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Inception-V1如何降低参数量的？"><span class="nav-number">4.</span> <span class="nav-text">Inception V1如何降低参数量的？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二-Motivation-and-High-Level-Considerations"><span class="nav-number">5.</span> <span class="nav-text">二. Motivation and High Level Considerations</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Inception-Net设计的思考是什么？-好的深度网络有哪些设计原则"><span class="nav-number">6.</span> <span class="nav-text">Inception Net设计的思考是什么？(好的深度网络有哪些设计原则)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#New-Version比Old-version是如何减少参数量的？"><span class="nav-number">7.</span> <span class="nav-text">New Version比Old version是如何减少参数量的？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#三-GoogleNet"><span class="nav-number">8.</span> <span class="nav-text">三. GoogleNet</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#inception-3a"><span class="nav-number">8.0.1.</span> <span class="nav-text">inception 3a</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#辅助分类器"><span class="nav-number">8.0.2.</span> <span class="nav-text">辅助分类器</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">&copy; 2018 &mdash; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-snowflake-o"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Poemlin</span>
+
+  
+</div>
+<div class="powered-by">
+<i class="fa fa-user-md"></i><span id="busuanzi_container_site_uv">
+  本站访客数:<span id="busuanzi_value_site_pv"></span>
+</span>
+</div>
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Deep_learning,Object_detection,Tensorflow,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="前面的文章我们讲了Detection API的安装，并且测试了官方训练好的模型，但是实际需求中，我们需要训练自己的数据集去检测我们需要检测的目标，这些目标很大概率不在官方训练的数据集里。即使在，实际需求中的目标形态更加多样。所以我们需要自己采集数据，自己制作标签，再送入模型训练我们采集制作的数据的检测模型。这里我的训练环境是：Centos7 + 1080ti + anconda3.6 + tens">
+<meta name="keywords" content="Deep_learning,Object_detection,Tensorflow">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Detection API 训练测试自己的数据集">
+<meta property="og:url" content="http://yoursite.com/2019/01/28/Detection-API-训练测试自己的数据集/index.html">
+<meta property="og:site_name" content="七月的风">
+<meta property="og:description" content="前面的文章我们讲了Detection API的安装，并且测试了官方训练好的模型，但是实际需求中，我们需要训练自己的数据集去检测我们需要检测的目标，这些目标很大概率不在官方训练的数据集里。即使在，实际需求中的目标形态更加多样。所以我们需要自己采集数据，自己制作标签，再送入模型训练我们采集制作的数据的检测模型。这里我的训练环境是：Centos7 + 1080ti + anconda3.6 + tens">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://i.loli.net/2019/02/26/5c74dc746a6d6.png">
+<meta property="og:image" content="https://i.loli.net/2019/02/26/5c74d79614da1.png">
+<meta property="og:image" content="https://i.loli.net/2019/02/26/5c74e1d09a51f.png">
+<meta property="og:image" content="https://i.loli.net/2019/02/26/5c74e224d9e8a.png">
+<meta property="og:image" content="https://i.loli.net/2019/02/26/5c74e23085231.png">
+<meta property="og:image" content="https://i.loli.net/2019/02/26/5c74d797c62c7.png">
+<meta property="og:image" content="https://i.loli.net/2019/02/26/5c74d7bc88b7e.png">
+<meta property="og:image" content="https://i.loli.net/2019/02/26/5c74e6b8c8e3f.png">
+<meta property="og:image" content="https://i.loli.net/2019/02/26/5c74e6bc312b9.png">
+<meta property="og:image" content="https://i.loli.net/2019/02/26/5c74e236c1d8d.png">
+<meta property="og:image" content="https://i.loli.net/2019/02/26/5c74e2d1cc090.png">
+<meta property="og:image" content="https://i.loli.net/2019/02/26/5c74d7baacbd0.png">
+<meta property="og:image" content="https://i.loli.net/2019/02/26/5c74e65c47eab.png">
+<meta property="og:image" content="https://i.loli.net/2019/02/26/5c74e6f1c5eed.png">
+<meta property="og:image" content="https://i.loli.net/2019/02/26/5c74e7240aea8.png">
+<meta property="og:image" content="https://i.loli.net/2019/02/26/5c74e74f2d36a.png">
+<meta property="og:updated_time" content="2019-02-26T07:18:13.204Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Detection API 训练测试自己的数据集">
+<meta name="twitter:description" content="前面的文章我们讲了Detection API的安装，并且测试了官方训练好的模型，但是实际需求中，我们需要训练自己的数据集去检测我们需要检测的目标，这些目标很大概率不在官方训练的数据集里。即使在，实际需求中的目标形态更加多样。所以我们需要自己采集数据，自己制作标签，再送入模型训练我们采集制作的数据的检测模型。这里我的训练环境是：Centos7 + 1080ti + anconda3.6 + tens">
+<meta name="twitter:image" content="https://i.loli.net/2019/02/26/5c74dc746a6d6.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/01/28/Detection-API-训练测试自己的数据集/">
+
+
+
+
+
+  <title>Detection API 训练测试自己的数据集 | 七月的风</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">七月的风</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/01/28/Detection-API-训练测试自己的数据集/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Poemlin">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/xw.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="七月的风">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Detection API 训练测试自己的数据集</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-01-28T19:12:49+08:00">
+                2019-01-28
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/目标检测/" itemprop="url" rel="index">
+                    <span itemprop="name">目标检测</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>前面的文章我们讲了Detection API的安装，并且测试了官方训练好的模型，但是实际需求中，我们需要训练自己的数据集去检测我们需要检测的目标，这些目标很大概率不在官方训练的数据集里。即使在，实际需求中的目标形态更加多样。所以我们需要自己采集数据，自己制作标签，再送入模型训练我们采集制作的数据的检测模型。这里我的训练环境是：Centos7 + 1080ti + anconda3.6 + tensorflow1.4</p>
+<h2 id="制作数据集"><a href="#制作数据集" class="headerlink" title="制作数据集"></a>制作数据集</h2><h4 id="1-采集数据"><a href="#1-采集数据" class="headerlink" title="1. 采集数据"></a>1. 采集数据</h4><p>根据实际项目需求，需要检测的物体只有一类：挖掘机（目标检测不限定类数，多类和单类训练测试过程完全相同），我们根据视频截取相应帧（这里可以使用python的opencv库，编写代码，利用cv2读取视频，截取视频帧）保存，同时数据集里还有网上爬取的一些照片，总共3572张。<br><img src="https://i.loli.net/2019/02/26/5c74dc746a6d6.png" alt></p>
+<h4 id="2-PASCAL-VOC数据集格式"><a href="#2-PASCAL-VOC数据集格式" class="headerlink" title="2.PASCAL VOC数据集格式"></a>2.PASCAL VOC数据集格式</h4><p>因为Detection API里的代码都是根据VOC数据集编写的，为了复用这些代码，做到最小的改动，我们需要将数据集改造成和VOC数据集一样的格式。VOC数据集的下载地址是：<a href="http://host.robots.ox.ac.uk/pascal/VOC/voc2012/VOCtrainval_11-May-2012.tar" target="_blank" rel="noopener">http://host.robots.ox.ac.uk/pascal/VOC/voc2012/VOCtrainval_11-May-2012.tar</a>  VOC原始结构如下所示。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">VOC2012/</span><br><span class="line">    Annotations/</span><br><span class="line">        2007_000027.xml</span><br><span class="line">        2007_000032.xml</span><br><span class="line">        2007_000033.xml</span><br><span class="line">        ...</span><br><span class="line">    ImageSets/</span><br><span class="line">        Action/</span><br><span class="line">        Layoyt/</span><br><span class="line">        Main/</span><br><span class="line">        Segmentation/</span><br><span class="line">    JPEGImages/</span><br><span class="line">        2007_000027.jpg</span><br><span class="line">        2007_000032.jpg</span><br><span class="line">        2007_000033.jpg</span><br><span class="line">        ...</span><br><span class="line">    SegmentationClass/</span><br><span class="line">    SegmentationObject/</span><br></pre></td></tr></table></figure></p>
+<p><img src="https://i.loli.net/2019/02/26/5c74d79614da1.png" alt><br>VOC数据集是一个多个任务都会使用的数据集，目标检测只是其中一个任务，制作目标检测的数据集时，只需要创建三个文件夹，Annotations（xml标注信息，每张图片一个，且和图片同名），ImageSets（划分训练 验证和测试的信息）和JPEGImages（实际jpg图片）。同时ImageSets下我们只需要：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">ImageSets/</span><br><span class="line">    Main/</span><br><span class="line">        test.txt</span><br><span class="line">        train.txt</span><br><span class="line">        trainval.txt</span><br><span class="line">        val.txt</span><br><span class="line"></span><br><span class="line"># 这四个txt都需要自己制作</span><br></pre></td></tr></table></figure></p>
+<h4 id="3-JPEGImages文件夹"><a href="#3-JPEGImages文件夹" class="headerlink" title="3. JPEGImages文件夹"></a>3. JPEGImages文件夹</h4><p>将采集的图片全部拷贝到这个文件夹内，注意不能有脏数据。同时文件名的格式是000001.jpg,000002.jpg,000003.jpg…(有相应matlab代码)<br><img src="https://i.loli.net/2019/02/26/5c74e1d09a51f.png" alt></p>
+<h4 id="4-Annotations文件夹"><a href="#4-Annotations文件夹" class="headerlink" title="4. Annotations文件夹"></a>4. Annotations文件夹</h4><p>这里记录了图片的标注信息，每个xml记录了一张图片的名称，大侠，每一个bounding box的位置，类别。标注工具网上有开源工具（<a href="https://tzutalin.github.io/labelImg/）" target="_blank" rel="noopener">https://tzutalin.github.io/labelImg/）</a> ，非常方便和简单。特别是我的数据集是单类的，可以设置默认标签，不需要一个个点。注意xml信息要保存在Annotations文件夹下。<br><img src="https://i.loli.net/2019/02/26/5c74e224d9e8a.png" alt></p>
+<h4 id="5-Main文件夹下的四个txt文件"><a href="#5-Main文件夹下的四个txt文件" class="headerlink" title="5. Main文件夹下的四个txt文件"></a>5. Main文件夹下的四个txt文件</h4><p>这里是分开测试验证和训练数据集的文件，修改下面代码的两个percent参数可以自动生成这四个文件<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">import os</span><br><span class="line">import random</span><br><span class="line"> </span><br><span class="line">trainval_percent = 0.66</span><br><span class="line">train_percent = 0.5</span><br><span class="line">xmlfilepath = &apos;Annotations&apos;</span><br><span class="line">txtsavepath = &apos;ImageSets\Main&apos;</span><br><span class="line">total_xml = os.listdir(xmlfilepath)</span><br><span class="line">print(total_xml)</span><br><span class="line">num=len(total_xml)</span><br><span class="line">list=range(num)</span><br><span class="line">tv=int(num*trainval_percent)</span><br><span class="line">tr=int(tv*train_percent)</span><br><span class="line">trainval= random.sample(list,tv)</span><br><span class="line">train=random.sample(trainval,tr)</span><br><span class="line"> </span><br><span class="line">ftrainval = open(&apos;ImageSets/Main/trainval.txt&apos;, &apos;w&apos;)</span><br><span class="line">ftest = open(&apos;ImageSets/Main/test.txt&apos;, &apos;w&apos;)</span><br><span class="line">ftrain = open(&apos;ImageSets/Main/train.txt&apos;, &apos;w&apos;)</span><br><span class="line">fval = open(&apos;ImageSets/Main/val.txt&apos;, &apos;w&apos;)</span><br><span class="line"> </span><br><span class="line">for i  in list:</span><br><span class="line">    name=total_xml[i][:-4]+&apos;\n&apos;</span><br><span class="line">    if i in trainval:</span><br><span class="line">        ftrainval.write(name)</span><br><span class="line">        if i in train:</span><br><span class="line">            ftrain.write(name)</span><br><span class="line">        else:</span><br><span class="line">            fval.write(name)</span><br><span class="line">    else:</span><br><span class="line">        ftest.write(name)</span><br><span class="line"> </span><br><span class="line">ftrainval.close()</span><br><span class="line">ftrain.close()</span><br><span class="line">fval.close()</span><br><span class="line">ftest .close()</span><br></pre></td></tr></table></figure></p>
+<h4 id="6-最终数据集形式"><a href="#6-最终数据集形式" class="headerlink" title="6.最终数据集形式"></a>6.最终数据集形式</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">VOC_digger/</span><br><span class="line">    Annotations/</span><br><span class="line">        000001.xml</span><br><span class="line">        000002.xml</span><br><span class="line">        000003.xml</span><br><span class="line">        ...</span><br><span class="line">    ImageSets/</span><br><span class="line">        Main/</span><br><span class="line">            test.txt</span><br><span class="line">            train.txt</span><br><span class="line">            trainval.txt</span><br><span class="line">            val.txt</span><br><span class="line">    JPEGImages/</span><br><span class="line">        000001.jpg</span><br><span class="line">        000002.jpg</span><br><span class="line">        000003.jpg</span><br><span class="line">        ...</span><br></pre></td></tr></table></figure>
+<h2 id="数据集加入Detection-API，并制作tfrecord"><a href="#数据集加入Detection-API，并制作tfrecord" class="headerlink" title="数据集加入Detection API，并制作tfrecord"></a>数据集加入Detection API，并制作tfrecord</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">cd object_detection</span><br><span class="line">mkdir digger_detection</span><br><span class="line">cd digger_detection</span><br><span class="line">mkdir dataset</span><br><span class="line">cd ..</span><br><span class="line">cp /data/minglin/VOC_digger digger_detection/dataset/</span><br><span class="line">cp create_pascal_tf_record.py digger_detection/dataset/VOC_digger/</span><br><span class="line">cp data/pascal_label_map.pbtxt digger_detection/dataset/VOC_digger/</span><br><span class="line">cp -r utils/ digger_detection/</span><br><span class="line">cp export_inference_graph.py digger_detection/</span><br><span class="line">cp samples/configs/faster_rcnn_inception_resnet_v2_atrous_coco.config digger_detection/</span><br><span class="line">cp train.py digger_detection/</span><br><span class="line">cp eval.py digger_detection/</span><br><span class="line">cp tutorial.py digger_detection/</span><br><span class="line">mkdir frozen_graph</span><br><span class="line">mkdir pretrained_models</span><br><span class="line">mkdir train</span><br><span class="line">mkdir test_images</span><br><span class="line">mkdir results</span><br><span class="line">cd digger_detection/dataset/VOC_digger/</span><br><span class="line">mkdir tfrecord</span><br></pre></td></tr></table></figure>
+<p>最终项目结构（object_detection文件夹内）</p>
+<p><img src="https://i.loli.net/2019/02/26/5c74e23085231.png" alt></p>
+<p>在创建tfrecord之前，1. 我们需要对pascal_label_map.pbtxt修改，这个文件是类别和index映射文件，需要修改成我们自己的类别<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">item &#123;</span><br><span class="line">  id: 1</span><br><span class="line">  name: &apos;digger&apos;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>2.修改create_pascal_tf_record.py文件<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br></pre></td><td class="code"><pre><span class="line">SETS = [&apos;train&apos;, &apos;val&apos;, &apos;trainval&apos;, &apos;test&apos;]</span><br><span class="line"># 增加自己的数据集名称</span><br><span class="line">YEARS = [&apos;VOC2007&apos;, &apos;VOC2012&apos;, &apos;merged&apos;, &apos;VOC_digger&apos;]</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def dict_to_tf_example(data,</span><br><span class="line">                       dataset_directory,</span><br><span class="line">                       label_map_dict,</span><br><span class="line">                       ignore_difficult_instances=False,</span><br><span class="line">                       image_subdirectory=&apos;JPEGImages&apos;):</span><br><span class="line">  # 这里需要自己反复调试，因为不同人不同的数据组织结构</span><br><span class="line">  # xml内名字有没有.jpg区别于这里+‘.jpg’</span><br><span class="line">  # data[&apos;folder&apos;]-&gt;VOC2007 data[&apos;filename&apos;]-&gt;00001 duiyin xml</span><br><span class="line">  img_path = os.path.join(&apos;VOC_digger&apos;, image_subdirectory,data[&apos;filename&apos;]+&apos;.jpg&apos;)</span><br><span class="line">  full_path = os.path.join(dataset_directory, img_path)</span><br><span class="line">  # 输出文件全名检测，无误后再注释掉</span><br><span class="line">  # print(&apos;full_path&apos;, full_path)</span><br><span class="line">  with tf.gfile.GFile(full_path, &apos;rb&apos;) as fid:</span><br><span class="line">    encoded_jpg = fid.read()</span><br><span class="line">  encoded_jpg_io = io.BytesIO(encoded_jpg)</span><br><span class="line">  image = PIL.Image.open(encoded_jpg_io)</span><br><span class="line">  if image.format != &apos;JPEG&apos;:</span><br><span class="line">    raise ValueError(&apos;Image format not JPEG&apos;)</span><br><span class="line">  key = hashlib.sha256(encoded_jpg).hexdigest()</span><br><span class="line"></span><br><span class="line">  width = int(data[&apos;size&apos;][&apos;width&apos;])</span><br><span class="line">  height = int(data[&apos;size&apos;][&apos;height&apos;])</span><br><span class="line"></span><br><span class="line">  xmin = []</span><br><span class="line">  ymin = []</span><br><span class="line">  xmax = []</span><br><span class="line">  ymax = []</span><br><span class="line">  classes = []</span><br><span class="line">  classes_text = []</span><br><span class="line">  truncated = []</span><br><span class="line">  poses = []</span><br><span class="line">  difficult_obj = []</span><br><span class="line">  for obj in data[&apos;object&apos;]:</span><br><span class="line">    difficult = bool(int(obj[&apos;difficult&apos;]))</span><br><span class="line">    if ignore_difficult_instances and difficult:</span><br><span class="line">      continue</span><br><span class="line"></span><br><span class="line">    difficult_obj.append(int(difficult))</span><br><span class="line"></span><br><span class="line">    xmin.append(float(obj[&apos;bndbox&apos;][&apos;xmin&apos;]) / width)</span><br><span class="line">    ymin.append(float(obj[&apos;bndbox&apos;][&apos;ymin&apos;]) / height)</span><br><span class="line">    xmax.append(float(obj[&apos;bndbox&apos;][&apos;xmax&apos;]) / width)</span><br><span class="line">    ymax.append(float(obj[&apos;bndbox&apos;][&apos;ymax&apos;]) / height)</span><br><span class="line">    classes_text.append(obj[&apos;name&apos;].encode(&apos;utf8&apos;))</span><br><span class="line">    classes.append(label_map_dict[obj[&apos;name&apos;]])</span><br><span class="line">    truncated.append(int(obj[&apos;truncated&apos;]))</span><br><span class="line">    poses.append(obj[&apos;pose&apos;].encode(&apos;utf8&apos;))</span><br><span class="line"></span><br><span class="line">  example = tf.train.Example(features=tf.train.Features(feature=&#123;</span><br><span class="line">      &apos;image/height&apos;: dataset_util.int64_feature(height),</span><br><span class="line">      &apos;image/width&apos;: dataset_util.int64_feature(width),</span><br><span class="line">      &apos;image/filename&apos;: dataset_util.bytes_feature(</span><br><span class="line">          data[&apos;filename&apos;].encode(&apos;utf8&apos;)),</span><br><span class="line">      &apos;image/source_id&apos;: dataset_util.bytes_feature(</span><br><span class="line">          data[&apos;filename&apos;].encode(&apos;utf8&apos;)),</span><br><span class="line">      &apos;image/key/sha256&apos;: dataset_util.bytes_feature(key.encode(&apos;utf8&apos;)),</span><br><span class="line">      &apos;image/encoded&apos;: dataset_util.bytes_feature(encoded_jpg),</span><br><span class="line">      &apos;image/format&apos;: dataset_util.bytes_feature(&apos;jpeg&apos;.encode(&apos;utf8&apos;)),</span><br><span class="line">      &apos;image/object/bbox/xmin&apos;: dataset_util.float_list_feature(xmin),</span><br><span class="line">      &apos;image/object/bbox/xmax&apos;: dataset_util.float_list_feature(xmax),</span><br><span class="line">      &apos;image/object/bbox/ymin&apos;: dataset_util.float_list_feature(ymin),</span><br><span class="line">      &apos;image/object/bbox/ymax&apos;: dataset_util.float_list_feature(ymax),</span><br><span class="line">      &apos;image/object/class/text&apos;: dataset_util.bytes_list_feature(classes_text),</span><br><span class="line">      &apos;image/object/class/label&apos;: dataset_util.int64_list_feature(classes),</span><br><span class="line">      &apos;image/object/difficult&apos;: dataset_util.int64_list_feature(difficult_obj),</span><br><span class="line">      &apos;image/object/truncated&apos;: dataset_util.int64_list_feature(truncated),</span><br><span class="line">      &apos;image/object/view&apos;: dataset_util.bytes_list_feature(poses),</span><br><span class="line">  &#125;))</span><br><span class="line">  return example</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def main(_):</span><br><span class="line">  if FLAGS.set not in SETS:</span><br><span class="line">    raise ValueError(&apos;set must be in : &#123;&#125;&apos;.format(SETS))</span><br><span class="line">  if FLAGS.year not in YEARS:</span><br><span class="line">    raise ValueError(&apos;year must be in : &#123;&#125;&apos;.format(YEARS))</span><br><span class="line"></span><br><span class="line">  data_dir = FLAGS.data_dir</span><br><span class="line">  # 增加</span><br><span class="line">  years = [&apos;VOC2007&apos;, &apos;VOC2012&apos;, &apos;VOC_digger&apos;]</span><br><span class="line">  if FLAGS.year != &apos;merged&apos;:</span><br><span class="line">    years = [FLAGS.year]</span><br><span class="line">  print(&apos;................&apos;)</span><br><span class="line">  writer = tf.python_io.TFRecordWriter(FLAGS.output_path)</span><br><span class="line"></span><br><span class="line">  label_map_dict = label_map_util.get_label_map_dict(FLAGS.label_map_path)</span><br><span class="line"></span><br><span class="line">  for year in years:</span><br><span class="line">    logging.info(&apos;Reading from PASCAL %s dataset.&apos;, year)</span><br><span class="line">    # 修改使用那四个txt，原始是xx_train.txt</span><br><span class="line">    examples_path = os.path.join(data_dir, year, &apos;ImageSets&apos;, &apos;Main/&apos;</span><br><span class="line">                                 + FLAGS.set + &apos;.txt&apos;)</span><br><span class="line">    annotations_dir = os.path.join(data_dir, year, FLAGS.annotations_dir)</span><br><span class="line">    examples_list = dataset_util.read_examples_list(examples_path)</span><br><span class="line">    print(&apos;length of eval&apos;,len(examples_list))</span><br><span class="line">    for idx, example in enumerate(examples_list):</span><br><span class="line">      if idx % 100 == 0:</span><br><span class="line">        logging.info(&apos;On image %d of %d&apos;, idx, len(examples_list))</span><br><span class="line">      path = os.path.join(annotations_dir, example + &apos;.xml&apos;)</span><br><span class="line">      with tf.gfile.GFile(path, &apos;r&apos;) as fid:</span><br><span class="line">        xml_str = fid.read()</span><br><span class="line">      xml = etree.fromstring(xml_str)</span><br><span class="line">      data = dataset_util.recursive_parse_xml_to_dict(xml)[&apos;annotation&apos;]</span><br><span class="line"></span><br><span class="line">      tf_example = dict_to_tf_example(data, FLAGS.data_dir, label_map_dict,</span><br><span class="line">                                      FLAGS.ignore_difficult_instances)</span><br><span class="line">      writer.write(tf_example.SerializeToString())</span><br></pre></td></tr></table></figure></p>
+<p>3.执行程序生成tfrecord到record文件夹内<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">CUDA_VISIBLE_DEVICES=6 python dataset/create_pascal_tf_record.py \</span><br><span class="line">--data_dir=/dataset \ </span><br><span class="line">--year=VOC_digger \</span><br><span class="line">--set=train \</span><br><span class="line">--output_path=/dataset/VOC_digger/record/pascal_train.record</span><br><span class="line">--label_map_path=/dataset/pascal_label_map.pbtxt</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">CUDA_VISIBLE_DEVICES=6 python dataset/create_pascal_tf_record.py \</span><br><span class="line">--data_dir=/dataset \ </span><br><span class="line">--year=VOC_digger \</span><br><span class="line">--set=val \</span><br><span class="line">--output_path=/dataset/VOC_digger/record/pascal_val.record</span><br><span class="line">--label_map_path=/dataset/pascal_label_map.pbtxt</span><br></pre></td></tr></table></figure>
+<p>运行时我出过很多错，大抵都是文件路径的问题，可以通过 # print(‘full_path’, full_path)修改代码，同时建议上面的运行命令直接使用绝对路径，而非相对路径。</p>
+<p>执行成功后，record文件夹内会生成两个文件：</p>
+<p><img src="https://i.loli.net/2019/02/26/5c74d797c62c7.png" alt></p>
+<h2 id="修改配置文件，执行训练过程"><a href="#修改配置文件，执行训练过程" class="headerlink" title="修改配置文件，执行训练过程"></a>修改配置文件，执行训练过程</h2><p>我们这里使用的时faster rcnn + inception_resnet_v2的检测模型，我们需要下载coco上与训练好的模型作为初始参数 （http: //download.tensorflow.org/models/object_detection/faster_rcnn_inception_resnet_v2_atrous coco_ll _06_2017.tar.gz ）<br>解压后将该模型放入pretrained_models文件夹内</p>
+<p><img src="https://i.loli.net/2019/02/26/5c74d7bc88b7e.png" alt></p>
+<p>训练过程是依赖于配置文件的，我们到sample/configs里找到相应模型的配置文件，复制到这里，voc.config 一共有·7处需要修改的地方：第一处为 num classes ，需要将包修改为 voc2012中的物体类别数，即1类。·第二处为eval_config 中的 num_examples，表示在验证阶段需要执行的图片数量，修改为我们验证集的图片数480 （可以在create_pascal_tf_record.py 中，输出对应的 examples_list的长度，就可以知道这个大小）。还有5处为所高含有PATH TO BE CONFIGURED的地方。这些地方需要修改为自己的目录。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br></pre></td><td class="code"><pre><span class="line">model &#123;</span><br><span class="line">  faster_rcnn &#123;</span><br><span class="line">    num_classes: 1</span><br><span class="line">    image_resizer &#123;</span><br><span class="line">      keep_aspect_ratio_resizer &#123;</span><br><span class="line">        min_dimension: 300</span><br><span class="line">        max_dimension: 512</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    feature_extractor &#123;</span><br><span class="line">      type: &apos;faster_rcnn_inception_resnet_v2&apos;</span><br><span class="line">      first_stage_features_stride: 8</span><br><span class="line">    &#125;</span><br><span class="line">    first_stage_anchor_generator &#123;</span><br><span class="line">      grid_anchor_generator &#123;</span><br><span class="line">        scales: [0.25, 0.5, 1.0, 2.0]</span><br><span class="line">        aspect_ratios: [0.5, 1.0, 2.0]</span><br><span class="line">        height_stride: 8</span><br><span class="line">        width_stride: 8</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    first_stage_atrous_rate: 2</span><br><span class="line">    first_stage_box_predictor_conv_hyperparams &#123;</span><br><span class="line">      op: CONV</span><br><span class="line">      regularizer &#123;</span><br><span class="line">        l2_regularizer &#123;</span><br><span class="line">          weight: 0.0</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">      initializer &#123;</span><br><span class="line">        truncated_normal_initializer &#123;</span><br><span class="line">          stddev: 0.01</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    first_stage_nms_score_threshold: 0.0</span><br><span class="line">    first_stage_nms_iou_threshold: 0.7</span><br><span class="line">    first_stage_max_proposals: 300</span><br><span class="line">    first_stage_localization_loss_weight: 2.0</span><br><span class="line">    first_stage_objectness_loss_weight: 1.0</span><br><span class="line">    initial_crop_size: 17</span><br><span class="line">    maxpool_kernel_size: 1</span><br><span class="line">    maxpool_stride: 1</span><br><span class="line">    second_stage_box_predictor &#123;</span><br><span class="line">      mask_rcnn_box_predictor &#123;</span><br><span class="line">        use_dropout: false</span><br><span class="line">        dropout_keep_probability: 1.0</span><br><span class="line">        fc_hyperparams &#123;</span><br><span class="line">          op: FC</span><br><span class="line">          regularizer &#123;</span><br><span class="line">            l2_regularizer &#123;</span><br><span class="line">              weight: 0.0</span><br><span class="line">            &#125;</span><br><span class="line">          &#125;</span><br><span class="line">          initializer &#123;</span><br><span class="line">            variance_scaling_initializer &#123;</span><br><span class="line">              factor: 1.0</span><br><span class="line">              uniform: true</span><br><span class="line">              mode: FAN_AVG</span><br><span class="line">            &#125;</span><br><span class="line">          &#125;</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    second_stage_post_processing &#123;</span><br><span class="line">      batch_non_max_suppression &#123;</span><br><span class="line">        score_threshold: 0.0</span><br><span class="line">        iou_threshold: 0.6</span><br><span class="line">        max_detections_per_class: 100</span><br><span class="line">        max_total_detections: 100</span><br><span class="line">      &#125;</span><br><span class="line">      score_converter: SOFTMAX</span><br><span class="line">    &#125;</span><br><span class="line">    second_stage_localization_loss_weight: 2.0</span><br><span class="line">    second_stage_classification_loss_weight: 1.0</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">train_config: &#123;</span><br><span class="line">  batch_size: 2</span><br><span class="line">  optimizer &#123;</span><br><span class="line">    momentum_optimizer: &#123;</span><br><span class="line">      learning_rate: &#123;</span><br><span class="line">        manual_step_learning_rate &#123;</span><br><span class="line">          initial_learning_rate: 0.0003</span><br><span class="line">          schedule &#123;</span><br><span class="line">            step: 0</span><br><span class="line">            learning_rate: .0003</span><br><span class="line">          &#125;</span><br><span class="line">          schedule &#123;</span><br><span class="line">            step: 9000</span><br><span class="line">            learning_rate: .00003</span><br><span class="line">          &#125;</span><br><span class="line">          schedule &#123;</span><br><span class="line">            step: 12000</span><br><span class="line">            learning_rate: .000003</span><br><span class="line">          &#125;</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">      momentum_optimizer_value: 0.9</span><br><span class="line">    &#125;</span><br><span class="line">    use_moving_average: false</span><br><span class="line">  &#125;</span><br><span class="line">  gradient_clipping_by_norm: 10.0</span><br><span class="line">  fine_tune_checkpoint: &quot;pretrained_models/faster_rcnn_inception_resnet_v2_atrous_coco_11_06_2017/model.ckpt&quot;</span><br><span class="line">  from_detection_checkpoint: true</span><br><span class="line">  # Note: The below line limits the training process to 200K steps, which we</span><br><span class="line">  # empirically found to be sufficient enough to train the pets dataset. This</span><br><span class="line">  # effectively bypasses the learning rate schedule (the learning rate will</span><br><span class="line">  # never decay). Remove the below line to train indefinitely.</span><br><span class="line">  num_steps: 20000</span><br><span class="line">  data_augmentation_options &#123;</span><br><span class="line">    random_horizontal_flip &#123;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">train_input_reader: &#123;</span><br><span class="line">  tf_record_input_reader &#123;</span><br><span class="line">    input_path: &quot;dataset/VOC_digger/record/pascal_train.record&quot;</span><br><span class="line">  &#125;</span><br><span class="line">  label_map_path: &quot;dataset/pascal_label_map.pbtxt&quot;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">eval_config: &#123;</span><br><span class="line">  num_examples: 247</span><br><span class="line">  # Note: The below line limits the evaluation process to 10 evaluations.</span><br><span class="line">  # Remove the below line to evaluate indefinitely.</span><br><span class="line">  max_evals: 10</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">eval_input_reader: &#123;</span><br><span class="line">  tf_record_input_reader &#123;</span><br><span class="line">    input_path: &quot;dataset/VOC_digger/record/pascal_val.record&quot;</span><br><span class="line">  &#125;</span><br><span class="line">  label_map_path: &quot;dataset/pascal_label_map.pbtxt&quot;</span><br><span class="line">  shuffle: false</span><br><span class="line">  num_readers: 1</span><br><span class="line">  num_epochs: 1</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>运行train.py文件进行训练<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python train.py --traiη＿dir train/ --pipeline_config_path faster_rcnn_inception_resnet_v2_atrous_coco.config</span><br></pre></td></tr></table></figure></p>
+<p><img src="https://i.loli.net/2019/02/26/5c74e6b8c8e3f.png" alt><br><img src="https://i.loli.net/2019/02/26/5c74e6bc312b9.png" alt><br>训练过程保存在train中，可以打开tensorboard 观察训练过程<br>最终loss情况：<br><img src="https://i.loli.net/2019/02/26/5c74e236c1d8d.png" alt><br>最终模型：<br><img src="https://i.loli.net/2019/02/26/5c74e2d1cc090.png" alt></p>
+<h2 id="测试我们的模型"><a href="#测试我们的模型" class="headerlink" title="测试我们的模型"></a>测试我们的模型</h2><p>在test_images下我们可以放入我们要测试的图片，运行上一篇文章我们写好的tutorial.py进行测试，在测试前，我们需要运行export_inference_graph.py将参数和模型融合成pb文件，<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">python export_inference_graph.py \</span><br><span class="line">--input_type image_tensor \</span><br><span class="line">--pipeline_config_path faster_rcnn_inception_resnet_v2_atrous_coco.config</span><br><span class="line">--trained_checkpoint_prefix train/model.ckpt-200000</span><br><span class="line">--output_directory frozen_graph</span><br></pre></td></tr></table></figure></p>
+<p><img src="https://i.loli.net/2019/02/26/5c74d7baacbd0.png" alt></p>
+<p>然后修改tutorial.py(改名为test_model.py)里的pb文件和pbtxt文件位置为我们自己模型生成的位置即可进行测试。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python test_model.py</span><br></pre></td></tr></table></figure></p>
+<p>部分结果：<br><img src="https://i.loli.net/2019/02/26/5c74e65c47eab.png" alt><br><img src="https://i.loli.net/2019/02/26/5c74e6f1c5eed.png" alt><br><img src="https://i.loli.net/2019/02/26/5c74e7240aea8.png" alt><br><img src="https://i.loli.net/2019/02/26/5c74e74f2d36a.png" alt></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Deep-learning/" rel="tag"># Deep_learning</a>
+          
+            <a href="/tags/Object-detection/" rel="tag"># Object_detection</a>
+          
+            <a href="/tags/Tensorflow/" rel="tag"># Tensorflow</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/01/23/Detection-API-安装与测试/" rel="next" title="Detection API 安装与测试">
+                <i class="fa fa-chevron-left"></i> Detection API 安装与测试
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/03/28/利用slim进行图像分类/" rel="prev" title="利用slim进行图像分类识别">
+                利用slim进行图像分类识别 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/xw.jpg" alt="Poemlin">
+            
+              <p class="site-author-name" itemprop="name">Poemlin</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">39</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">12</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">36</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#制作数据集"><span class="nav-number">1.</span> <span class="nav-text">制作数据集</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-采集数据"><span class="nav-number">1.0.1.</span> <span class="nav-text">1. 采集数据</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-PASCAL-VOC数据集格式"><span class="nav-number">1.0.2.</span> <span class="nav-text">2.PASCAL VOC数据集格式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-JPEGImages文件夹"><span class="nav-number">1.0.3.</span> <span class="nav-text">3. JPEGImages文件夹</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-Annotations文件夹"><span class="nav-number">1.0.4.</span> <span class="nav-text">4. Annotations文件夹</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#5-Main文件夹下的四个txt文件"><span class="nav-number">1.0.5.</span> <span class="nav-text">5. Main文件夹下的四个txt文件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#6-最终数据集形式"><span class="nav-number">1.0.6.</span> <span class="nav-text">6.最终数据集形式</span></a></li></ol></li></ol><li class="nav-item nav-level-2"><a class="nav-link" href="#数据集加入Detection-API，并制作tfrecord"><span class="nav-number">2.</span> <span class="nav-text">数据集加入Detection API，并制作tfrecord</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#修改配置文件，执行训练过程"><span class="nav-number">3.</span> <span class="nav-text">修改配置文件，执行训练过程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#测试我们的模型"><span class="nav-number">4.</span> <span class="nav-text">测试我们的模型</span></a></li></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">&copy; 2018 &mdash; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-snowflake-o"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Poemlin</span>
+
+  
+</div>
+<div class="powered-by">
+<i class="fa fa-user-md"></i><span id="busuanzi_container_site_uv">
+  本站访客数:<span id="busuanzi_value_site_pv"></span>
+</span>
+</div>
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

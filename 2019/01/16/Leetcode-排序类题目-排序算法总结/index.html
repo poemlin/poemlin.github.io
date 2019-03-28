@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="oj,面试,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="1. Merge Sorted ArrayDescription： Easy Given two sorted integer arrays nums1 and nums2, merge nums2 into nums1 as one sorted array.   Note:You may assume that nums1 has enough space (size that is grea">
+<meta name="keywords" content="oj,面试">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Leetcode 排序类题目 排序算法总结">
+<meta property="og:url" content="http://yoursite.com/2019/01/16/Leetcode-排序类题目-排序算法总结/index.html">
+<meta property="og:site_name" content="七月的风">
+<meta property="og:description" content="1. Merge Sorted ArrayDescription： Easy Given two sorted integer arrays nums1 and nums2, merge nums2 into nums1 as one sorted array.   Note:You may assume that nums1 has enough space (size that is grea">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/3352522-26fa6d2959a9484f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2019-01-17T08:42:36.205Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Leetcode 排序类题目 排序算法总结">
+<meta name="twitter:description" content="1. Merge Sorted ArrayDescription： Easy Given two sorted integer arrays nums1 and nums2, merge nums2 into nums1 as one sorted array.   Note:You may assume that nums1 has enough space (size that is grea">
+<meta name="twitter:image" content="https://upload-images.jianshu.io/upload_images/3352522-26fa6d2959a9484f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/01/16/Leetcode-排序类题目-排序算法总结/">
+
+
+
+
+
+  <title>Leetcode 排序类题目 排序算法总结 | 七月的风</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">七月的风</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/01/16/Leetcode-排序类题目-排序算法总结/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Poemlin">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/xw.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="七月的风">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Leetcode 排序类题目 排序算法总结</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-01-16T20:05:30+08:00">
+                2019-01-16
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/数据结构与算法/" itemprop="url" rel="index">
+                    <span itemprop="name">数据结构与算法</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="1-Merge-Sorted-Array"><a href="#1-Merge-Sorted-Array" class="headerlink" title="1. Merge Sorted Array"></a>1. Merge Sorted Array</h2><h4 id="Description：-Easy"><a href="#Description：-Easy" class="headerlink" title="Description： Easy"></a>Description： Easy</h4><blockquote>
+<p>Given two sorted integer arrays nums1 and nums2, merge nums2 into nums1 as one sorted array.</p>
+</blockquote>
+<blockquote>
+<p>Note:<br>You may assume that nums1 has enough space (size that is greater or equal to m + n) to hold additional elements from nums2. The number of elements initialized in nums1 and nums2 are m and n respectively.</p>
+</blockquote>
+<h4 id="Analysis"><a href="#Analysis" class="headerlink" title="Analysis"></a>Analysis</h4><ol>
+<li>把两个有序的数组融合到一起，使融合后的数组仍然有序。并且数组1的长度是足够容纳数组2的。</li>
+<li>数组1长度长于数组2，说明我们可以在数组1上进行尾插入排序。<br>3.3个尾指针，  第一个判断条件是两个尾指针都没结束。第二个判断条件是短的没结束（ib&gt;=0)，只需要把剩余短的依次插入即可。<br>4.其实还有第三个判断，长的没结束，但是此时由于我们在长的上操作的，所以不需要任何操作，数组是有序的。<h4 id="Solution-混合尾插入排序"><a href="#Solution-混合尾插入排序" class="headerlink" title="Solution 混合尾插入排序"></a>Solution 混合尾插入排序</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">class Solution &#123;</span><br><span class="line">public:</span><br><span class="line">    void merge(vector&lt;int&gt;&amp; nums1, int m, vector&lt;int&gt;&amp; nums2, int n) &#123;</span><br><span class="line">      // l1和l2分别是nums1和nums2当前比较的指针，lcur是当前插入位置</span><br><span class="line">      int l1 = m-1, l2 = n-1, lcur = m+n-1;</span><br><span class="line">      // 一直比较，直到1或2有一个到头，2先到头无所谓，正好结束</span><br><span class="line">      while(l1 &gt;= 0 &amp;&amp; l2 &gt;=0)&#123;</span><br><span class="line">        // 注意后置--++</span><br><span class="line">        nums1[lcur--] = nums1[l1] &gt;= nums2[l2] ? nums1[l1--] : nums2[l2--];</span><br><span class="line">      &#125;</span><br><span class="line">      // 1先到头单独考虑，把nums2剩余的插入前面</span><br><span class="line">      while(l2 &gt;= 0)&#123;</span><br><span class="line">        nums1[lcur--] = nums2[l2--];</span><br><span class="line">      &#125;  </span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p><strong>tips</strong><br>1.两个判断条件 while(ia&gt;=0 &amp;&amp; ib&gt;=0); while(ib&gt;=0)<br>2.三元运算符 A[icur–] = A[ia]&gt;=B[ib] ? A[ia–]:B[ib–]</p>
+<hr>
+<hr>
+<h2 id="2-Merge-Two-Sorted-Lists"><a href="#2-Merge-Two-Sorted-Lists" class="headerlink" title="2. Merge Two Sorted Lists"></a>2. Merge Two Sorted Lists</h2><h4 id="Description：-Easy-1"><a href="#Description：-Easy-1" class="headerlink" title="Description： Easy"></a>Description： Easy</h4><p>Merge two sorted linked lists and return it as a new list. The new list should be made by splicing together the nodes of the first two lists.<br>Input: 1-&gt;2-&gt;4, 1-&gt;3-&gt;4<br>Output: 1-&gt;1-&gt;2-&gt;3-&gt;4-&gt;4</p>
+<h4 id="Analysis-1"><a href="#Analysis-1" class="headerlink" title="Analysis"></a>Analysis</h4><ol>
+<li>合并两个有序的链表。</li>
+<li>新建一个链表，比较原始两个链表，开始插入。只要两者有一个为空，则把剩余的全部插入。<h4 id="Solution"><a href="#Solution" class="headerlink" title="Solution"></a>Solution</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">class Solution &#123;</span><br><span class="line">public:</span><br><span class="line">    ListNode* mergeTwoLists(ListNode* l1, ListNode* l2) &#123;</span><br><span class="line">        // 创建一个新链表，并使用一个指针指向该链表</span><br><span class="line">        ListNode *dummy = new ListNode(-1);</span><br><span class="line">        ListNode *cur = dummy;</span><br><span class="line">        // 只要两个链表一个不为空</span><br><span class="line">        while(l1 &amp;&amp; l2)</span><br><span class="line">        &#123;</span><br><span class="line">            // 一次比较插入排序</span><br><span class="line">            if(l1-&gt;val&lt;=l2-&gt;val)</span><br><span class="line">            &#123;</span><br><span class="line">                cur-&gt;next = l1;</span><br><span class="line">                l1 = l1-&gt;next;</span><br><span class="line">            &#125;</span><br><span class="line">            else</span><br><span class="line">            &#123;</span><br><span class="line">                cur-&gt;next = l2;</span><br><span class="line">                l2 = l2-&gt;next;</span><br><span class="line">            &#125;</span><br><span class="line">            // 一次比较插入需要更新cur</span><br><span class="line">            cur = cur-&gt;next;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        // 只要有一个为空，只需要把剩下的节点直接全部插入</span><br><span class="line">        cur-&gt;next = l1?l1:l2;</span><br><span class="line">        </span><br><span class="line">        return dummy-&gt;next;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p><strong>tips</strong></p>
+<ol>
+<li>新建链表 ListNode *dummy = new ListNode(-1), 头节点是dummy</li>
+<li>判断链表是否为空，if(l1)</li>
+</ol>
+<hr>
+<hr>
+<h2 id="3-Insertion-Sort-List"><a href="#3-Insertion-Sort-List" class="headerlink" title="3.  Insertion Sort List"></a>3.  Insertion Sort List</h2><h4 id="Description："><a href="#Description：" class="headerlink" title="Description："></a>Description：</h4><p>对两个链表进行直接插入排序</p>
+<h4 id="Analysis-2"><a href="#Analysis-2" class="headerlink" title="Analysis"></a>Analysis</h4><ol>
+<li>遍历链表，一个个插入，使链表逐渐有序</li>
+<li>发现当前有序链表插入位置是关键<h4 id="Solution-1"><a href="#Solution-1" class="headerlink" title="Solution"></a>Solution</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">class Solution &#123;</span><br><span class="line">public:</span><br><span class="line">    ListNode* insertionSortList(ListNode* head) &#123;</span><br><span class="line">        // 新建链表的头节点</span><br><span class="line">        ListNode *dummy = new ListNode(-1);</span><br><span class="line">        // 遍历链表，建立新链表</span><br><span class="line">        for(ListNode *cur = head; cur!=nullptr;)</span><br><span class="line">        &#123;</span><br><span class="line">            ListNode* pos = FindInsertPos(dummy, cur-&gt;val);</span><br><span class="line">            ListNode *temp = cur-&gt;next;</span><br><span class="line">            cur-&gt;next = pos-&gt;next;</span><br><span class="line">            pos-&gt;next = cur;</span><br><span class="line">            cur = temp;</span><br><span class="line">        &#125;</span><br><span class="line">        return dummy-&gt;next;</span><br><span class="line">        </span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    // 定义找到当前有序链表内插入一个数的位置</span><br><span class="line">    ListNode* FindInsertPos(ListNode *head, int x)</span><br><span class="line">    &#123;</span><br><span class="line">        // 定义一个链表节点表示插入位置的前一个节点，因为链表只能返回next</span><br><span class="line">        ListNode *pre = nullptr;</span><br><span class="line">        // 遍历当前有序链表, 遍历都需要新建一个链表节点</span><br><span class="line">        for(ListNode *cur = head; cur!=nullptr &amp;&amp; cur-&gt;val&lt;x; pre = cur, cur = cur-&gt;next)</span><br><span class="line">            ;</span><br><span class="line">        return pre;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p><strong>tips</strong></p>
+<ol>
+<li>遍历链表需要建立新节点 for(ListNode *cur = head; cur!=nullptr;cur = cur-&gt;next)</li>
+</ol>
+<hr>
+<hr>
+<h2 id="4-Sort-List"><a href="#4-Sort-List" class="headerlink" title="4. Sort List"></a>4. Sort List</h2><h4 id="Description：-Medium"><a href="#Description：-Medium" class="headerlink" title="Description： Medium"></a>Description： Medium</h4><p>Sort a linked list in O(n log n) time using constant space complexity.<br>Example 1:</p>
+<p>Input: 4-&gt;2-&gt;1-&gt;3<br>Output: 1-&gt;2-&gt;3-&gt;4<br>Example 2:</p>
+<p>Input: -1-&gt;5-&gt;3-&gt;4-&gt;0<br>Output: -1-&gt;0-&gt;3-&gt;4-&gt;5</p>
+<h4 id="Analysis-3"><a href="#Analysis-3" class="headerlink" title="Analysis"></a>Analysis</h4><p>1.以常数空间，nlogn时间复杂度完成一个无序链表的排序。<br>2.单链表使用归并排序，双向链表使用快速排序。</p>
+<h4 id="Solution-2"><a href="#Solution-2" class="headerlink" title="Solution:"></a>Solution:</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line">class Solution &#123;</span><br><span class="line">public:</span><br><span class="line">    ListNode* sortList(ListNode* head) &#123;</span><br><span class="line">        if(head == NULL || head-&gt;next == NULL)</span><br><span class="line">            return head;</span><br><span class="line">        //使用快慢指针，找到链表中间节点</span><br><span class="line">        ListNode *fast = head, *slow = head;</span><br><span class="line">        if(fast-&gt;next != NULL &amp;&amp; fast-&gt;next-&gt;next != NULL)</span><br><span class="line">        &#123;</span><br><span class="line">            fast = fast-&gt;next-&gt;next;</span><br><span class="line">            slow = slow-&gt;next;</span><br><span class="line">        &#125;</span><br><span class="line">        // 断开两段</span><br><span class="line">        fast = slow;</span><br><span class="line">        slow = slow-&gt;next;</span><br><span class="line">        fast-&gt;next = NULL;</span><br><span class="line">        // 递归，利用本函数继续对两个分支排序</span><br><span class="line">        ListNode *l1 = sortList(head);</span><br><span class="line">        ListNode *l2 = sortList(slow);</span><br><span class="line">        // 经过上面操作后，认为两个分支是有序的，使用之前的合并两个有序链表的函数</span><br><span class="line">        return MergeTwoSortedLists(l1, l2);</span><br><span class="line">    &#125;</span><br><span class="line">    ListNode* MergeTwoSortedLists(ListNode *l1, ListNode *l2)</span><br><span class="line">    &#123;</span><br><span class="line">        ListNode *dummy = new ListNode(-1);</span><br><span class="line">        ListNode *cur = dummy;</span><br><span class="line">        while(l1 &amp;&amp; l2)</span><br><span class="line">        &#123;</span><br><span class="line">            if(l1-&gt;val&lt;=l2-&gt;val)</span><br><span class="line">            &#123;</span><br><span class="line">                cur-&gt;next = l1;</span><br><span class="line">                l1 = l1-&gt;next;</span><br><span class="line">            &#125;</span><br><span class="line">            else</span><br><span class="line">            &#123;</span><br><span class="line">                cur-&gt;next = l2;</span><br><span class="line">                l2 = l2-&gt;next;</span><br><span class="line">            &#125;</span><br><span class="line">            cur = cur-&gt;next;</span><br><span class="line">        &#125;</span><br><span class="line">        cur-&gt;next = l1?l1:l2;</span><br><span class="line">        return dummy-&gt;next;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p><strong>tips</strong></p>
+<ol>
+<li>使用快慢指针找到链表中间节点的方式。</li>
+<li>归并排序使用递归实现。</li>
+<li>归并排序前提，合并两个有序链表。</li>
+</ol>
+<hr>
+<hr>
+<blockquote>
+<p>一下都是搜集的网上的知识，并不是我的原创，收集来学习使用。</p>
+</blockquote>
+<h2 id="各类排序算法复杂度"><a href="#各类排序算法复杂度" class="headerlink" title="各类排序算法复杂度"></a>各类排序算法复杂度</h2><p><img src="https://upload-images.jianshu.io/upload_images/3352522-26fa6d2959a9484f.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt><br><strong>时间复杂度</strong></p>
+<ol>
+<li>平均情况下：快(快速排序)些(希尔排序)以“nlogn”的速度归(归并排序)队(堆排序)！其它n^2</li>
+<li>最坏情况下：快速排序n^2，其他和平均情况一样。</li>
+</ol>
+<p><strong>空间复杂度</strong></p>
+<ol>
+<li>快速排序logn</li>
+<li>归并排序n</li>
+<li>其它1</li>
+</ol>
+<p><strong>稳定性</strong><br>快(快速排序)些(希尔排序)选(简单选择)一堆(堆排序)好友聊天！（不稳定）</p>
+<hr>
+<hr>
+<h2 id="各类排序算法总结实现"><a href="#各类排序算法总结实现" class="headerlink" title="各类排序算法总结实现"></a>各类排序算法总结实现</h2><p>#####插入排序</p>
+<ol>
+<li>基本思想： 每一步将一个待排序的元素，按其排序码的大小，插入到前面已经排好序的一组元素的合适位置上去，直到元素全部插完为止。 </li>
+<li>当插入第i(i&gt;=1)个元素时，前面的array[0],array[1],…,array[i-1]<strong>已经<br>排好序</strong></li>
+<li>此时用array[i]的排序码与array[i-1],array[i-2],…的排序码顺序 进行比较，找到插入位置即将array[i]插入，原来位置上的元素顺序后移</li>
+<li>元素集合越接近有序，直接插入排序算法的时间效率越高 .如果对于最初的数据是倒序排列的，则每次比较都需要移动数据，导致算法效率降低</li>
+<li>最优情况下：时间效率为O(n) </li>
+<li>最差情况下：时间复杂度为O( n^2) </li>
+<li>空间复杂度：O(1)</li>
+<li>它是一种稳定的排序算法<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">template &lt;typename T&gt;</span><br><span class="line">void InsertSort(vector&lt;T&gt;&amp; array)</span><br><span class="line">&#123;</span><br><span class="line">    for(int i=0; i&lt;array.size(); ++i)</span><br><span class="line">    &#123;</span><br><span class="line">        for(int j=i; j&gt;0; --j)</span><br><span class="line">        &#123;</span><br><span class="line">            if(array[j] &lt; array[j-1])</span><br><span class="line">                swap(array[j], array[j-1]);</span><br><span class="line">            else</span><br><span class="line">                break;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">public void insertSort(int[] A) &#123;</span><br><span class="line">        int len = A.length;</span><br><span class="line">        int j;</span><br><span class="line">        for(int i=0;i&lt;len;i++)&#123;</span><br><span class="line">            int tmp = A[i];</span><br><span class="line">            for(j = i; j &gt; 0 &amp;&amp; tmp &lt; A[j-1]; j--)   </span><br><span class="line">                A[j] = A[j-1];   </span><br><span class="line">            A[j] = tmp;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<h4 id="希尔排序"><a href="#希尔排序" class="headerlink" title="希尔排序"></a>希尔排序</h4><ol>
+<li>缩小增量排序，是对直接插入排序的优化</li>
+<li>相当于以不断变小的增量划分子序列，对原数据进行预排序,通过这样的操作可使需要排序的数列基本有序，最后再使用一次直接插入排序。</li>
+<li>不需要大量的辅助空间</li>
+<li>希尔排序没有快速排序算法快 O(n(logn))，因此中等大小规模表现良好，对规模非常大的数据排序不是最优选择。</li>
+<li>希尔算法在最坏的情况下和平均情况下执行效率相差不是很多，而快速排序在最坏的情况下执行的效率会非常差。<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">void shellSort(myDataType *ary,int len)</span><br><span class="line">&#123;</span><br><span class="line">    int i,j;</span><br><span class="line">    int increment = len;//增量</span><br><span class="line">    myDataType key;</span><br><span class="line">    while(increment &gt; 1)//最后在增量为1并且是执行了情况下停止。</span><br><span class="line">    &#123;</span><br><span class="line">        increment = increment/3 + 1;//根据公式</span><br><span class="line">        //printf(&quot;increment:%d\n&quot;,increment);</span><br><span class="line">        for (i=increment;i&lt;len;i++)//从[0]开始，对相距增量步长的元素集合进行修改。</span><br><span class="line">        &#123;</span><br><span class="line">            key = ary[i];</span><br><span class="line">            //以下和直接插入排序类似。</span><br><span class="line">            j=i-increment;</span><br><span class="line">            while(j &gt;= 0)</span><br><span class="line">            &#123;</span><br><span class="line">                if (key &lt; ary[j] )</span><br><span class="line">                &#123;</span><br><span class="line">                    myDataType temp = ary[j];</span><br><span class="line">                    ary[j] = key;</span><br><span class="line">                    ary[j+increment] = temp;</span><br><span class="line">                &#125;</span><br><span class="line">                j=j-increment;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h4 id="冒泡排序"><a href="#冒泡排序" class="headerlink" title="冒泡排序"></a>冒泡排序</h4><ol>
+<li>相邻数值两两交换。从第一个数值开始，如果相邻两个数的排列顺序与我们的期望不同，则将两个数的位置进行交换（对调）；如果其与我们的期望一致，则不用交换。</li>
+<li>一趟冒泡排序，最大（小）的到达末尾</li>
+<li>结束标志：一趟排序没有发生任何元素交换</li>
+<li>一般地，如果有N个数需要排序，则需要进行（N-1）趟起泡</li>
+<li>最好情况O(n)，最差情况O(n^2)  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">public void bubbleSort(int[] A) &#123;</span><br><span class="line">      int len = A.length;</span><br><span class="line">      for(int i=0; i&lt;len;i++) &#123;</span><br><span class="line">          for(int j=len-1; j&gt;i; j--) &#123;</span><br><span class="line">              if(A[i]&gt;A[j])&#123;</span><br><span class="line">                  int tmp = A[i];</span><br><span class="line">                  A[i] = A[j];</span><br><span class="line">                  A[j] = tmp;</span><br><span class="line">              &#125;</span><br><span class="line">          &#125;</span><br><span class="line">      &#125;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>####堆排序</p>
+<ol>
+<li>首先对数组中所有的元素建立一个最小堆，然后依次推出栈顶的元素（最小的），重新建堆。直到堆中的元素为空。</li>
+<li>堆排序为原位排序，空间复杂度小，时间复杂度为O(n log n)<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line">public void heapSort(int[] array) &#123;  </span><br><span class="line">            if (array == null || array.length &lt;= 1) &#123;  </span><br><span class="line">                return;  </span><br><span class="line">            &#125;  </span><br><span class="line"></span><br><span class="line">            buildMaxHeap(array);  </span><br><span class="line"></span><br><span class="line">            for (int i = array.length - 1; i &gt;= 1; i--) &#123;  </span><br><span class="line">                swap(array, 0, i);  </span><br><span class="line"></span><br><span class="line">                maxHeap(array, i, 0);  </span><br><span class="line">            &#125;  </span><br><span class="line">        &#125;  </span><br><span class="line"></span><br><span class="line">        private void buildMaxHeap(int[] array) &#123;  </span><br><span class="line">            if (array == null || array.length &lt;= 1) &#123;  </span><br><span class="line">                return;  </span><br><span class="line">            &#125;  </span><br><span class="line"></span><br><span class="line">            int half = array.length / 2;  </span><br><span class="line">            for (int i = half; i &gt;= 0; i--) &#123;  </span><br><span class="line">                maxHeap(array, array.length, i);  </span><br><span class="line">            &#125;  </span><br><span class="line">        &#125;  </span><br><span class="line"></span><br><span class="line">        private void maxHeap(int[] array, int heapSize, int index) &#123;  </span><br><span class="line">            int left = index * 2 + 1;  </span><br><span class="line">            int right = index * 2 + 2;  </span><br><span class="line"></span><br><span class="line">            int largest = index;  </span><br><span class="line">            if (left &lt; heapSize &amp;&amp; array[left] &gt; array[index]) &#123;  </span><br><span class="line">                largest = left;  </span><br><span class="line">            &#125;  </span><br><span class="line"></span><br><span class="line">            if (right &lt; heapSize &amp;&amp; array[right] &gt; array[largest]) &#123;  </span><br><span class="line">                largest = right;  </span><br><span class="line">            &#125;  </span><br><span class="line"></span><br><span class="line">            if (index != largest) &#123;  </span><br><span class="line">                swap(array, index, largest);  </span><br><span class="line"></span><br><span class="line">                maxHeap(array, heapSize, largest);  </span><br><span class="line">            &#125;  </span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h4 id="归并排序"><a href="#归并排序" class="headerlink" title="归并排序"></a>归并排序</h4><ol>
+<li>归并排序是一种分治策略，该算法采用经典的分治（divide-and-conquer）策略，分治法将问题分(divide)成一些小的问题然后递归求解</li>
+<li>最终分成n个序列（只有一个所以有序），所以空间复杂度为n</li>
+<li>时间复杂度nlogn</li>
+<li>关键是归并操作：将两个有序序列合并成一个有序序列<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">public void mergeSort(int[] A,int l,int r) &#123;</span><br><span class="line">        if(l&gt;=r) return; </span><br><span class="line">            int m = l + (r-l)/2;</span><br><span class="line">            mergeSort(A,l,m);</span><br><span class="line">            mergeSort(A,m+1,r);</span><br><span class="line">            merge(A,l,m,r);</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void merge(int[] A, int l, int mid, int r) &#123;</span><br><span class="line">        int[] B = new int[A.length];</span><br><span class="line">        int s = l;</span><br><span class="line">        int m = mid+1;</span><br><span class="line">        int k = l;//数组标志位</span><br><span class="line">        while(s&lt;=mid &amp;&amp; m&lt;=r) &#123;</span><br><span class="line">            if(A[s]&lt;=A[m]) &#123;</span><br><span class="line">                B[k++] = A[s++];</span><br><span class="line">            &#125; else&#123;</span><br><span class="line">                B[k++] = A[m++];</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        while(s&lt;=mid) &#123;</span><br><span class="line">            B[k++] = A[s++];</span><br><span class="line">        &#125;</span><br><span class="line">        while(m&lt;=r) &#123;</span><br><span class="line">            B[k++] = A[m++];</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        for(int i=l;i&lt;=r;i++) &#123;</span><br><span class="line">            A[i] = B[i];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h4 id="快速排序"><a href="#快速排序" class="headerlink" title="快速排序"></a>快速排序</h4><p>1.首先从数组中选择一个数字X，然后用首尾指针将大于X的放在数组的右边，小于X的放在数组左边，这样在X的左边的数字全部为小于X的数字，在X右边的数字全部为大于X的数字。对于数字X，它的位置已经确定；</p>
+<ol start="2">
+<li>然后将X左边和X右边依次递归进行这样的过程，最后得到的数字即为有序</li>
+<li>最终的序列以枢纽为中心，左边比其小，右边比其大。</li>
+<li>取数组中的中位数（实际上采用三数中值分割的方法），会将递归的层数减少(每次少一半，)，使复杂度趋近N*log(N);</li>
+<li>如果每次选取的数字为待排序部分中，最小或最大的，会加大递归层数(每次少1), 复杂度趋近 N*N</li>
+<li>所以如果取第一个数为枢纽：序列基本有序和序列长度较短时，不建议使用快速排序。<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">public void quickSort(int[] A, int l, int r) &#123;</span><br><span class="line">        if(l&lt;r) &#123;</span><br><span class="line">            int p = partition(A,l,r);</span><br><span class="line">            quickSort(A,l,p-1);</span><br><span class="line">            quickSort(A,p+1,r);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public int partition(int[] A, int l, int r) &#123;</span><br><span class="line">        int tmp = A[r];</span><br><span class="line">        int p = l-1;</span><br><span class="line">        for(int i=l; i&lt;r;i++) &#123;</span><br><span class="line">            if(A[i]&lt;=tmp) &#123;</span><br><span class="line">                p++;</span><br><span class="line">                swap(A,p,i);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        p++;</span><br><span class="line">        swap(A,p,r);</span><br><span class="line">        return p;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h4 id="计数排序-桶排序"><a href="#计数排序-桶排序" class="headerlink" title="计数排序(桶排序)"></a>计数排序(桶排序)</h4><ol>
+<li>时间复杂度O（n），空间复杂度O（k），k是输入序列的值的范围（最大值-最小值），是稳定的。</li>
+<li>计数排序一般用于已知输入值的范围相对较小，比如给公司员工的身高体重信息排序。</li>
+<li>假设n个输入元素中的每一个都是介于0到k之间的整数，对每一个输入元素x，确定出小于x的元素个数，有了这一信息，就可以把x直接放在它在最终输出数组的位置上，例如，如果有17个元素小于x，则x就是属于第18个输出位置。</li>
+<li>举个例子，假设输入数组A为{3，5，1，2，4，3}，值的范围是1~5，所以创建5个桶，序号1，2，3，4，5。装桶时遍历一遍输入数组，A[0]=3，把它放到3号桶；A[1]=5，放到5号桶；1放到1号桶……最后3放到3号桶。现在三号桶的值为2，其他桶的值为1，再遍历一遍桶数组，按顺序把桶倒出，元素被倒出的顺序就是排序的顺序了。<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">public class CountingSort &#123;</span><br><span class="line">    public int[] countingSort(int[] A, int n) &#123;</span><br><span class="line">        //找数组中的最大值和最小值，确定桶的个数</span><br><span class="line">        int max=A[0];</span><br><span class="line">        int min=A[0];</span><br><span class="line">        for(int i=0;i&lt;n;i++)&#123;</span><br><span class="line">            if(A[i]&gt;max)</span><br><span class="line">                max=A[i];</span><br><span class="line">            if(A[i]&lt;min)</span><br><span class="line">                min=A[i];</span><br><span class="line">        &#125;</span><br><span class="line">        //定义桶数组B并初始化</span><br><span class="line">        int[] B= new int[max-min+1];</span><br><span class="line">        for(int i=0;i&lt;max-min+1;i++)</span><br><span class="line">            B[i]=0;</span><br><span class="line">        //把数组A的元素装到对应桶里</span><br><span class="line">        for(int i=0;i&lt;n;i++)&#123;</span><br><span class="line">            B[A[i]-min]++;</span><br><span class="line">        &#125;</span><br><span class="line">        //把所有桶倒出来</span><br><span class="line">        for(int i=0,j=0;j&lt;max-min+1;j++)&#123;</span><br><span class="line">            //倒桶j</span><br><span class="line">            for(int k=B[j];k&gt;0;k--)&#123;</span><br><span class="line">                A[i++]=j+min;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        return A;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h2 id="各类面试题目"><a href="#各类面试题目" class="headerlink" title="各类面试题目"></a>各类面试题目</h2><ol>
+<li>nlogn的指的快排，归并排序，堆排序。</li>
+<li>序列基本有序：直接插入，堆</li>
+<li>请设计一个高效算法，判断数组中是否有重复值。必须保证额外空间复杂度为O(1)。给定一个int数组A及它的大小n，请返回它是否有重复值。</li>
+</ol>
+<ul>
+<li>计数排序，简单高效。实际上如果没有额外空间复杂度的限制</li>
+<li>用哈希表遍历一般数组，记录数值出现次数</li>
+</ul>
+<ol start="4">
+<li>有一个整形数组A，请设计一个复杂度为O(n)的算法，算出排序后相邻两数的最大差值。</li>
+</ol>
+<ul>
+<li>首先想到的满足它时间复杂度要求的解决方案就是使用计数排序，因为他要复杂度为O(n),用桶排序思想实现。先装桶，再遍历一遍桶，计算非空桶序号最大差值。</li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/oj/" rel="tag"># oj</a>
+          
+            <a href="/tags/面试/" rel="tag"># 面试</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/01/16/Leetcode-二叉树解题报告/" rel="next" title="Leetcode 二叉树解题报告">
+                <i class="fa fa-chevron-left"></i> Leetcode 二叉树解题报告
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/01/16/Leetcode-array-数组题目解题报告/" rel="prev" title="Leetcode array 数组题目解题报告">
+                Leetcode array 数组题目解题报告 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/xw.jpg" alt="Poemlin">
+            
+              <p class="site-author-name" itemprop="name">Poemlin</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">39</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">12</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">36</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-Merge-Sorted-Array"><span class="nav-number">1.</span> <span class="nav-text">1. Merge Sorted Array</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Description：-Easy"><span class="nav-number">1.0.1.</span> <span class="nav-text">Description： Easy</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Analysis"><span class="nav-number">1.0.2.</span> <span class="nav-text">Analysis</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Solution-混合尾插入排序"><span class="nav-number">1.0.3.</span> <span class="nav-text">Solution 混合尾插入排序</span></a></li></ol></li></ol><li class="nav-item nav-level-2"><a class="nav-link" href="#2-Merge-Two-Sorted-Lists"><span class="nav-number">2.</span> <span class="nav-text">2. Merge Two Sorted Lists</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Description：-Easy-1"><span class="nav-number">2.0.1.</span> <span class="nav-text">Description： Easy</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Analysis-1"><span class="nav-number">2.0.2.</span> <span class="nav-text">Analysis</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Solution"><span class="nav-number">2.0.3.</span> <span class="nav-text">Solution</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-Insertion-Sort-List"><span class="nav-number">3.</span> <span class="nav-text">3.  Insertion Sort List</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Description："><span class="nav-number">3.0.1.</span> <span class="nav-text">Description：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Analysis-2"><span class="nav-number">3.0.2.</span> <span class="nav-text">Analysis</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Solution-1"><span class="nav-number">3.0.3.</span> <span class="nav-text">Solution</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-Sort-List"><span class="nav-number">4.</span> <span class="nav-text">4. Sort List</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Description：-Medium"><span class="nav-number">4.0.1.</span> <span class="nav-text">Description： Medium</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Analysis-3"><span class="nav-number">4.0.2.</span> <span class="nav-text">Analysis</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Solution-2"><span class="nav-number">4.0.3.</span> <span class="nav-text">Solution:</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#各类排序算法复杂度"><span class="nav-number">5.</span> <span class="nav-text">各类排序算法复杂度</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#各类排序算法总结实现"><span class="nav-number">6.</span> <span class="nav-text">各类排序算法总结实现</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#希尔排序"><span class="nav-number">6.0.1.</span> <span class="nav-text">希尔排序</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#冒泡排序"><span class="nav-number">6.0.2.</span> <span class="nav-text">冒泡排序</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#归并排序"><span class="nav-number">6.0.3.</span> <span class="nav-text">归并排序</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#快速排序"><span class="nav-number">6.0.4.</span> <span class="nav-text">快速排序</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#计数排序-桶排序"><span class="nav-number">6.0.5.</span> <span class="nav-text">计数排序(桶排序)</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#各类面试题目"><span class="nav-number">7.</span> <span class="nav-text">各类面试题目</span></a></li></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">&copy; 2018 &mdash; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-snowflake-o"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Poemlin</span>
+
+  
+</div>
+<div class="powered-by">
+<i class="fa fa-user-md"></i><span id="busuanzi_container_site_uv">
+  本站访客数:<span id="busuanzi_value_site_pv"></span>
+</span>
+</div>
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

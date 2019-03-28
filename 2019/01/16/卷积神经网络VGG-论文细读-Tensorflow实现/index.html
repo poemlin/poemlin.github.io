@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Deep_learning,VGG,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="一. 背景介绍VERY DEEP CONVOLUTIONAL NETWORKS FOR LARGE-SCALE IMAGE RECOGNITION是牛津大学计算机视觉实验室参加2014年ILSVRC（ImageNet Large Scale Visual Recognition Challenge)比赛的网络结构。解决ImageNet中的1000类图像分类和localization。实验结果是VG">
+<meta name="keywords" content="Deep_learning,VGG">
+<meta property="og:type" content="article">
+<meta property="og:title" content="卷积神经网络VGG 论文细读 + Tensorflow实现">
+<meta property="og:url" content="http://yoursite.com/2019/01/16/卷积神经网络VGG-论文细读-Tensorflow实现/index.html">
+<meta property="og:site_name" content="七月的风">
+<meta property="og:description" content="一. 背景介绍VERY DEEP CONVOLUTIONAL NETWORKS FOR LARGE-SCALE IMAGE RECOGNITION是牛津大学计算机视觉实验室参加2014年ILSVRC（ImageNet Large Scale Visual Recognition Challenge)比赛的网络结构。解决ImageNet中的1000类图像分类和localization。实验结果是VG">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/3352522-f5f362075eab9717.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/3352522-2976676d221c8591.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/3352522-67a7bae7f48ff4bc.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/3352522-f12720f0da1f878e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/3352522-95871f31121e2641.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/3352522-033d9629bd04007b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/3352522-61e40de69fe1aef2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/3352522-91fd68acfa15537a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/3352522-1a60b820389a1ae5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/3352522-7bd8f7b59799ec83.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/3352522-395d80f0e8c02760.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/3352522-a2d8c129da423b5d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/3352522-d92b70e51121e4bc.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:image" content="https://upload-images.jianshu.io/upload_images/3352522-a463b9f02eba418d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+<meta property="og:updated_time" content="2019-01-17T08:41:32.798Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="卷积神经网络VGG 论文细读 + Tensorflow实现">
+<meta name="twitter:description" content="一. 背景介绍VERY DEEP CONVOLUTIONAL NETWORKS FOR LARGE-SCALE IMAGE RECOGNITION是牛津大学计算机视觉实验室参加2014年ILSVRC（ImageNet Large Scale Visual Recognition Challenge)比赛的网络结构。解决ImageNet中的1000类图像分类和localization。实验结果是VG">
+<meta name="twitter:image" content="https://upload-images.jianshu.io/upload_images/3352522-f5f362075eab9717.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/01/16/卷积神经网络VGG-论文细读-Tensorflow实现/">
+
+
+
+
+
+  <title>卷积神经网络VGG 论文细读 + Tensorflow实现 | 七月的风</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">七月的风</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/01/16/卷积神经网络VGG-论文细读-Tensorflow实现/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Poemlin">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/xw.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="七月的风">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">卷积神经网络VGG 论文细读 + Tensorflow实现</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-01-16T20:11:09+08:00">
+                2019-01-16
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/深度学习/" itemprop="url" rel="index">
+                    <span itemprop="name">深度学习</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="一-背景介绍"><a href="#一-背景介绍" class="headerlink" title="一. 背景介绍"></a>一. 背景介绍</h2><h4 id="VERY-DEEP-CONVOLUTIONAL-NETWORKS-FOR-LARGE-SCALE-IMAGE-RECOGNITION"><a href="#VERY-DEEP-CONVOLUTIONAL-NETWORKS-FOR-LARGE-SCALE-IMAGE-RECOGNITION" class="headerlink" title="VERY DEEP CONVOLUTIONAL NETWORKS FOR LARGE-SCALE IMAGE RECOGNITION"></a>VERY DEEP CONVOLUTIONAL NETWORKS FOR LARGE-SCALE IMAGE RECOGNITION</h4><p>是牛津大学计算机视觉实验室参加2014年<strong>ILSVRC</strong>（ImageNet Large Scale Visual Recognition Challenge)比赛的网络结构。解决ImageNet中的1000类图像分类和localization。<br><img src="https://upload-images.jianshu.io/upload_images/3352522-f5f362075eab9717.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="分类、定位、检测、分割"><br>实验结果是VGGNet斩获了2014年ILSVRC<strong>分类第二，定位第一</strong>。（当年分类第一是GoogleNet，后续会介绍）</p>
+<h4 id="Oxford-Visual-Geometry-Group"><a href="#Oxford-Visual-Geometry-Group" class="headerlink" title="Oxford Visual Geometry Group"></a><a href="http://www.robots.ox.ac.uk/~vgg/" target="_blank" rel="noopener">Oxford Visual Geometry Group</a></h4><h4 id="Robotics-Research-Group"><a href="#Robotics-Research-Group" class="headerlink" title="Robotics Research Group"></a><a href="http://www.robots.ox.ac.uk/" target="_blank" rel="noopener">Robotics Research Group</a></h4><h4 id="Paper-link"><a href="#Paper-link" class="headerlink" title="Paper link"></a><a href="https://arxiv.org/abs/1409.1556" target="_blank" rel="noopener">Paper link</a></h4><h2 id="二-Abstract"><a href="#二-Abstract" class="headerlink" title="二. Abstract"></a>二. Abstract</h2><p><img src="https://upload-images.jianshu.io/upload_images/3352522-2976676d221c8591.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="Abstract"></p>
+<h5 id="1-VGGNet-探索的是神经网络的深度-depth-与其性能之间的关系。"><a href="#1-VGGNet-探索的是神经网络的深度-depth-与其性能之间的关系。" class="headerlink" title="1.VGGNet 探索的是神经网络的深度(depth)与其性能之间的关系。"></a>1.VGGNet 探索的是神经网络的深度(depth)与其性能之间的关系。</h5><p>VGG通过反复堆叠3×3的小型卷积核和2×2的最大池化层，VGG成功构建了16-19层的卷积神经网络。是当时在论文发表前最深的深度网络。实际上，VGG在探索深度对神经网络影响的同时，其实本身广度也是很深的。那么：</p>
+<h4 id="神经网络的深度和广度对其本身的影响是什么呢？"><a href="#神经网络的深度和广度对其本身的影响是什么呢？" class="headerlink" title="神经网络的深度和广度对其本身的影响是什么呢？"></a>神经网络的深度和广度对其本身的影响是什么呢？</h4><ul>
+<li>卷积核的种类对应了网络的广度，卷积层数对应了网络的深度。这两者对网络的拟合都有影响。但是在现代深度学习中，大家普遍认为深度比广度的影响更加高。</li>
+<li>宽度即卷积核的种类个数，在LeNet那篇文章里我们说了，<strong><em>权值共享</em></strong>(每个神经元对应一块局部区域，如果局部区域是10*10，那么就有100的权重参数，但如果我们把每个神经元的权重参数设置为一样，相当于每个神经元用的是同一个卷积核去卷积图像，最终两层间的连接只有 100 个参数 ！)可以大大减少我们的训练参数，但是由于使用了同一个卷积核，最终特征个数太少，效果也不会好，所以一般神经网络都会有多个卷积核，这里说明宽度的增加在一开始对网络的性能提升是有效的。但是，随着广度的增加，对网络整体的性能其实是开始趋于饱和，并且有下降趋势，因为过多的特征（一个卷积核对应发现一种特征）可能对带来噪声的影响。</li>
+<li>深度即卷积层的个数，对网络的性能是极其重要的，ResNet已经表明越深的深度网络性能也就越好。深度网络自然集成了低、中、高层特征。多层特征可以通过网络的堆叠的数量（深度）来丰富其表达。挑战imagenet数据集的优秀网络都是采用较深的模型。网络的深度很重要，但是否能够简单的通过增加更多的网络层次学习更好的网络？这个问题的障碍就是臭名昭著的梯度消失(爆炸)问题，这从根本上阻碍了深度模型的收敛。</li>
+<li>增加更多的卷积核可以发现更多的特征，但是特征是需要进行组合的，只有知道了特征之间的关系才能够更好的表达图片内容，而增加深度就是组合特征的过程。</li>
+</ul>
+<p><img src="https://upload-images.jianshu.io/upload_images/3352522-67a7bae7f48ff4bc.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt></p>
+<h5 id="2-VGG结构全部都采用较小的卷积核（3×3，部分1×1）"><a href="#2-VGG结构全部都采用较小的卷积核（3×3，部分1×1）" class="headerlink" title="2. VGG结构全部都采用较小的卷积核（3×3，部分1×1）"></a>2. VGG结构全部都采用较小的卷积核（3×3，部分1×1）</h5><p>在VGG出现之前的深度网络，比如ZFNet或Overfeat普遍都采用了7×7和11×11的卷积核。VGG通篇全部采用很小的卷积核。我们再回顾一下在深度学习中卷积核的感受野的作用。<br><img src="https://upload-images.jianshu.io/upload_images/3352522-f12720f0da1f878e.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="卷积核的感受野"></p>
+<h5 id="如何选择卷积核的大小？越大越好还是越小越好？"><a href="#如何选择卷积核的大小？越大越好还是越小越好？" class="headerlink" title="如何选择卷积核的大小？越大越好还是越小越好？"></a>如何选择卷积核的大小？越大越好还是越小越好？</h5><p>答案是<strong>小而深</strong>，单独较小的卷积核也是不好的，只有堆叠很多小的卷积核，模型的性能才会提升。</p>
+<ul>
+<li>如上图所示，CNN的卷积核对应一个感受野，这使得每一个神经元不需要对全局图像做感受，每个神经元只感受局部的图像区域，然后在更高层，将这些感受不同局部的神经元综合起来就可以得到全局信息。这样做的一个好处就是可以减少大量训练的参数。</li>
+<li>VGG经常出现多个完全一样的3×3的卷积核堆叠在一起的情况，这些多个小型卷积核堆叠的设计其实是非常有效的。如下图所示，两个3×3的卷积层串联相当于1个5×5的卷积层，即一个像素会和周围5×5的像素产生关联，可以说感受野是5×5。同时，3个串联的3×3卷积层串联的效果相当于一个7×7的卷积层。除此之外，3个串联的3×3的卷积层拥有比一个7×7更少的参数量，只有后者的 (3×3×3) / (7×7) = 55%。最重要的是3个3×3的卷积层拥有比一个7×7的卷积层更多的非线性变换（前者可以使用三次ReLu激活，而后者只有一次）。<br><img src="https://upload-images.jianshu.io/upload_images/3352522-95871f31121e2641.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt><h5 id="3-VGG获得了2014年ILSVRC分类第二，定位第一。（当年分类第一是GoogleNet，后续会介绍）"><a href="#3-VGG获得了2014年ILSVRC分类第二，定位第一。（当年分类第一是GoogleNet，后续会介绍）" class="headerlink" title="3.VGG获得了2014年ILSVRC分类第二，定位第一。（当年分类第一是GoogleNet，后续会介绍）"></a>3.VGG获得了2014年ILSVRC<strong>分类第二，定位第一</strong>。（当年分类第一是GoogleNet，后续会介绍）</h5><h2 id="三-Architecture"><a href="#三-Architecture" class="headerlink" title="三. Architecture"></a>三. Architecture</h2><img src="https://upload-images.jianshu.io/upload_images/3352522-033d9629bd04007b.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="architecture"><br><strong>1. vgg模型的输入是固定的224×224的彩色RGB通道图像。</strong><br><strong>2. 输入做的唯一一个数据预处理就是各自减去 RGB 3个通道的均值</strong><br><strong>3. 使用的是非常小的3×3的卷积核。</strong><br><strong>4. 其中一个结构采用了一些1×1的卷积核。</strong><h4 id="1×1的卷积核到底有什么作用呢？"><a href="#1×1的卷积核到底有什么作用呢？" class="headerlink" title="1×1的卷积核到底有什么作用呢？"></a>1×1的卷积核到底有什么作用呢？</h4></li>
+<li>1×1的卷积核和正常的滤波器完全是一样的，只不过它不再感受一个局部区域，不考虑像素与像素之间的关系。1×1的卷积本身就是不同feature channel的线性叠加。1×1的卷积最早出现在<a href="https://arxiv.org/abs/1312.4400" target="_blank" rel="noopener">Network in Network</a>这篇文章中，在Google的inception结构中也采用了大量1×1的卷积。</li>
+<li>NIN论文中解释1×1的卷积实现了多个feature map的结合，从而整合了不同通道间的信息。（个人认为这个作用并不是特点，因为其它大小的卷积核也可以实现）</li>
+<li>1×1的卷积可以实现通道数量的升维和降维。并且是低成本的特征变换（计算量比3×3小很多）。是一个性价比很高的聚合操作。怎么理解1×1是性价比很高的升降通道数的操作呢？<br>（以google inception为例）<br><img src="https://upload-images.jianshu.io/upload_images/3352522-61e40de69fe1aef2.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="原始"><br><img src="https://upload-images.jianshu.io/upload_images/3352522-91fd68acfa15537a.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="新"></li>
+</ul>
+<p>原始结构：<br>参数：(1×1×192×64) + (3×3×192×128) + (5×5×192×32) = 153600<br>最终输出的feature map：64+128+32+192 = 416</p>
+<p>加入不同channel的1×1卷积后：<br>参数：1×1×192×64+（1×1×192×96+3×3×96×128）+（1×1×192×16+5×5×16×32）=15872<br>最终输出的feature map： 64+128+32+32=256</p>
+<p>所以加入1×1的卷积后，在降低大量运算的前提下，降低了维度。</p>
+<p><strong>5. 卷积步长是一个像素</strong><br><strong>6.采用最大池化层</strong><br><strong>7. 不是所有卷积层后面都接一个池化层。（和之前的网络有区别，是反复堆叠几个3×3的卷积）</strong><br><strong>8. 最大池化是2×2，步长为2.</strong><br><strong>9. 最后接了3个全连接层</strong><br><strong>10. 前两个全连接都是4096，最后一个根据imagenet1000类定为1000个输出</strong><br><strong>11. 分类层是softmax</strong><br><strong>12. 所有隐层都进行了ReLU激活。</strong><br><strong>13. 只有一个地方使用了LRN，并且实验表明LRN没有任何用处。</strong></p>
+<h2 id="四-ConvNet-Configurations"><a href="#四-ConvNet-Configurations" class="headerlink" title="四. ConvNet Configurations"></a>四. ConvNet Configurations</h2><p><img src="https://upload-images.jianshu.io/upload_images/3352522-1a60b820389a1ae5.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="ConvNet Configurations"><br><img src="https://upload-images.jianshu.io/upload_images/3352522-7bd8f7b59799ec83.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="参数数量"></p>
+<ul>
+<li>VGG全部使用了3×3的卷积核和2×2的池化核，通过不断加深网络结构来提升性能。上图为VGG各个级别的网络结构图。</li>
+<li>VGG各种级别的结构都采用了5段卷积，每一段有一个或多个卷积层。同时每一段的尾部都接着一个最大池化层来缩小图片尺寸。每一段内的卷积核数量一致，越靠后的卷积核数量越多 64-128-256-512-512。经常出现多个完全一样的卷积层堆叠在一起的情况。</li>
+<li>A-LRN结构使用了LRN，结果表明并没有什么用处。</li>
+<li>C 结构比B多了几个1×1的卷积。在VGG里，1×1的卷积意义主要是线性变换，输入输出通道数量并没有变化。没有发生降维。所以作者认为1×1没有3×3好，大一些的卷积核可以学到更大的空间特征。</li>
+<li>A-E 每一级网络逐渐变深，但是参数并没有变多很多。这是因为参数量主要消耗在最后3个全连接层，卷积虽然深但是参数消耗并不多。但是训练耗时的仍然是卷积，因其计算量大。</li>
+<li>D E就是我们经常说的VGG-16和VGG-19  <h2 id="五-Training"><a href="#五-Training" class="headerlink" title="五. Training"></a>五. Training</h2><img src="https://upload-images.jianshu.io/upload_images/3352522-395d80f0e8c02760.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt><br>这个部分是VGG当时是怎么训练的具体过程，有很多值得借鉴的地方。<br><strong>1. 使用mini-batch的梯度下降法，并且是带动量的。batch_size设置为256，动量是0.9。</strong><br><strong>2. 前两个全连接使用了dropout，值是0.5, 用来缓解过拟合。</strong><br><strong>3.  学习率初始设置为0.01，衰减系数为10，每当验证集上准确率不再变好时，会降低学习率。学习率一共被衰减3次。总共训练了74个epoch，370k个iteration。</strong><h4 id="VGG的参数初始化方式是怎么样的？"><a href="#VGG的参数初始化方式是怎么样的？" class="headerlink" title="VGG的参数初始化方式是怎么样的？"></a>VGG的参数初始化方式是怎么样的？</h4></li>
+<li>上图中间红框部分作者介绍了VGG训练时参数的初始化方式，这个部分比较有意思。作者认为这么深的网络（论文发表前最深）训练收敛是很困难的，必须借助有效的参数初始化方式。</li>
+<li>作者先训练上面网络结构中的A结构，A收敛之后呢，将A的网络权重保存下来，再复用A网络的权重来初始化后面几个简单模型。</li>
+<li>复用A的网络权重，只是前四个卷积层，以及后三层全连接层，其它的都是随机初始化。</li>
+<li>随机初始化，均值是0，方差是0.01。bias是0.</li>
+</ul>
+<h2 id="六-Image-Size"><a href="#六-Image-Size" class="headerlink" title="六. Image Size"></a>六. Image Size</h2><p>在训练和测试阶段，VGG都采用了Multi-scale的方式。<br><img src="https://upload-images.jianshu.io/upload_images/3352522-a2d8c129da423b5d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="training"><br><img src="https://upload-images.jianshu.io/upload_images/3352522-d92b70e51121e4bc.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="testing"></p>
+<h2 id="VGG的Multi-Scale方法"><a href="#VGG的Multi-Scale方法" class="headerlink" title="VGG的Multi-Scale方法"></a>VGG的Multi-Scale方法</h2><ul>
+<li>VGG在训练阶段使用了Multi-Scale的方法做数据增强，将原始图片缩放到不同的尺寸S，然后再随机裁剪224×224的图片，这样能增加很多数据量，对于防止模型过拟合有很不错的效果。</li>
+<li>实验中，作者令S在[256, 512]这个区间，使用Multi-Scale获得了多个版本的数据，并将多个版本的数据合在一起训练。</li>
+<li>在测试时，也采用了Multi-Scale的方法，将图像scale到一个尺寸Q，并将图片输入卷积网络计算，然后再最后一个卷积层使用滑窗的方式进行分类预测，将不同窗口的分类结果平均，再将不同尺寸Q的结果平均，得到最后的结果。这样可以提高数据的利用率和预测准确率。</li>
+<li>下图是VGG各种不同scale的训练结果，融合了Multi-Scale的D和E是最好的。<br><img src="https://upload-images.jianshu.io/upload_images/3352522-a463b9f02eba418d.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt></li>
+</ul>
+<h2 id="七-Tensorflow实现简单的VGG-16的结构"><a href="#七-Tensorflow实现简单的VGG-16的结构" class="headerlink" title="七. Tensorflow实现简单的VGG-16的结构"></a>七. Tensorflow实现简单的VGG-16的结构</h2><p>本部分整理自《Tensorflow实战》</p>
+<h4 id="1-实现卷积操作函数"><a href="#1-实现卷积操作函数" class="headerlink" title="1. 实现卷积操作函数"></a>1. 实现卷积操作函数</h4><p>VGG包含很多卷积，函数conv_op创建卷积层，并把本层参数存入参数列表。这样可以方便后面VGG结构中多次使用卷积操作。</p>
+<p>输入参数</p>
+<ul>
+<li><strong>input_op:</strong> 输入tensor，是一个4D的tensor，可以理解为image batch。shape=[batch, in_height, in_width, in_channels]，即：[训练时一个batch的图片数量, 图片高度, 图片宽度, 图像通道数]</li>
+<li><strong>kh</strong>：卷积核的高</li>
+<li><strong>kw：</strong>卷积核的宽</li>
+<li><strong>n_out：</strong>输出通道数；这三个参数恰好定义了一个卷积核的参数，卷积核kernel的参数即为: shape=[filter_height, filter_width, in_channels, out_channels]，即：[卷积核的高度，卷积核的宽度，图像通道数，卷积核个数]</li>
+<li><strong>dh</strong>：卷积的步长高</li>
+<li><strong>dw</strong>：卷积的步长宽。 进行卷积操作时，我们除了需要输入的tensor和卷积核参数外，还需要定义卷积的步长strides，strides卷积时在每一维上的步长，strides[0]=strides[3]=1。</li>
+<li><strong>p</strong>：参数列表。将卷积核和bias的参数写入p，以便后面使用</li>
+</ul>
+<p>输出：<br>经过卷积，和激活函数的tensor。[batch_size, new_h, new_w, n_out]</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">def conv_op(input_op, name, kh, kw, n_out, dh, dw, p):</span><br><span class="line">    n_in = input_op.get_shape()[-1].value</span><br><span class="line">    with tf.name_scope(name) as scope:</span><br><span class="line">        kernel = tf.get_variable(scope+&apos;w&apos;, shape=[kh, kw, n_in, n_out], dtype = tf.float32,</span><br><span class="line">                                initializer = tf.contrib.layers.xavier_initializer_conv2d())</span><br><span class="line">        conv = tf.nn.conv2d(input_op, kernel, (1, dh, dw, 1), padding = &apos;SAME&apos;)</span><br><span class="line">        bias_init_val = tf.constant(0.0, shape = [n_out], dtype = tf.float32)</span><br><span class="line">        biases = tf.variable(bias_init_val, trainable = True, name = &apos;b&apos;)</span><br><span class="line">        z = tf.nn.bias_add(conv, biases)</span><br><span class="line">        activation = tf.nn.relu(z, name = scope)</span><br><span class="line">        p += [kernel, biases]</span><br><span class="line">        return activation</span><br></pre></td></tr></table></figure>
+<ul>
+<li>整体过程非常简单，建议熟背这一段代码。首先获得输入的tensor，即image batch，并且定义name，卷积核的大小，卷积的步长(输入参数)。</li>
+<li>使用get_shape()获得输入tensor的输入通道数。</li>
+<li>name_scope将scope内生成的variable自动命名为name/xxx，用于区分不同卷积层的组件</li>
+<li>get_variable()定义卷积核的参数，注意shape和初始化方式</li>
+<li>conv2d对输入tensor，使用刚刚的卷积核进行卷积操作，注意此处定义strides和padding</li>
+<li>constant定义bias，注意shape等于输出通道数。一个卷积核对应一个输出通道，对应一个bias。tf.variable再将其转换成可训练的参数。</li>
+<li>进行relu激活</li>
+</ul>
+<h4 id="2-实现池化操作函数"><a href="#2-实现池化操作函数" class="headerlink" title="2. 实现池化操作函数"></a>2. 实现池化操作函数</h4><p>输入参数</p>
+<ul>
+<li><strong>input_op:</strong> 输入tensor</li>
+<li><strong>kh</strong>：池化的高</li>
+<li><strong>kw：</strong>池化的宽</li>
+<li><strong>dh</strong>：池化的步长高</li>
+<li><strong>dw</strong>：池化的步长宽。<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">def maxpool_op(input_op, name, kh, kw, dh, dw):</span><br><span class="line">    return tf.nn.max_pool(input_op,</span><br><span class="line">                          ksize=[1, kh, kw, 1],</span><br><span class="line">                          strides=[1, dh, dw, 1],</span><br><span class="line">                          padding=&apos;SAME&apos;,</span><br><span class="line">                          name=name)</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>这部分代码也很容易理解，nn.max_pool可以直接使用，需要定义池化的大小ksize，步长strides，以及边界填充方式padding。此部分没有需要训练的参数。</p>
+<h4 id="3-定义全连接操作函数"><a href="#3-定义全连接操作函数" class="headerlink" title="3. 定义全连接操作函数"></a>3. 定义全连接操作函数</h4><p>输入参数</p>
+<ul>
+<li><strong>input_op:</strong> 输入的tensor</li>
+<li><strong>n_out</strong>: 输出向量长度。 全连接只需要这两个参数<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">def fc_op(input_op, name, n_out, p):</span><br><span class="line">    n_in = input_op.get_shape()[-1].value</span><br><span class="line">    with tf.name_scope(name) as scope:</span><br><span class="line">        kernel = tf.get_variable(scope+&quot;w&quot;, shape=[n_in, n_out], dtype=tf.float32,</span><br><span class="line">                                 initializer=tf.contrib.layers.xavier_initializer())</span><br><span class="line">        biases = tf.Variable(tf.constant(0.1, shape=[n_out], dtype=tf.float32), name=&apos;b&apos;)n</span><br><span class="line">        activation = tf.nn.relu_layer(input_op, kernel, biases, name= scope)</span><br><span class="line">        p += [kernel, biases]</span><br><span class="line">        return activation</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>此部分代码也很简单，全连接层需要训练参数，并且比卷积层更多(卷积层是局部连接)，同样获得输入图片tensor的通道数(向量长度)，同样获得输入图片tensor的通道数，注意每个训练参数都需要给定初始化值或初始化方式。bias利用constant函数初始化为较小的值0.1,而不是0， 再做relu非线性变。</p>
+<h4 id="4-根据论文结构创建VGG16网络"><a href="#4-根据论文结构创建VGG16网络" class="headerlink" title="4. 根据论文结构创建VGG16网络"></a>4. 根据论文结构创建VGG16网络</h4><p>input_op是输入的图像tensor shape=[batch, in_height, in_width, in_channels]<br>keep_prob是控制dropout比率的一个placeholder<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">def inference_op(input_op,keep_prob):</span><br><span class="line">    # 初始化参数p列表</span><br><span class="line">    p = []</span><br></pre></td></tr></table></figure></p>
+<p>VGG16包含6个部分，前面5段卷积，最后一段全连接,<br>每段卷积包含多个卷积层和pooling层.</p>
+<p>下面是第一段卷积，包含2个卷积层和一个pooling层,<br>利用前面定义好的函数conv_op,mpool_op 创建这些层<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"># 第一段卷积的第一个卷积层 卷积核3*3，共64个卷积核（输出通道数），步长1*1</span><br><span class="line"># input_op：224*224*3 输出尺寸224*224*64</span><br><span class="line">conv1_1 = conv_op(input_op, name=&quot;conv1_1&quot;, kh=3, kw=3, n_out=64, dh=1,</span><br><span class="line">                      dw=1, p=p)</span><br><span class="line"></span><br><span class="line"># 第一段卷积的第2个卷积层 卷积核3*3，共64个卷积核（输出通道数），步长1*1</span><br><span class="line"># input_op：224*224*64 输出尺寸224*224*64</span><br><span class="line">conv1_2 = conv_op(conv1_1, name=&quot;conv1_2&quot;, kh=3, kw=3, n_out=64, dh=1,</span><br><span class="line">                      dw=1, p=p)</span><br><span class="line"></span><br><span class="line"># 第一段卷积的pooling层，核2*2，步长2*2</span><br><span class="line"># input_op：224*224*64 输出尺寸112*112*64</span><br><span class="line">pool1 = mpool_op(conv1_2, name=&quot;pool1&quot;, kh=2, kw=2, dh=2, dw=2)</span><br></pre></td></tr></table></figure></p>
+<p>下面是第2段卷积，包含2个卷积层和一个pooling层<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"># 第2段卷积的第一个卷积层 卷积核3*3，共128个卷积核（输出通道数），步长1*1</span><br><span class="line"># input_op：112*112*64 输出尺寸112*112*128</span><br><span class="line">conv2_1 = conv_op(pool1, name=&quot;conv2_1&quot;, kh=3, kw=3, n_out=128, dh=1,</span><br><span class="line">                      dw=1, p=p)</span><br><span class="line"></span><br><span class="line"># input_op：112*112*128 输出尺寸112*112*128</span><br><span class="line">conv2_2 = conv_op(conv2_1, name=&quot;conv2_2&quot;, kh=3, kw=3, n_out=128, dh=1,</span><br><span class="line">                      dw=1, p=p)</span><br><span class="line"></span><br><span class="line"># input_op：112*112*128 输出尺寸56*56*128</span><br><span class="line">pool2 = mpool_op(conv2_2, name=&quot;pool2&quot;, kh=2, kw=2, dh=2, dw=2)</span><br></pre></td></tr></table></figure></p>
+<p>下面是第3段卷积，包含3个卷积层和一个pooling层<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"># 第3段卷积的第一个卷积层 卷积核3*3，共256个卷积核（输出通道数），步长1*1</span><br><span class="line"># input_op：56*56*128 输出尺寸56*56*256</span><br><span class="line">conv3_1 = conv_op(pool2, name=&quot;conv3_1&quot;, kh=3, kw=3, n_out=256, dh=1,</span><br><span class="line">                      dw=1, p=p)</span><br><span class="line"></span><br><span class="line"># input_op：56*56*256 输出尺寸56*56*256</span><br><span class="line">conv3_2 = conv_op(conv3_1, name=&quot;conv3_2&quot;, kh=3, kw=3, n_out=256, dh=1,</span><br><span class="line">                      dw=1, p=p)</span><br><span class="line"></span><br><span class="line"># input_op：56*56*256 输出尺寸56*56*256</span><br><span class="line">conv3_3 = conv_op(conv3_2, name=&quot;conv3_3&quot;, kh=3, kw=3, n_out=256, dh=1,</span><br><span class="line">                      dw=1, p=p)</span><br><span class="line"></span><br><span class="line"># input_op：56*56*256 输出尺寸28*28*256</span><br><span class="line">pool3 = mpool_op(conv3_3, name=&quot;pool3&quot;, kh=2, kw=2, dh=2, dw=2)</span><br></pre></td></tr></table></figure></p>
+<p>下面是第4段卷积，包含3个卷积层和一个pooling层<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"># 第3段卷积的第一个卷积层 卷积核3*3，共512个卷积核（输出通道数），步长1*1</span><br><span class="line"># input_op：28*28*256 输出尺寸28*28*512</span><br><span class="line">conv4_1 = conv_op(pool3, name=&quot;conv4_1&quot;, kh=3, kw=3, n_out=512, dh=1,</span><br><span class="line">                      dw=1, p=p)</span><br><span class="line"></span><br><span class="line"># input_op：28*28*512 输出尺寸28*28*512</span><br><span class="line">conv4_2 = conv_op(conv4_1, name=&quot;conv4_2&quot;, kh=3, kw=3, n_out=512, dh=1,</span><br><span class="line">                      dw=1, p=p)</span><br><span class="line"></span><br><span class="line"># input_op：28*28*512 输出尺寸28*28*512</span><br><span class="line">conv4_3 = conv_op(conv4_2, name=&quot;conv4_3&quot;, kh=3, kw=3, n_out=512, dh=1,</span><br><span class="line">                      dw=1, p=p)</span><br><span class="line"></span><br><span class="line"># input_op：28*28*512 输出尺寸14*14*512</span><br><span class="line">pool4 = mpool_op(conv4_3, name=&quot;pool4&quot;, kh=2, kw=2, dh=2, dw=2)</span><br></pre></td></tr></table></figure></p>
+<p>前面4段卷积发现，VGG16每段卷积都是把图像面积变为1/4，但是通道数翻倍, 因此图像tensor的总尺寸缩小一半。<br>下面是第5段卷积，包含3个卷积层和一个pooling层<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"># 第5段卷积的第一个卷积层 卷积核3*3，共512个卷积核（输出通道数），步长1*1</span><br><span class="line"># input_op：14*14*512 输出尺寸14*14*512</span><br><span class="line">conv5_1 = conv_op(pool4, name=&quot;conv5_1&quot;, kh=3, kw=3, n_out=512, dh=1,</span><br><span class="line">                      dw=1, p=p)</span><br><span class="line"></span><br><span class="line"># input_op：14*14*512 输出尺寸14*14*512</span><br><span class="line">conv5_2 = conv_op(conv5_1, name=&quot;conv5_2&quot;, kh=3, kw=3, n_out=512, dh=1,</span><br><span class="line">                      dw=1, p=p)</span><br><span class="line"></span><br><span class="line"># input_op：14*14*512 输出尺寸14*14*512</span><br><span class="line">conv5_3 = conv_op(conv5_2, name=&quot;conv5_3&quot;, kh=3, kw=3, n_out=512, dh=1,</span><br><span class="line">                      dw=1, p=p)</span><br><span class="line"></span><br><span class="line"># input_op：28*28*512 输出尺寸7*7*512</span><br><span class="line">pool5 = mpool_op(conv5_3, name=&quot;pool5&quot;, kh=2, kw=2, dh=2, dw=2)</span><br></pre></td></tr></table></figure></p>
+<p>下面要经过全连接，需将第五段卷积网络的结果扁平化, reshape将每张图片变为7<em>7</em>512=25088的一维向量<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">shp = pool5.get_shape()</span><br><span class="line">flattened_shape = shp[1].value * shp[2].value * shp[3].value</span><br><span class="line"># tf.reshape(tensor, shape, name=None) 将tensor变换为参数shape的形式。</span><br><span class="line">resh1 = tf.reshape(pool5, [-1, flattened_shape], name=&quot;resh1&quot;)</span><br></pre></td></tr></table></figure></p>
+<p>第一个全连接层，是一个隐藏节点数为4096的全连接层，后面接一个dropout层，训练时保留率为0.5，预测时为1.0<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">fc6 = fc_op(resh1, name=&quot;fc6&quot;, n_out=4096, p=p)</span><br><span class="line">fc6_drop = tf.nn.dropout(fc6, keep_prob, name=&quot;fc6_drop&quot;)</span><br></pre></td></tr></table></figure></p>
+<p>第2个全连接层，是一个隐藏节点数为4096的全连接层，后面接一个dropout层，训练时保留率为0.5，预测时为1.0<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">fc7 = fc_op(fc6_drop, name=&quot;fc7&quot;, n_out=4096, p=p)</span><br><span class="line">fc7_drop = tf.nn.dropout(fc7, keep_prob, name=&quot;fc7_drop&quot;)</span><br></pre></td></tr></table></figure></p>
+<p>最后是一个1000个输出节点的全连接层，利用softmax输出分类概率，argmax输出概率最大的类别。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">fc8 = fc_op(fc7_drop, name=&quot;fc8&quot;, n_out=1000, p=p)</span><br><span class="line">softmax = tf.nn.softmax(fc8)</span><br><span class="line">predictions = tf.argmax(softmax, 1)</span><br><span class="line">return predictions, softmax, fc8, p</span><br></pre></td></tr></table></figure></p>
+<blockquote>
+<p><strong>个人原创作品，转载需征求本人同意</strong></p>
+</blockquote>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Deep-learning/" rel="tag"># Deep_learning</a>
+          
+            <a href="/tags/VGG/" rel="tag"># VGG</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/01/16/Google-Inception-Net论文细读/" rel="next" title="Google Inception Net论文细读">
+                <i class="fa fa-chevron-left"></i> Google Inception Net论文细读
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/01/16/Interview-for-Deep-Learning/" rel="prev" title="Interview for Deep Learning">
+                Interview for Deep Learning <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/xw.jpg" alt="Poemlin">
+            
+              <p class="site-author-name" itemprop="name">Poemlin</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">39</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">12</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">36</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#一-背景介绍"><span class="nav-number">1.</span> <span class="nav-text">一. 背景介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#VERY-DEEP-CONVOLUTIONAL-NETWORKS-FOR-LARGE-SCALE-IMAGE-RECOGNITION"><span class="nav-number">1.0.1.</span> <span class="nav-text">VERY DEEP CONVOLUTIONAL NETWORKS FOR LARGE-SCALE IMAGE RECOGNITION</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Oxford-Visual-Geometry-Group"><span class="nav-number">1.0.2.</span> <span class="nav-text">Oxford Visual Geometry Group</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Robotics-Research-Group"><span class="nav-number">1.0.3.</span> <span class="nav-text">Robotics Research Group</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Paper-link"><span class="nav-number">1.0.4.</span> <span class="nav-text">Paper link</span></a></li></ol></li></ol><li class="nav-item nav-level-2"><a class="nav-link" href="#二-Abstract"><span class="nav-number">2.</span> <span class="nav-text">二. Abstract</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-VGGNet-探索的是神经网络的深度-depth-与其性能之间的关系。"><span class="nav-number">2.0.0.1.</span> <span class="nav-text">1.VGGNet 探索的是神经网络的深度(depth)与其性能之间的关系。</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#神经网络的深度和广度对其本身的影响是什么呢？"><span class="nav-number">2.0.1.</span> <span class="nav-text">神经网络的深度和广度对其本身的影响是什么呢？</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#2-VGG结构全部都采用较小的卷积核（3×3，部分1×1）"><span class="nav-number">2.0.1.1.</span> <span class="nav-text">2. VGG结构全部都采用较小的卷积核（3×3，部分1×1）</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#如何选择卷积核的大小？越大越好还是越小越好？"><span class="nav-number">2.0.1.2.</span> <span class="nav-text">如何选择卷积核的大小？越大越好还是越小越好？</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-VGG获得了2014年ILSVRC分类第二，定位第一。（当年分类第一是GoogleNet，后续会介绍）"><span class="nav-number">2.0.1.3.</span> <span class="nav-text">3.VGG获得了2014年ILSVRC分类第二，定位第一。（当年分类第一是GoogleNet，后续会介绍）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#三-Architecture"><span class="nav-number">3.</span> <span class="nav-text">三. Architecture</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1×1的卷积核到底有什么作用呢？"><span class="nav-number">3.0.1.</span> <span class="nav-text">1×1的卷积核到底有什么作用呢？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#四-ConvNet-Configurations"><span class="nav-number">4.</span> <span class="nav-text">四. ConvNet Configurations</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#五-Training"><span class="nav-number">5.</span> <span class="nav-text">五. Training</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#VGG的参数初始化方式是怎么样的？"><span class="nav-number">5.0.1.</span> <span class="nav-text">VGG的参数初始化方式是怎么样的？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#六-Image-Size"><span class="nav-number">6.</span> <span class="nav-text">六. Image Size</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#VGG的Multi-Scale方法"><span class="nav-number">7.</span> <span class="nav-text">VGG的Multi-Scale方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#七-Tensorflow实现简单的VGG-16的结构"><span class="nav-number">8.</span> <span class="nav-text">七. Tensorflow实现简单的VGG-16的结构</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-实现卷积操作函数"><span class="nav-number">8.0.1.</span> <span class="nav-text">1. 实现卷积操作函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-实现池化操作函数"><span class="nav-number">8.0.2.</span> <span class="nav-text">2. 实现池化操作函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-定义全连接操作函数"><span class="nav-number">8.0.3.</span> <span class="nav-text">3. 定义全连接操作函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-根据论文结构创建VGG16网络"><span class="nav-number">8.0.4.</span> <span class="nav-text">4. 根据论文结构创建VGG16网络</span></a></li></ol></li></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">&copy; 2018 &mdash; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-snowflake-o"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Poemlin</span>
+
+  
+</div>
+<div class="powered-by">
+<i class="fa fa-user-md"></i><span id="busuanzi_container_site_uv">
+  本站访客数:<span id="busuanzi_value_site_pv"></span>
+</span>
+</div>
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Deep_learning,code,tensorflow,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="记录本人在使用 tensorflow 过程中遇到过的函数，长期更新。  1. def reshape(tensor, shape, name=None)第1个参数为被调整维度的张量。第2个参数为要调整为的形状。返回一个shape形状的新tensor注意shape里最多有一个维度的值可以填写为-1，表示自动计算此维度。shape是一个列表形式好了我想说的重点还有一个就是根据shape如何变换矩阵。">
+<meta name="keywords" content="Deep_learning,code,tensorflow">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Tensorflow.org 个人日常函数">
+<meta property="og:url" content="http://yoursite.com/2019/01/16/Tensorflow-org-个人日常函数/index.html">
+<meta property="og:site_name" content="七月的风">
+<meta property="og:description" content="记录本人在使用 tensorflow 过程中遇到过的函数，长期更新。  1. def reshape(tensor, shape, name=None)第1个参数为被调整维度的张量。第2个参数为要调整为的形状。返回一个shape形状的新tensor注意shape里最多有一个维度的值可以填写为-1，表示自动计算此维度。shape是一个列表形式好了我想说的重点还有一个就是根据shape如何变换矩阵。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-01-16T12:31:00.255Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Tensorflow.org 个人日常函数">
+<meta name="twitter:description" content="记录本人在使用 tensorflow 过程中遇到过的函数，长期更新。  1. def reshape(tensor, shape, name=None)第1个参数为被调整维度的张量。第2个参数为要调整为的形状。返回一个shape形状的新tensor注意shape里最多有一个维度的值可以填写为-1，表示自动计算此维度。shape是一个列表形式好了我想说的重点还有一个就是根据shape如何变换矩阵。">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/01/16/Tensorflow-org-个人日常函数/">
+
+
+
+
+
+  <title>Tensorflow.org 个人日常函数 | 七月的风</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">七月的风</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/01/16/Tensorflow-org-个人日常函数/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Poemlin">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/xw.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="七月的风">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Tensorflow.org 个人日常函数</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-01-16T20:12:34+08:00">
+                2019-01-16
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Tensorflow-Pytorch/" itemprop="url" rel="index">
+                    <span itemprop="name">Tensorflow/Pytorch</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p>记录本人在使用 tensorflow 过程中遇到过的函数，长期更新。</p>
+</blockquote>
+<h2 id="1-def-reshape-tensor-shape-name-None"><a href="#1-def-reshape-tensor-shape-name-None" class="headerlink" title="1. def reshape(tensor, shape, name=None)"></a>1. def reshape(tensor, shape, name=None)</h2><p>第1个参数为被调整维度的张量。<br>第2个参数为要调整为的形状。<br>返回一个shape形状的新tensor<br>注意shape里最多有一个维度的值可以填写为-1，表示自动计算此维度。shape是一个列表形式<br>好了我想说的重点还有一个就是根据shape如何变换矩阵。其实简单的想就是，</p>
+<blockquote>
+<p>reshape（t, shape） =&gt; reshape(t, [-1]) =&gt; reshape(t, shape)</p>
+</blockquote>
+<p>首先将矩阵t变为一维矩阵，然后再对矩阵的形式更改就可以了。</p>
+<h5 id="关于shape"><a href="#关于shape" class="headerlink" title="关于shape"></a>关于shape</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"># tensor &apos;t&apos; is [1, 2, 3, 4, 5, 6, 7, 8, 9]</span><br><span class="line"># tensor &apos;t&apos; has shape [9]</span><br><span class="line"></span><br><span class="line"># tensor &apos;t&apos; is [[[1, 1], [2, 2]],</span><br><span class="line">#                [[3, 3], [4, 4]]]</span><br><span class="line"># tensor &apos;t&apos; has shape [2, 2, 2]</span><br><span class="line"></span><br><span class="line"># tensor &apos;t&apos; is [[[1, 1, 1],</span><br><span class="line">#                 [2, 2, 2]],</span><br><span class="line">#                [[3, 3, 3],</span><br><span class="line">#                 [4, 4, 4]],</span><br><span class="line">#                [[5, 5, 5],</span><br><span class="line">#                 [6, 6, 6]]]</span><br><span class="line"># tensor &apos;t&apos; has shape [3, 2, 3]</span><br></pre></td></tr></table></figure>
+<h2 id="2-tf-concat-concat-dim-values-name-’concat’"><a href="#2-tf-concat-concat-dim-values-name-’concat’" class="headerlink" title="2. tf.concat(concat_dim, values, name=’concat’)"></a>2. tf.concat(concat_dim, values, name=’concat’)</h2><p>concat_dim：必须是一个数，表明在哪一维上连接</p>
+<p>如果concat_dim是0 可以理解为使行变大<br>t1 = [[1, 2, 3], [4, 5, 6]]<br>t2 = [[7, 8, 9], [10, 11, 12]]<br>tf.concat(0, [t1, t2]) == &gt; [[1, 2, 3], [4, 5, 6], [7, 8, 9], [10, 11, 12]] </p>
+<p>如果concat_dim是1 可以理解为使列变大<br>t1 = [[1, 2, 3], [4, 5, 6]]<br>t2 = [[7, 8, 9], [10, 11, 12]]<br>tf.concat(1, [t1, t2]) ==&gt; [[1, 2, 3, 7, 8, 9], [4, 5, 6, 10, 11, 12  </p>
+<p>如果有更高维:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># tensor t3 with shape [2, 3]  </span><br><span class="line"># tensor t4 with shape [2, 3]  </span><br><span class="line">tf.shape(tf.concat(0, [t3, t4])) ==&gt; [4, 3]  </span><br><span class="line">tf.shape(tf.concat(1, [t3, t4])) ==&gt; [2, 6]</span><br></pre></td></tr></table></figure></p>
+<h2 id="3-tf-add-to-collection-self-name-value"><a href="#3-tf-add-to-collection-self-name-value" class="headerlink" title="3. tf.add_to_collection(self, name, value)"></a>3. tf.add_to_collection(self, name, value)</h2><p>将value以name的名称存储在收集器(self._collections)中.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">import tensorflow as tf</span><br><span class="line">v1 = tf.get_variable(&apos;v1&apos;, shape=[1], initializer=tf.ones_initializer())</span><br><span class="line">v2 = tf.get_variable(&apos;v2&apos;, shape=[1], initializer=tf.zeros_initializer())</span><br><span class="line">tf.add_to_collection(&apos;vc&apos;, v1)</span><br><span class="line">tf.add_to_collection(&apos;vc&apos;, v2)</span><br><span class="line">with tf.Session() as sess:</span><br><span class="line">    sess.run(tf.global_variables_initializer())</span><br><span class="line">    vc = tf.get_collection(&apos;vc&apos;)</span><br><span class="line">    print(vc)</span><br><span class="line">    for i in vc:</span><br><span class="line">        print(i)</span><br><span class="line">        print(sess.run(i))</span><br><span class="line">输出</span><br><span class="line">[&lt;tf.Variable &apos;v1:0&apos; shape=(1,) dtype=float32_ref&gt;, &lt;tf.Variable &apos;v2:0&apos; shape=(1,) dtype=float32_ref&gt;]</span><br><span class="line">&lt;tf.Variable &apos;v1:0&apos; shape=(1,) dtype=float32_ref&gt;</span><br><span class="line">[ 1.]</span><br><span class="line">&lt;tf.Variable &apos;v2:0&apos; shape=(1,) dtype=float32_ref&gt;</span><br><span class="line">[ 0.]</span><br></pre></td></tr></table></figure>
+<h2 id="4-tf-ones-like-tensor-dype-None-name-None"><a href="#4-tf-ones-like-tensor-dype-None-name-None" class="headerlink" title="4. tf.ones_like(tensor,dype=None,name=None)"></a>4. tf.ones_like(tensor,dype=None,name=None)</h2><p>  新建一个与给定的tensor类型大小一致的tensor，其所有元素为1。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Deep-learning/" rel="tag"># Deep_learning</a>
+          
+            <a href="/tags/code/" rel="tag"># code</a>
+          
+            <a href="/tags/tensorflow/" rel="tag"># tensorflow</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/01/16/Pytorch-org-个人日常函数/" rel="next" title="Pytorch.org 个人日常函数">
+                <i class="fa fa-chevron-left"></i> Pytorch.org 个人日常函数
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/01/16/Tensorflow-Error-1/" rel="prev" title="Tensorflow Error 1">
+                Tensorflow Error 1 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/xw.jpg" alt="Poemlin">
+            
+              <p class="site-author-name" itemprop="name">Poemlin</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">39</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">12</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">36</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-def-reshape-tensor-shape-name-None"><span class="nav-number">1.</span> <span class="nav-text">1. def reshape(tensor, shape, name=None)</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#关于shape"><span class="nav-number">1.0.0.1.</span> <span class="nav-text">关于shape</span></a></li></ol></li></ol><li class="nav-item nav-level-2"><a class="nav-link" href="#2-tf-concat-concat-dim-values-name-’concat’"><span class="nav-number">2.</span> <span class="nav-text">2. tf.concat(concat_dim, values, name=’concat’)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-tf-add-to-collection-self-name-value"><span class="nav-number">3.</span> <span class="nav-text">3. tf.add_to_collection(self, name, value)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-tf-ones-like-tensor-dype-None-name-None"><span class="nav-number">4.</span> <span class="nav-text">4. tf.ones_like(tensor,dype=None,name=None)</span></a></li></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">&copy; 2018 &mdash; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-snowflake-o"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Poemlin</span>
+
+  
+</div>
+<div class="powered-by">
+<i class="fa fa-user-md"></i><span id="busuanzi_container_site_uv">
+  本站访客数:<span id="busuanzi_value_site_pv"></span>
+</span>
+</div>
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
