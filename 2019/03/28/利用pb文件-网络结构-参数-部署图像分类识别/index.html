@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Deep_learning,Tensorflow,classification,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="当我们训练好了我们的模型，准备部署测试我们的模型时，逻辑上我们需要获得我们使用的网络的结构，再往网络结构里导入我们训练好的参数。此时我们就可以在任意的图片上进行实际使用了。这里介绍一下如何在已有网络结构+参数的文件(一般为pb)的前提下，如何进行实际部署使用。 建立类别index到类型名的映射之前我们讲过在准备数据时往往会生成一个类型中文或者英文名的实际类型名，分类任务最终网络的输出的类是0-n的">
+<meta name="keywords" content="Deep_learning,Tensorflow,classification">
+<meta property="og:type" content="article">
+<meta property="og:title" content="利用pb文件(网络结构+参数)部署图像分类识别">
+<meta property="og:url" content="http://yoursite.com/2019/03/28/利用pb文件-网络结构-参数-部署图像分类识别/index.html">
+<meta property="og:site_name" content="七月的风">
+<meta property="og:description" content="当我们训练好了我们的模型，准备部署测试我们的模型时，逻辑上我们需要获得我们使用的网络的结构，再往网络结构里导入我们训练好的参数。此时我们就可以在任意的图片上进行实际使用了。这里介绍一下如何在已有网络结构+参数的文件(一般为pb)的前提下，如何进行实际部署使用。 建立类别index到类型名的映射之前我们讲过在准备数据时往往会生成一个类型中文或者英文名的实际类型名，分类任务最终网络的输出的类是0-n的">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-03-30T06:48:26.553Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="利用pb文件(网络结构+参数)部署图像分类识别">
+<meta name="twitter:description" content="当我们训练好了我们的模型，准备部署测试我们的模型时，逻辑上我们需要获得我们使用的网络的结构，再往网络结构里导入我们训练好的参数。此时我们就可以在任意的图片上进行实际使用了。这里介绍一下如何在已有网络结构+参数的文件(一般为pb)的前提下，如何进行实际部署使用。 建立类别index到类型名的映射之前我们讲过在准备数据时往往会生成一个类型中文或者英文名的实际类型名，分类任务最终网络的输出的类是0-n的">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/03/28/利用pb文件-网络结构-参数-部署图像分类识别/">
+
+
+
+
+
+  <title>利用pb文件(网络结构+参数)部署图像分类识别 | 七月的风</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">七月的风</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/03/28/利用pb文件-网络结构-参数-部署图像分类识别/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Poemlin">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/xw.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="七月的风">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">利用pb文件(网络结构+参数)部署图像分类识别</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-03-28T17:06:33+08:00">
+                2019-03-28
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/图像分类识别/" itemprop="url" rel="index">
+                    <span itemprop="name">图像分类识别</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>当我们训练好了我们的模型，准备部署测试我们的模型时，逻辑上我们需要获得我们使用的网络的结构，再往网络结构里导入我们训练好的参数。此时我们就可以在任意的图片上进行实际使用了。这里介绍一下如何在已有网络结构+参数的文件(一般为pb)的前提下，如何进行实际部署使用。</p>
+<h3 id="建立类别index到类型名的映射"><a href="#建立类别index到类型名的映射" class="headerlink" title="建立类别index到类型名的映射"></a>建立类别index到类型名的映射</h3><p>之前我们讲过在准备数据时往往会生成一个类型中文或者英文名的实际类型名，分类任务最终网络的输出的类是0-n的数字，两者的关系就是利用这个label.txt实现。label.txt如果是：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">cat</span><br><span class="line">dog</span><br><span class="line">human</span><br><span class="line">horse</span><br><span class="line">tree</span><br></pre></td></tr></table></figure></p>
+<p>如果此时网络输出最大的predecition是1，那么网络预测的类就是dog，下面的代码实现这一过程，较为简单。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">class NodeLookup(object):</span><br><span class="line">    def __init__(self, label_lookup_path=None):</span><br><span class="line">        self.node_lookup = self.load(label_lookup_path)</span><br><span class="line">    </span><br><span class="line">    def load(self, label_lookup_path):</span><br><span class="line">        node_id_to_name = &#123;&#125;</span><br><span class="line">        with open(label_lookup_path) as f:</span><br><span class="line">            # enumerate使迭代对象索引化，先返回索引值后返回实际value</span><br><span class="line">            for index, line in enumerate(f):</span><br><span class="line">                node_id_to_name[index] = line.strip()</span><br><span class="line">        return node_id_to_name</span><br><span class="line">    </span><br><span class="line">    def id_to_string(self, node_id):</span><br><span class="line">        if node_id not in self.node_lookup:</span><br><span class="line">            return &apos;&apos;</span><br><span class="line">        return self.node_lookup[node_id]</span><br></pre></td></tr></table></figure></p>
+<h3 id="建立并读取模型文件"><a href="#建立并读取模型文件" class="headerlink" title="建立并读取模型文件"></a>建立并读取模型文件</h3><p>读取图文件前，需要先建立空白图，在读取图，最后加载<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">def create_graph():</span><br><span class="line">    with tf.gfile.FastGFile(FLAGS.model_path, &apos;rb&apos;) as f:</span><br><span class="line">        # 新建GraphDef文件，用于临时载入模型中的图</span><br><span class="line">        graph_def = tf.GraphDef() </span><br><span class="line">        # GraphDef加载模型中的图</span><br><span class="line">        graph_def.ParaseFromString(f.read())</span><br><span class="line">        # 在空白图中加载GraphDef中的图</span><br><span class="line">        _ = tf.import_graph_def(graph_def, name=&apos;&apos;)</span><br></pre></td></tr></table></figure></p>
+<h3 id="对读取的图片进行必要处理"><a href="#对读取的图片进行必要处理" class="headerlink" title="对读取的图片进行必要处理"></a>对读取的图片进行必要处理</h3><p>直接读取的图片一般不会直接送入网络，需要进行一定的操作，裁剪，指定大小，归一化等等。特别是网络大小输入固定时。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">def preprocess_for_eval(image, height, width, </span><br><span class="line">                        central_fraction=0.875,scope=None):</span><br><span class="line">    with tf.name_scope(scope, &apos;eval_image&apos;, [image, height, width]):</span><br><span class="line">        # 转换解码后的图像数据类型到float32</span><br><span class="line">        if image.dtype != tf.float32:</span><br><span class="line">            image = tf.image.convert_image_dtype(iamge, dtype=tf.float32)</span><br><span class="line">        # 对图像进行中心裁剪</span><br><span class="line">        if central_fraction:</span><br><span class="line">            image = tf.image.central_crop(image, central_fraction=central_fraction)</span><br><span class="line">        # 如果需要指定图像大小</span><br><span class="line">        if height and width:</span><br><span class="line">            # 解码后图像是三维，升维后resize</span><br><span class="line">            image = tf.expand_dims(image, 0)</span><br><span class="line">            # 双线性差值resize</span><br><span class="line">            image = tf.image.resize_bilinear(image, [height, width], </span><br><span class="line">                                               align_corners=False)</span><br><span class="line">            # 去掉第一维 batch</span><br><span class="line">            image = tf.squeeze(image, [0])</span><br><span class="line">        # 归一化</span><br><span class="line">        image = tf.subtract(image, 0.5)</span><br><span class="line">        image = tf.multiply(image, 2.0)</span><br><span class="line">        return image</span><br></pre></td></tr></table></figure></p>
+<h3 id="将图片输入网络进行预测"><a href="#将图片输入网络进行预测" class="headerlink" title="将图片输入网络进行预测"></a>将图片输入网络进行预测</h3><p>启动session，输入网络，获得最后一层的分类输出，再根据index到类型名的对应获得类型名。显示在屏幕上<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">def run_inference_on_image(image:</span><br><span class="line">    with tf.Graph().as_default():</span><br><span class="line">        # 读取图片文件</span><br><span class="line">        image_data = tf.gfile.FastGFile(image, &apos;rb&apos;).read()</span><br><span class="line">        # jepg解码图片</span><br><span class="line">        image_data = tf.image.decode_jpeg(image_data)</span><br><span class="line">        image_data = preprocess_for_eval(image_data, 299, 299)</span><br><span class="line">        # [w,h, c]-&gt;[b, w, h, c]</span><br><span class="line">        inage_data = tf.expand_dims(image_data, 0) </span><br><span class="line">        # 启动session，正式获取image_data</span><br><span class="line">        with tf.Session() as sess:</span><br><span class="line">            image_data = sess.run(image_data)</span><br><span class="line"></span><br><span class="line">    # 创建获取图   </span><br><span class="line">    create_graph()</span><br><span class="line">    </span><br><span class="line">    with tf.Session() as sess:</span><br><span class="line">        # 根据名字获取最后的softmax分类层</span><br><span class="line">        softmax_tensor = sess.graph.get_tensor_by_name(&apos;InceptionV3/Logits/SpatialSqueeze:0&apos;)</span><br><span class="line">        # 喂入测试图片</span><br><span class="line">        predictions = sess.run(softmax_tensor,</span><br><span class="line">                        &#123;&apos;input:0&apos;:image_data&#125;)</span><br><span class="line">        # 去掉batchsize维</span><br><span class="line">        predictions = np.squeeze(predictions)</span><br><span class="line">        # 获取index到类型名的对应,node_lookup是该类的对象</span><br><span class="line">        node_lookup = NodeLookup(FLAGS.label_path)</span><br><span class="line">        # 获取前k个预测值的预测类别</span><br><span class="line">        top_k = predictions.argsort()[-FLAGS.num_top_predictions:][::-1]</span><br><span class="line">        for node_id in top_k:</span><br><span class="line">            human_string = node_lookup.id_to_string(node_id)</span><br><span class="line">            # 获取概率值</span><br><span class="line">            score = predictions[node_id]</span><br><span class="line">            print(&apos;%s (score = %.5f)&apos; % (human_string, score))</span><br></pre></td></tr></table></figure></p>
+<h3 id="main函数和命令行解析"><a href="#main函数和命令行解析" class="headerlink" title="main函数和命令行解析"></a>main函数和命令行解析</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">def main(_):</span><br><span class="line">    image = FLAGS.image_file</span><br><span class="line">    run_inference_on_image(image)</span><br><span class="line"></span><br><span class="line">if __name__ == &apos;__main__&apos;:</span><br><span class="line">    parser = argparse.ArgumentParser()</span><br><span class="line">    parser.add_argument(</span><br><span class="line">      &apos;--model_path&apos;,</span><br><span class="line">      type=str,</span><br><span class="line">  )</span><br><span class="line">    parser.add_argument(</span><br><span class="line">      &apos;--label_path&apos;,</span><br><span class="line">      type=str,</span><br><span class="line">  )</span><br><span class="line">    parser.add_argument(</span><br><span class="line">      &apos;--image_file&apos;,</span><br><span class="line">      type=str,</span><br><span class="line">      default=&apos;&apos;,</span><br><span class="line">      help=&apos;Absolute path to image file.&apos;</span><br><span class="line">  )</span><br><span class="line">    parser.add_argument(</span><br><span class="line">      &apos;--num_top_predictions&apos;,</span><br><span class="line">      type=int,</span><br><span class="line">      default=5,</span><br><span class="line">      help=&apos;Display this many predictions.&apos;</span><br><span class="line">  )</span><br><span class="line">    FLAGS, unparsed = parser.parse_known_args()</span><br><span class="line">    tf.app.run(main=main, argv=[sys.argv[0]] + unparsed)</span><br></pre></td></tr></table></figure>
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Deep-learning/" rel="tag"># Deep_learning</a>
+          
+            <a href="/tags/Tensorflow/" rel="tag"># Tensorflow</a>
+          
+            <a href="/tags/classification/" rel="tag"># classification</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/03/28/利用slim进行图像分类/" rel="next" title="利用slim进行图像分类识别">
+                <i class="fa fa-chevron-left"></i> 利用slim进行图像分类识别
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/xw.jpg" alt="Poemlin">
+            
+              <p class="site-author-name" itemprop="name">Poemlin</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">40</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">12</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">36</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#建立类别index到类型名的映射"><span class="nav-number">1.</span> <span class="nav-text">建立类别index到类型名的映射</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#建立并读取模型文件"><span class="nav-number">2.</span> <span class="nav-text">建立并读取模型文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#对读取的图片进行必要处理"><span class="nav-number">3.</span> <span class="nav-text">对读取的图片进行必要处理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#将图片输入网络进行预测"><span class="nav-number">4.</span> <span class="nav-text">将图片输入网络进行预测</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#main函数和命令行解析"><span class="nav-number">5.</span> <span class="nav-text">main函数和命令行解析</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">&copy; 2018 &mdash; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-snowflake-o"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Poemlin</span>
+
+  
+</div>
+<div class="powered-by">
+<i class="fa fa-user-md"></i><span id="busuanzi_container_site_uv">
+  本站访客数:<span id="busuanzi_value_site_pv"></span>
+</span>
+</div>
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
